@@ -4,7 +4,7 @@
             @if (!empty($logo))
                 <img src="{{ asset('/') . $logo }}" alt="" height="40">
             @else
-                EIL<span>POS</span>
+                Eclipse <span>POS</span>
             @endif
         </a>
         <div class="sidebar-toggler not-active">
@@ -64,6 +64,13 @@
                     </a>
                 </li>
             @endif
+
+            <li class="nav-item">
+                <a href="{{ route('make.item') }}" class="nav-link {{ request()->routeIs('make.item') ? 'nav_active' : '' }}">
+                    <i class="ms-2 ms-2 link-icon" data-feather="shopping-cart"></i>
+                    <span class="link-title">Make Items</span>
+                </a>
+            </li>
             @if (Auth::user()->can('pos-manage.menu'))
                 <li class="nav-item">
                     <a href="{{ route('sale.view') }}"

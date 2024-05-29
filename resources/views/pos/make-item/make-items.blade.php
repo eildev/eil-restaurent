@@ -6,165 +6,121 @@
             <div class="card">
                 <div class="card-body px-4 py-2">
                     <div class="row">
-                        <ul class="nav nav-tabs" id="myTab" role="tablist">
-                            <li class="nav-item">
-                                <a class="nav-link active" id="neworder-tab" data-bs-toggle="tab" href="#neworder"
-                                    role="tab" aria-controls="neworder" aria-selected="true">New Order</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" id="profile-tab" data-bs-toggle="tab" href="#profile" role="tab"
-                                    aria-controls="profile" aria-selected="false">Order Queue</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link disabled" id="disabled-tab" data-bs-toggle="tab" href="#disabled"
-                                    role="tab" aria-controls="disabled" aria-selected="false">Details</a>
-                            </li>
-                        </ul>
-                        <div class="tab-content border border-top-0 p-3" id="myTabContent">
-                            {{-- New Order Start --}}
-                            <div class="tab-pane fade show active" id="neworder" role="tabpanel"
-                                aria-labelledby="neworder-tab">
-                                <div class="row">
-                                    <div class="col-2 col-md-2 pe-0">
-                                        <div class="nav nav-tabs nav-tabs-vertical" id="v-tab" role="tablist"
-                                            aria-orientation="vertical">
-                                            @php
-                                                $categories = App\Models\ItemCategory::all();
-                                            @endphp
-                                            @if ($categories->count() > 0)
-                                                @foreach ($categories as $key => $category)
-                                                    <a class="nav-link {{ $key == 0 ? 'active' : '' }}"
-                                                        id="v-mytab{{ $category->id }}-tab" data-bs-toggle="pill"
-                                                        href="#v-mytab{{ $category->id }}" role="tab"
-                                                        aria-controls="v-mytab{{ $category->id }}"
-                                                        aria-selected="true">{{ $category->category_name }}</a>
-                                                @endforeach
-                                            @else
-                                                Note Found
-                                            @endif
-                                            {{-- <a class="nav-link active" id="v-home-tab" data-bs-toggle="pill" href="#v-home" role="tab" aria-controls="v-home" aria-selected="true">Home</a>
-                                        <a class="nav-link" id="v-profile-tab" data-bs-toggle="pill" href="#v-profile" role="tab" aria-controls="v-profile" aria-selected="false">Profile</a>
-                                        <a class="nav-link" id="v-messages-tab" data-bs-toggle="pill" href="#v-messages" role="tab" aria-controls="v-messages" aria-selected="false">Messages</a>
-                                        <a class="nav-link" id="v-settings-tab" data-bs-toggle="pill" href="#v-settings" role="tab" aria-controls="v-settings" aria-selected="false">Settings</a> --}}
-                                        </div>
-                                    </div>
-                                    <div class="col-5 col-md-5 ps-0">
-                                        <div class="tab-content tab-content-vertical border p-3" id="v-tabContent">
-                                            @php
-                                                $categories = App\Models\ItemCategory::all();
-                                            @endphp
-                                            @if ($categories->count() > 0)
-                                                @foreach ($categories as $key => $category)
-                                                    <div class="tab-pane fade {{ $key == 0 ? 'show active' : '' }}"
-                                                        id="v-mytab{{ $category->id }}" role="tabpanel"
-                                                        aria-labelledby="v-mytab{{ $category->id }}-tab">
-                                                        @php
-                                                            $items = App\Models\MakeItem::where(
-                                                                'make_category_id',
-                                                                $category->id,
-                                                            )->get();
-                                                        @endphp
-                                                        @if ($items->count() > 0)
-                                                            <div class="row">
-                                                                <style>
-                                                                    .product_image {
-                                                                        position: relative;
-                                                                        /* z-index: -1; */
-                                                                    }
-
-                                                                    /* .product_image::after {
-                                                                        content: "";
-                                                                        position: absolute;
-                                                                        bottom: 4px;
-                                                                        left: 4px;
-                                                                        right: 4px;
-                                                                        top: 4px;
-                                                                        background: rgba(0, 0, 0, .3);
-                                                                        z-index: 1;
-                                                                    } */
-                                                                </style>
-                                                                @foreach ($items as $key => $item)
-                                                                    <div class="col-4 p-1 my-1 product_image"
-                                                                        style="boder:1px solid red">
-                                                                        <div class="Item__div w-100" product_id="{{ $item->id }}"
-                                                                            style="cursor: pointer; ">
-                                                                            <img class="w-100" height="120" style="border-radius:5px 5px 0 0;border-left: 1px solid;border-top: 1px solid;border-right: 1px solid;border-color:#00a9f1"
-                                                                                src="https://images.unsplash.com/photo-1561154464-82e9adf32764?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=800&q=60">
-
-                                                                            <div class="info"
-                                                                                style="border-radius:0 0 5px 5px;color:black;background: rgba(255,255,255,.7);text-align:center;border-left: 1px solid;border-bottom: 1px solid;border-right: 1px solid;border-color:#00a9f1">
-                                                                                <p>{{ Str::limit($item->item_name, 16, '') }}
-                                                                                </p>
-                                                                                <p>৳{{ $item->sale_price }}</p>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                @endforeach
-                                                            </div>
-                                                        @else
-                                                            <div class="row text-center">
-                                                                <div class="col-lg-12">
-                                                                    <div class="card" style="width:18rem;">
-                                                                        <div class="card-body">
-                                                                            <h5 class="card-title">Product Not Found</h5>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        @endif
-                                                    </div>
-                                                @endforeach
-                                            @else
-                                                Note Found
-                                            @endif
-
-
-                                            {{-- <div class="tab-pane fade" id="v-profile" role="tabpanel" aria-labelledby="v-profile-tab">
-                                          <h6 class="mb-1">Profile</h6>
-                                          <p>Nulla est ullamco ut irure incididunt nulla Lorem Lorem minim irure officia enim reprehenderit. Magna duis labore cillum sint adipisicing
-                                          exercitation ipsum. Nostrud ut anim non exercitation velit laboris fugiat cupidatat. Commodo esse dolore fugiat sint velit ullamco magna
-                                          consequat voluptate minim amet aliquip ipsum aute laboris nisi.</p>
-                                        </div>
-                                        <div class="tab-pane fade" id="v-messages" role="tabpanel" aria-labelledby="v-messages-tab">
-                                          <h6 class="mb-1">Messages</h6>
-                                          <p>Nulla est ullamco ut irure incididunt nulla Lorem Lorem minim irure officia enim reprehenderit. Magna duis labore cillum sint adipisicing
-                                          exercitation ipsum. Nostrud ut anim non exercitation velit laboris fugiat cupidatat. Commodo esse dolore fugiat sint velit ullamco magna
-                                          consequat voluptate minim amet aliquip ipsum aute laboris nisi.</p>
-                                        </div>
-                                        <div class="tab-pane fade" id="v-settings" role="tabpanel" aria-labelledby="v-settings-tab">
-                                          <h6 class="mb-1">Settings</h6>
-                                          <p>Nulla est ullamco ut irure incididunt nulla Lorem Lorem minim irure officia enim reprehenderit. Magna duis labore cillum sint adipisicing
-                                          exercitation ipsum. Nostrud ut anim non exercitation velit laboris fugiat cupidatat. Commodo esse dolore fugiat sint velit ullamco magna
-                                          consequat voluptate minim amet aliquip ipsum aute laboris nisi.</p>
-                                        </div> --}}
-                                        </div>
-                                    </div>
-                                    <div class="col-5 col-md-5 ps-0">
-                                        sdfdsf
-                                    </div>
-                                </div>
+                        <div class="mb-1 col-md-4">
+                            @php
+                                $categories = App\Models\ItemCategory::all();
+                            @endphp
+                            <label for="ageSelect" class="form-label">Category</label>
+                            <select class="js-example-basic-single  form-select product_select" data-width="100%"
+                                onclick="errorRemove(this);" onblur="errorRemove(this);">
+                                @if ($categories->count() > 0)
+                                    <option selected disabled>Select Product</option>
+                                    @foreach ($categories as $category)
+                                        <option value="{{ $category->id }}">{{ $category->category_name }} </option>
+                                    @endforeach
+                                @else
+                                    <option selected disabled>Please Select Category</option>
+                                @endif
+                            </select>
+                            <span class="text-danger product_select_error"></span>
+                        </div>
+                        <div class="mb-2 col-md-4">
+                            <label for="ageSelect" class="form-label">Item Name</label>
+                            <div class="">
+                                <input type="text" class="form-control barcode_input" placeholder="Item Name"
+                                     aria-describedby="btnGroupAddon">
                             </div>
-                            {{-- New Order End --}}
-                            {{-- Order Queue Start --}}
-                            <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">Order
-                                Queue</div>
-                            {{-- Order Queue End --}}
-                            {{-- Details Start --}}
-                            <div class="tab-pane fade" id="disabled" role="tabpanel" aria-labelledby="disabled-tab">Details
+                        </div>
+                        <div class="mb-2 col-md-4">
+                            <label for="ageSelect" class="form-label">Item Price</label>
+                            <div class="">
+                                <input type="number" class="form-control barcode_input" placeholder="Item Price"
+                                     aria-describedby="btnGroupAddon">
                             </div>
-                            {{-- Details End --}}
+                        </div>
+                        <div class="mb-2 col-md-6">
+                            <h6 class="card-title">Product Image</h6>
+                            {{-- <p class="mb-3 text-warning">Note: <span class="fst-italic">please add a 400 X 400 size image.</span></p> --}}
+                            <input type="file" class="categoryImage" name="image" id="myDropify" />
+                        </div>
+                        <div class="mb-2 col-md-6">
+                            <label for="" class="form-label">Item Note</label>
+                            <textarea class="form-control" name="details" id="" rows="9"></textarea>
                         </div>
                     </div>
-
-
                 </div>
             </div>
         </div>
     </div>
+    <div class="row">
+        <div class="col-md-12 mb-1 grid-margin stretch-card">
+            <div class="card">
+                <div class="card-body px-4 py-2">
+                    <div class="row">
+                        <div class="mb-1 col-md-3">
+                            @php
+                                $products = App\Models\Product::where('stock', '>', 0)->get();
+                            @endphp
+                            <label for="ageSelect" class="form-label">Materials Name</label>
+                            <select class="js-example-basic-single  form-select product_select" data-width="100%"
+                                onclick="errorRemove(this);" onblur="errorRemove(this);">
+                                @if ($products->count() > 0)
+                                    <option selected disabled>Select Product</option>
+                                    @foreach ($products as $product)
+                                        <option value="{{ $product->id }}">{{ $product->name }} ({{ $product->stock }}
+                                            {{ $product->unit->name }} Available )
+                                        </option>
+                                    @endforeach
+                                @else
+                                    <option selected disabled>Please Add Product</option>
+                                @endif
+                            </select>
+                            <span class="text-danger product_select_error"></span>
+                        </div>
+                        <div class="mb-2 col-md-3">
+                            <label for="ageSelect" class="form-label">Quantity</label>
+                            <div class="">
+                                <input type="text" class="form-control" placeholder="Quantity"
+                                     aria-describedby="btnGroupAddon">
+                            </div>
+                        </div>
+                        <div class="mb-1 col-md-3">
+                            <label for="password" class="form-label">Unit</label>
+                            @php
+                            $units = App\Models\Unit::all();
+                        @endphp
+                        <label for="ageSelect" class="form-label">Materials Name</label>
+                        <select class="js-example-basic-single  form-select product_select" data-width="100%"
+                            onclick="errorRemove(this);" onblur="errorRemove(this);">
+                            @if ($units->count() > 0)
+                                <option selected disabled>Select Unit</option>
+                                @foreach ($units as $unit)
+                                    <option value="{{ $unit->id }}">{{ $unit->name }} </option>                                </option>
+                                @endforeach
+                            @else
+                                <option selected disabled>Please Add Unit</option>
+                            @endif
+                        </select>
+                        <span class="text-danger product_select_error"></span>
+                        </div>
+                        <div class="mb-1 col-md-3">
+                            <label for="password" class="form-label">Customer</label>
+                            <div class="d-flex g-3">
+                                <input type="text" class="form-control barcode_input" placeholder="Item Cost" readonly
+                                     aria-describedby="btnGroupAddon">
+                                <button class="btn btn-primary ms-2" data-bs-toggle="modal"
+                                    data-bs-target="#customerModal">Add</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
+    </div>
     {{-- table  --}}
     <div class="row">
-        <div class="col-md-7 mb-1 grid-margin stretch-card">
+        <div class="col-md-12 mb-1 grid-margin stretch-card">
             <div class="card">
                 <div class="card-body px-4 py-2">
                     <div class="mb-3">
@@ -188,123 +144,6 @@
                             <tbody class="showData">
                             </tbody>
                         </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-5 mb-1 grid-margin stretch-card">
-            <div class="card">
-                <div class="card-body px-4 py-2">
-                    <div class="row align-items-center mb-2">
-                        <div class="col-sm-4">
-                            Grand Total :
-                        </div>
-                        <div class="col-sm-8">
-                            <input type="number" class="form-control grandTotal border-0 " name="" readonly
-                                value="0.00" />
-                        </div>
-
-                        <input type="hidden" class="form-control total border-0 " name="total" readonly
-                            value="0.00" />
-
-                    </div>
-                    <div class="row align-items-center mb-2">
-                        <div class="col-sm-4">
-                            Discount :
-                        </div>
-                        <div class="col-sm-8">
-                            {{-- @php
-                                $promotions = App\Models\Promotion::get();
-                            @endphp --}}
-                            {{-- <input type="number" class="form-control discount_field border-0 " name="discount_field"
-                                readonly value="0.00" /> --}}
-                            {{-- <span class="ms-3 discount_field">00</span> --}}
-                            <select class="form-select discount_field" name="discount_field">
-
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="row align-items-center">
-                        <div class="col-sm-8">
-                            <input type="hidden" class="form-control grand_total border-0 " name="grand_total" readonly
-                                value="0.00" />
-                        </div>
-                    </div>
-                    <div class="row align-items-center mb-2">
-                        <div class="col-sm-4">
-                            <label for="name" class="form-label">Tax:</label>
-                        </div>
-                        <div class="col-sm-8">
-                            @php
-                                $taxs = App\Models\Tax::get();
-                            @endphp
-                            <select class="form-select tax" data-width="100%" onclick="errorRemove(this);"
-                                onblur="errorRemove(this);" value="">
-                                @if ($taxs->count() > 0)
-                                    <option selected disabled>0%</option>
-                                    @foreach ($taxs as $taxs)
-                                        <option value="{{ $taxs->percentage }}">
-                                            {{ $taxs->percentage }} %
-                                        </option>
-                                    @endforeach
-                                @else
-                                    <option selected disabled>Please Add Transaction</option>
-                                @endif
-                            </select>
-                        </div>
-                    </div>
-                    <div class="row align-items-center mb-2">
-                        <div class="col-sm-4">
-                            <label for="name" class="form-label">Pay Amount <span
-                                    class="text-danger">*</span>:</label>
-                        </div>
-                        <div class="col-sm-8">
-                            <input class="form-control total_payable" name="total_payable" type="number" value=""
-                                onkeyup="errorRemove(this);">
-                            <span class="text-danger total_payable_error"></span>
-                        </div>
-                    </div>
-                    <div class="row align-items-center">
-                        <div class="col-sm-4">
-                            Due/Return :
-                        </div>
-                        <div class="col-sm-8">
-                            <input type="number" class="form-control total_due border-0 " name="" readonly
-                                value="0.00" />
-                        </div>
-                    </div>
-                    <div class="row align-items-center">
-                        <div class="col-sm-4">
-                            <label for="name" class="form-label">Transaction Method <span
-                                    class="text-danger">*</span>:</label>
-                        </div>
-                        <div class="col-sm-8">
-                            @php
-                                $payments = App\Models\Bank::get();
-                            @endphp
-                            <select class="form-select payment_method" data-width="100%" onclick="errorRemove(this);"
-                                onblur="errorRemove(this);">
-                                @if ($payments->count() > 0)
-                                    @foreach ($payments as $payemnt)
-                                        <option value="{{ $payemnt->id }}">
-                                            {{ $payemnt->name }}
-                                        </option>
-                                    @endforeach
-                                @else
-                                    <option selected disabled>Please Add Transaction</option>
-                                @endif
-                            </select>
-                            <span class="text-danger payment_method_error"></span>
-                        </div>
-                    </div>
-
-                    <div class="my-3">
-                        <button class="btn btn-primary payment_btn"><i class="fa-solid fa-money-check-dollar"></i>
-                            Payment</button>
-                        <button id="printButton" class="btn btn-primary print_btn"><i
-                                class="fa-solid fa-money-check-dollar"></i>
-                            print</button>
                     </div>
                 </div>
             </div>
@@ -375,15 +214,6 @@
 
     <script>
         $(document).ready(function() {
-            // Select Product Start
-            const Item__divs = document.querySelectorAll('.Item__div')
-            console.log(Item__divs)
-            Item__divs.forEach(function(item) {
-                item.addEventListener('click', function(e) {
-                alert("OK")
-            });
-            });
-            // Select Product End
             $('#printButton').on('click', function() {
                 var printFrame = $('#printFrame')[0];
                 var printContentUrl =
@@ -710,22 +540,22 @@
             });
 
             // Select product
-            $('.product_select').change(function() {
-                let id = $(this).val();
-                if ($(`.data_row${id}`).length === 0 && id) {
-                    $.ajax({
-                        url: '/product/find/' + id,
-                        type: 'GET',
-                        dataType: 'JSON',
-                        success: function(res) {
-                            const product = res.data;
-                            const promotion = res.promotion;
-                            showAddProduct(product, promotion);
-                            updateGrandTotal();
-                        }
-                    });
-                }
-            });
+            // $('.product_select').change(function() {
+            //     let id = $(this).val();
+            //     if ($(`.data_row${id}`).length === 0 && id) {
+            //         $.ajax({
+            //             url: '/product/find/' + id,
+            //             type: 'GET',
+            //             dataType: 'JSON',
+            //             success: function(res) {
+            //                 const product = res.data;
+            //                 const promotion = res.promotion;
+            //                 showAddProduct(product, promotion);
+            //                 updateGrandTotal();
+            //             }
+            //         });
+            //     }
+            // });
 
             // Purchase delete
             $(document).on('click', '.purchase_delete', function(e) {

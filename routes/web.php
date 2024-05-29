@@ -26,6 +26,7 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\DamageController;
 use App\Http\Controllers\CustomeMailControler;
 use App\Http\Controllers\RolePermissionController;
+use App\Http\Controllers\MakeItemsController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -308,6 +309,10 @@ Route::middleware('auth')->group(function () {
         Route::get('/sale/promotions/{id}', 'salePromotions')->name('sale.promotions');
         Route::get('/product/barcode/find/{id}', 'findProductWithBarcode')->name('product.barcode.find');
         Route::get('/sale/product/find/{id}', 'saleProductFind')->name('sale.product.find');
+    });
+    // Make Items related routes
+    Route::controller(MakeItemsController::class)->group(function () {
+        Route::get('/make/item', 'index')->name('make.item');
     });
     // Transaction related route(n)
     Route::controller(EmployeeSalaryController::class)->group(function () {
