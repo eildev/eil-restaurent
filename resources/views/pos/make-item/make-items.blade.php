@@ -10,19 +10,29 @@
                             @php
                                 $categories = App\Models\ItemCategory::all();
                             @endphp
-                            <label for="ageSelect" class="form-label">Category</label>
-                            <select class="js-example-basic-single  form-select product_select" data-width="100%"
-                                onclick="errorRemove(this);" onblur="errorRemove(this);">
-                                @if ($categories->count() > 0)
-                                    <option selected disabled>Select Product</option>
-                                    @foreach ($categories as $category)
-                                        <option value="{{ $category->id }}">{{ $category->category_name }} </option>
-                                    @endforeach
-                                @else
-                                    <option selected disabled>Please Select Category</option>
-                                @endif
-                            </select>
-                            <span class="text-danger product_select_error"></span>
+                            <div  class="row">
+                                <div class="col-md-10">
+                                    <label for="ageSelect" class="form-label">Category</label>
+                                    <select class="js-example-basic-single  form-select category_select" data-width="100%"
+                                        onclick="errorRemove(this);" onblur="errorRemove(this);">
+                                        @if ($categories->count() > 0)
+                                            <option selected disabled>Select Category</option>
+                                            @foreach ($categories as $category)
+                                                <option value="{{ $category->id }}">{{ $category->category_name }} </option>
+                                            @endforeach
+                                        @else
+                                            <option selected disabled>Please Select Category</option>
+                                        @endif
+                                    </select>
+
+                                    <span class="text-danger product_select_error"></span>
+                                </div>
+                                <div class="col-md-2"  style="margin-top: 10px">
+                                    <label for="ageSelect" class="form-label"> </label><br>
+                                    <a href="" class="btn btn-sm btn-info"  data-bs-toggle="modal"
+                                    data-bs-target="#exampleModalLongScollable">+</a>
+                                </div>
+                            </div>
                         </div>
                         <div class="mb-2 col-md-4">
                             <label for="ageSelect" class="form-label">Item Name</label>
@@ -52,6 +62,36 @@
             </div>
         </div>
     </div>
+     {{-- /////////////////Category Add Modal//////////////// --}}
+     <div class="modal fade" id="exampleModalLongScollable" tabindex="-1"
+     aria-labelledby="exampleModalScrollableTitle" aria-hidden="true">
+     <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
+         <div class="modal-content">
+             <div class="modal-header">
+                 <h5 class="modal-title" id="exampleModalScrollableTitle">Add  Category</h5>
+                 <button type="button" class="btn-close" data-bs-dismiss="modal"
+                     aria-label="btn-close"></button>
+             </div>
+             <div class="modal-body">
+                 <form id="signupForm" class="categoryForm">
+                     <div class="mb-3">
+                         <label for="name" class="form-label">Category Name</label>
+                         <input id="defaultconfig" class="form-control category_name"
+                             maxlength="250" name="category_name" type="text"
+                             onkeyup="errorRemove(this);" onblur="errorRemove(this);">
+                         <span class="text-danger category_name_error"></span>
+                     </div>
+             </div>
+             <div class="modal-footer">
+                 <button type="button" class="btn btn-secondary"
+                     data-bs-dismiss="modal">Close</button>
+                 <button type="button" class="btn btn-primary save_category">Save</button>
+             </div>
+             </form>
+         </div>
+     </div>
+ </div>
+ <!--------Category Modal-------->
     <div class="row">
         <div class="col-md-12 mb-1 grid-margin stretch-card">
             <div class="card">
@@ -118,6 +158,7 @@
         </div>
 
     </div>
+
     {{-- table  --}}
     <div class="row">
         <div class="col-md-12 mb-1 grid-margin stretch-card">
@@ -227,6 +268,45 @@
                 };
             });
         });
+
+        //Category add
+        const saveCategory = document.querySelector('.save_category');
+        saveCategory.addEventListener('click', function(e) {
+                e.preventDefault();
+                // alert('ok')
+                let formData = new FormData($('.categoryForm')[0]);
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+                $.ajax({
+                    url: '/add/make/item/catgoey',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(res) {
+                        if (res.status == 200) {
+                            // console.log(res);
+                            $('#exampleModalLongScollable').modal('hide');
+                            $('.categoryForm')[0].reset();
+                            toastr.success(res.message);
+                            const newOption = new Option(res.data.category_name, res.data.id);
+                            document.querySelector('.category_select').append(newOption);
+
+                            // Optionally refresh select2 if used
+                            $('.js-example-basic-single').select2();
+                        } else {
+                            // console.log(res);
+                            if (res.error.category_name) {
+                                showError('.category_name', res.error.category_name);
+                            }
+                        }
+                    }
+                });
+            })
+
     </script>
 
 
