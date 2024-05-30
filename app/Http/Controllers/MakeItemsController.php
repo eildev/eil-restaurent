@@ -87,6 +87,7 @@ class MakeItemsController extends Controller
             // Add any other fields as needed
         ]);
         $material->load('product');
+        $material->load('unit');
         return response()->json([
             'status' => 200,
             'message' => 'Item created successfully!',
@@ -95,4 +96,22 @@ class MakeItemsController extends Controller
         ]);
 
     }
+    public function DestroyMaterials($id)
+    {
+        $material = MaterialList::findOrFail($id);
+
+        if ($material) {
+            $material->delete();
+            return response()->json([
+                'status' => 200,
+                'message' => 'Item deleted successfully!',
+            ]);
+        } else {
+            return response()->json([
+                'status' => 404,
+                'message' => 'Item not found!',
+            ]);
+        }
+    }
+
 }

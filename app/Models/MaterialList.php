@@ -13,4 +13,8 @@ class MaterialList extends Model
     {
         return $this->belongsTo(Product::class ,'product_id', 'id');
     }
+    public function unit()
+    {
+        return $this->belongsTo(unit::class ,'unit', 'id');
+    }
 }

@@ -315,7 +315,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/make/item', 'index')->name('make.item');
         Route::post('/add/make/item/catgoey', 'MakeItemCategory')->name('make.item.category');
         Route::post('/store/make/item/', 'MakeItemStore')->name('make.item.store');
-
+        Route::get('/delete/material/{id}', 'DestroyMaterials');
     });
     // Transaction related route(n)
     Route::controller(EmployeeSalaryController::class)->group(function () {
