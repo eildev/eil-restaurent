@@ -337,6 +337,7 @@ $(document).ready(function() {
             totalCost += parseFloat($(this).text());
         });
         $('#totalCost').text(totalCost.toFixed(2)); // Update the total cost display
+        $('input[name="total_cost_price"]').val(totalCost.toFixed(2));
     }
 ///Delete
 $(document).on('click', '.deleteRow', function() {
