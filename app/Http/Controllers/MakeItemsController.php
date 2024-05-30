@@ -38,15 +38,16 @@ class MakeItemsController extends Controller
         ]);
 
     }
+    //Store Data
     public function MakeItemStore(Request $request){
         $validatedData = $request->validate([
             'make_category_id' => 'required|exists:item_categories,id',
             'item_name' => 'required|string|max:255',
             'sale_price' => 'required|numeric',
             'product_id' => 'required|exists:products,id',
-            'quantity' => 'required|numeric|min:1',
+            'quantity' => 'required',
             'unit' => 'required|exists:units,id',
-            'apro_cost' => 'required|numeric|min:0',
+            'apro_cost' => 'required',
         ]);
 
         if ($request->hasFile('picture')) {
@@ -71,7 +72,7 @@ class MakeItemsController extends Controller
                             'id' => $request->id ?? 0,
                     ],
                         [
-                        'make_category_id' => $request->input('make_category_id'),
+                    'make_category_id' => $request->input('make_category_id'),
                     'item_name' => $request->input('item_name'),
                     'sale_price' => $request->input('sale_price'),
                     'note' => $request->input('note'),
@@ -82,8 +83,6 @@ class MakeItemsController extends Controller
         }
 
         $makeItemId = $makeItem->id;
-
-        // Create a new Product instance and save it to the database
        $material =   MaterialList::create([
             'make_item_id' => $makeItemId,
             'product_id' => $validatedData['product_id'],

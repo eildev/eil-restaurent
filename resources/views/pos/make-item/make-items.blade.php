@@ -10,6 +10,8 @@
                 <div class="card-body px-4 py-2">
                     <form id="myValidForm" class="myForm" method="POST" enctype="multipart/form-data">
                         @csrf
+                        <input type="hidden" name="id" value="0">
+                        <input type="hidden" name="total_cost_price" value="0">
                     <div class="row" >
                         <div class="mb-1 col-md-4">
                             @php
@@ -200,6 +202,7 @@
                                         <i class="fa-solid fa-trash-can"></i>
                                     </th>
                                 </tr>
+
                             </thead>
                             <tbody class="showData">
                                 <tr>
@@ -210,6 +213,13 @@
                                     <td></td>
                                 </tr>
                             </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th colspan="3"></th>
+                                    <th >Grand Total</th>
+                                    <th id="totalCost">0.00</th>
+                                </tr>
+                            </tfoot>
                         </table>
                     </div>
                 </div>
@@ -301,10 +311,11 @@ $(document).ready(function() {
                              '<td>' + productPrice + '</td>' +
                              '<td>' + response.material.quantity + '</td>' +
                              '<td>' + unitName + '</td>' +
-                             '<td>' + response.material.apro_cost + '</td>' +
+                             '<td class="apro-cost">' + response.material.apro_cost + '</td>' +
                              '<td><a type="button" class="btn btn-sm text-danger deleteRow"><i class="fas fa-trash-alt"></i></a></td>' +
                              '</tr>';
                 $('.showData').append(newRow); // Append the new row to the table body
+                 calculateTotalCost();
                 if (response.status === 200) {
                     toastr.success(response.message);
                 } else {
@@ -319,7 +330,14 @@ $(document).ready(function() {
             }
         });
     });
-
+//last calculate Grand Total Function
+    function calculateTotalCost() {
+        var totalCost = 0;
+        $('.apro-cost').each(function() {
+            totalCost += parseFloat($(this).text());
+        });
+        $('#totalCost').text(totalCost.toFixed(2)); // Update the total cost display
+    }
 ///Delete
 $(document).on('click', '.deleteRow', function() {
         var row = $(this).closest('tr');
@@ -333,6 +351,7 @@ $(document).on('click', '.deleteRow', function() {
             success: function(response) {
                 if (response.status === 200) {
                     row.remove(); // Remove the row from the table
+                    calculateTotalCost();
                     toastr.success(response.message);
                 } else {
                     toastr.error('Failed to delete the item.');
@@ -399,6 +418,7 @@ $(document).on('click', '.deleteRow', function() {
         const quantity = parseFloat(quantityInput.value) || 0;
         const totalCost = price * quantity;
         itemCostInput.value = totalCost.toFixed(2);
+
     }
     </script>
 
