@@ -151,7 +151,7 @@
 
     </div>
    {{-- /////////////////Category Add Modal//////////////// --}}
-   <div class="modal fade" id="exampleModalLongScollable" tabindex="-1"
+<div class="modal fade" id="exampleModalLongScollable" tabindex="-1"
    aria-labelledby="exampleModalScrollableTitle" aria-hidden="true">
    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
        <div class="modal-content">
@@ -194,7 +194,7 @@
                             <thead>
                                 <tr>
                                     <th>Product Name</th>
-                                    <th>Price</th>
+                                    <th>Product Price</th>
                                     <th>Qty</th>
                                     <th>Unit</th>
                                     <th>Total Cost</th>
@@ -337,8 +337,9 @@ $(document).ready(function() {
             totalCost += parseFloat($(this).text());
         });
         $('#totalCost').text(totalCost.toFixed(2)); // Update the total cost display
-        $('input[name="total_cost_price"]').val(totalCost.toFixed(2));
+        $('input[name="total_cost_price"]').val(totalCost);
     }
+
 ///Delete
 $(document).on('click', '.deleteRow', function() {
         var row = $(this).closest('tr');
@@ -405,7 +406,7 @@ $(document).on('click', '.deleteRow', function() {
                     }
                 });
             })
-            ///Item Cost
+    ///Item Cost // Show realtime update total cot
         function updateCost() {
         const productSelect = document.querySelector('.product_select');
         const quantityInput = document.getElementById('quantity');
