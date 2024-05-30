@@ -1,6 +1,9 @@
 @extends('master')
 @section('title', '| Sale')
 @section('admin')
+@php
+    $mode = App\models\PosSetting::all()->first();
+@endphp
 <style>
     .mybtn_white {
   display: flex;
@@ -45,6 +48,13 @@
 
 .mybtn_dark:hover {
   box-shadow: 0 3px 3px 1px #172340, 0 4px 6px #172340, 0 -2px 2px #172340, 0 -2px 2px #666, inset 0 0 2px 2px #000;
+}
+.my_select{
+    border: 1px solid #00a9f1;
+    color: #00a9f1;
+    border-radius: 14px;
+    background: linear-gradient(182deg, #f0f0f0, #cacaca);
+    box-shadow: 0px 4px 7px #cecece, -2px -2px 5px #f2f2f2;
 }
 /* .mybtn_white:active {
   box-shadow: 0 4px 3px 1px #00a9f1, 0 6px 8px #00a9f1, 0 -4px 4px #00a9f1, 0 -6px 4px #00a9f1, inset 0 0 5px 3px #00a9f1, inset 0 0 30px #00a9f1;
@@ -139,11 +149,11 @@
                                                                 </style>
                                                                 @foreach ($items as $key => $item)
                                                                     <div class="col-lg-4 col-md-6 p-1 my-1 product_image"
-                                                                        style="boder:1px solid red">
+                                                                        style="">
                                                                         <div class="Item__div w-100" product_id="{{ $item->id }}"
                                                                             style="cursor: pointer; ">
                                                                             <img class="w-100" height="120" style="border-radius:5px 5px 0 0;border-left: 1px solid;border-top: 1px solid;border-right: 1px solid;border-color:#00a9f1"
-                                                                                src="https://images.unsplash.com/photo-1561154464-82e9adf32764?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=800&q=60">
+                                                                                src="{{ !empty($item->picture) ? asset('upload/make_item/.$item->picture') : asset('assets/images/empty.png') }}">
                                                                             <div class="info"
                                                                                 style="border-radius:0 0 5px 5px;color:black;background: rgba(255,255,255,.7);text-align:center;border-left: 1px solid;border-bottom: 1px solid;border-right: 1px solid;border-color:#00a9f1">
                                                                                 <p>{{ Str::limit($item->item_name, 16, '') }}
@@ -196,6 +206,24 @@
                                         <table class="table">
                                             <thead>
                                                 <tr>
+                                                    <th style="font-size: 10px; padding: 0 20px 10px 13px">
+                                                        Customer Info:<br>
+                                                        <span> name: Md Majidul Islam</span>
+                                                    </th>
+                                                    <th style="font-size: 10px; padding: 0 20px 10px 13px">
+
+                                                       <span> address: Banasree, Dhaka</span><br>
+                                                       <span> P. Total: 50000</span>
+                                                    </th>
+                                                    <th>
+                                                        <button class="{{ ($mode->dark_mode == 1) ? 'mybtn_white' : 'mybtn_dark' }}" style="width: 35px; height: 25px; border-radius:5px;font-size:10px;padding-left: 0px;"><i class="fa fa-pencil"></i></button>
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                        </table>
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
                                                     <th>Product Information</th>
                                                     <th>Qty</th>
                                                     <th>Price</th>
@@ -209,26 +237,74 @@
                                                     <td>৳50000</td>
                                                     <td><i class="fa fa-trash"></i></td>
                                                 </tr>
+                                                <tr>
+                                                    <td>Americano (S/D) | 545412 | Dis: 10%</td>
+                                                    <td>x 2</td>
+                                                    <td>৳50000</td>
+                                                    <td><i class="fa fa-trash"></i></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Americano (S/D) | 545412 | Dis: 10%</td>
+                                                    <td>x 2</td>
+                                                    <td>৳50000</td>
+                                                    <td><i class="fa fa-trash"></i></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Americano (S/D) | 545412 | Dis: 10%</td>
+                                                    <td>x 2</td>
+                                                    <td>৳50000</td>
+                                                    <td><i class="fa fa-trash"></i></td>
+                                                </tr>
+
+
                                             </tbody>
                                         </table>
-
+                                                <br>
+                                                <br>
+                                                <br>
+                                                <br>
+                                                <br>
+                                                <br>
+                                                <br>
                                         <div class="payment-footer" style="position: absolute;bottom:0;left:0;right:0">
                                             <table class="table">
                                                 <thead>
                                                     <tr>
-                                                        <td>Total (Iteems: 2, Quantity: 10)</td>
+                                                        <td><h4>Total</h5> (Iteems: 2, Quantity: 10)</td>
                                                         <td>৳50000</td>
                                                     </tr>
                                                 </thead>
                                             </table><table class="table">
                                                 <tbody>
-                                                    @php
-                                                        $mode = App\models\PosSetting::all()->first();
-                                                    @endphp
-                                                    <tr>
-                                                        <td><button class="{{ ($mode->dark_mode == 1) ? 'mybtn_white' : 'mybtn_dark' }}">Cash</button></td>
-                                                        <td><button class="{{ ($mode->dark_mode == 1) ? 'mybtn_white' : 'mybtn_dark' }}">Cash</button></td>
 
+                                                    <tr>
+                                                        <td>
+                                                        <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+                                                            <button class="{{ ($mode->dark_mode == 1) ? 'mybtn_white' : 'mybtn_dark' }}" style="width:70px;margin-right:5px">Cash</button>
+                                                            <button class="{{ ($mode->dark_mode == 1) ? 'mybtn_white' : 'mybtn_dark' }}" style="width:70px;margin-right:5px">Card</button>
+                                                            <button class="{{ ($mode->dark_mode == 1) ? 'mybtn_white' : 'mybtn_dark' }}" style="width:70px;margin-right:5px">Nagad</button>
+                                                            <div class="btn-group" role="group">
+                                                              <button style="width: 130px" id="btnGroupDrop1" type="button" class="{{ ($mode->dark_mode == 1) ? 'mybtn_white' : 'mybtn_dark' }} dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                                Select Dine
+                                                              </button>
+                                                              <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                                                                <a class="dropdown-item" href="#">Dine -1</a>
+                                                                <a class="dropdown-item" href="#">Dine -2</a>
+                                                                <a class="dropdown-item" href="#">Dine -3</a>
+                                                                <a class="dropdown-item" href="#">Dine -4</a>
+                                                                <a class="dropdown-item" href="#">Dine -5</a>
+                                                              </div>
+                                                            </div>
+                                                          </div>
+                                                          <select class="form-select my_select" name="age_select" id="ageSelect">
+                                                            <option selected="" disabled="">Select your age</option>
+                                                            <option>12-18</option>
+                                                            <option>18-22</option>
+                                                            <option>22-30</option>
+                                                            <option>30-60</option>
+                                                            <option>Above 60</option>
+                                                        </select>
+                                                        </td>
                                                     </tr>
                                                 </tbody>
                                             </table>
