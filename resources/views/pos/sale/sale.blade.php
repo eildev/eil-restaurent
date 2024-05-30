@@ -1,6 +1,60 @@
 @extends('master')
 @section('title', '| Sale')
 @section('admin')
+<style>
+    .mybtn_white {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  outline: none;
+  cursor: pointer;
+  width: 100px;
+  height: 40px;
+  background-image: linear-gradient(to top, #D8D9DB 0%, #fff 80%, #FDFDFD 100%);
+  border-radius: 30px;
+  border: 1px solid #00a9f1;
+  transition: all 0.2s ease;
+  font-family: "Source Sans Pro", sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: #00a9f1;
+  text-shadow: 0 1px #00a9f1;
+}
+
+.mybtn_white:hover {
+  box-shadow: 0 3px 3px 1px #FCFCFC, 0 4px 6px #D6D7D9, 0 -2px 2px #CECFD1, 0 -2px 2px #FEFEFE, inset 0 0 2px 2px #CECFD1;
+}
+.mybtn_dark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  outline: none;
+  cursor: pointer;
+  width: 100px;
+  height: 40px;
+  background-image: linear-gradient(to top, #172340 0%, #172340 80%, #172340 100%);
+  border-radius: 30px;
+  border: 1px solid #00a9f1;
+  transition: all 0.2s ease;
+  font-family: "Source Sans Pro", sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: #fff;
+  text-shadow: 0 1px #000;
+}
+
+.mybtn_dark:hover {
+  box-shadow: 0 3px 3px 1px #172340, 0 4px 6px #172340, 0 -2px 2px #172340, 0 -2px 2px #666, inset 0 0 2px 2px #000;
+}
+/* .mybtn_white:active {
+  box-shadow: 0 4px 3px 1px #00a9f1, 0 6px 8px #00a9f1, 0 -4px 4px #00a9f1, 0 -6px 4px #00a9f1, inset 0 0 5px 3px #00a9f1, inset 0 0 30px #00a9f1;
+}
+
+.mybtn_white:focus {
+  box-shadow: 0 4px 3px 1px #FCFCFC, 0 6px 8px #D6D7D9, 0 -4px 4px #CECFD1, 0 -6px 4px #FEFEFE, inset 0 0 5px 3px rgba(0,169,241, .2), inset 0 0 30px rgba(0,169,241, .2);
+} */
+
+</style>
     <div class="row mt-0">
         <div class="col-lg-12 grid-margin stretch-card mb-3">
             <div class="card">
@@ -25,7 +79,7 @@
                             <div class="tab-pane fade show active" id="neworder" role="tabpanel"
                                 aria-labelledby="neworder-tab">
                                 <div class="row">
-                                    <div class="col-2 col-md-2 pe-0">
+                                    <div class="col-md-2 pe-0">
                                         <div class="nav nav-tabs nav-tabs-vertical" id="v-tab" role="tablist"
                                             aria-orientation="vertical">
                                             @php
@@ -48,7 +102,7 @@
                                         <a class="nav-link" id="v-settings-tab" data-bs-toggle="pill" href="#v-settings" role="tab" aria-controls="v-settings" aria-selected="false">Settings</a> --}}
                                         </div>
                                     </div>
-                                    <div class="col-5 col-md-5 ps-0">
+                                    <div class="col-md-5 ps-0">
                                         <div class="tab-content tab-content-vertical border p-3" id="v-tabContent">
                                             @php
                                                 $categories = App\Models\ItemCategory::all();
@@ -84,13 +138,12 @@
                                                                     } */
                                                                 </style>
                                                                 @foreach ($items as $key => $item)
-                                                                    <div class="col-4 p-1 my-1 product_image"
+                                                                    <div class="col-lg-4 col-md-6 p-1 my-1 product_image"
                                                                         style="boder:1px solid red">
                                                                         <div class="Item__div w-100" product_id="{{ $item->id }}"
                                                                             style="cursor: pointer; ">
                                                                             <img class="w-100" height="120" style="border-radius:5px 5px 0 0;border-left: 1px solid;border-top: 1px solid;border-right: 1px solid;border-color:#00a9f1"
                                                                                 src="https://images.unsplash.com/photo-1561154464-82e9adf32764?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=800&q=60">
-
                                                                             <div class="info"
                                                                                 style="border-radius:0 0 5px 5px;color:black;background: rgba(255,255,255,.7);text-align:center;border-left: 1px solid;border-bottom: 1px solid;border-right: 1px solid;border-color:#00a9f1">
                                                                                 <p>{{ Str::limit($item->item_name, 16, '') }}
@@ -139,8 +192,47 @@
                                         </div> --}}
                                         </div>
                                     </div>
-                                    <div class="col-5 col-md-5 ps-0">
-                                        sdfdsf
+                                    <div class="col-md-5 ps-0" style="position: relative">
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Product Information</th>
+                                                    <th>Qty</th>
+                                                    <th>Price</th>
+                                                    <th><i class="fas fa-sliders"></i></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>Americano (S/D) | 545412 | Dis: 10%</td>
+                                                    <td>x 2</td>
+                                                    <td>৳50000</td>
+                                                    <td><i class="fa fa-trash"></i></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+
+                                        <div class="payment-footer" style="position: absolute;bottom:0;left:0;right:0">
+                                            <table class="table">
+                                                <thead>
+                                                    <tr>
+                                                        <td>Total (Iteems: 2, Quantity: 10)</td>
+                                                        <td>৳50000</td>
+                                                    </tr>
+                                                </thead>
+                                            </table><table class="table">
+                                                <tbody>
+                                                    @php
+                                                        $mode = App\models\PosSetting::all()->first();
+                                                    @endphp
+                                                    <tr>
+                                                        <td><button class="{{ ($mode->dark_mode == 1) ? 'mybtn_white' : 'mybtn_dark' }}">Cash</button></td>
+                                                        <td><button class="{{ ($mode->dark_mode == 1) ? 'mybtn_white' : 'mybtn_dark' }}">Cash</button></td>
+
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -380,7 +472,8 @@
             console.log(Item__divs)
             Item__divs.forEach(function(item) {
                 item.addEventListener('click', function(e) {
-                alert("OK")
+                const product_id = this.getAttribute('product_id');
+                alert(product_id);
             });
             });
             // Select Product End
