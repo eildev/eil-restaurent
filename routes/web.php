@@ -313,6 +313,7 @@ Route::middleware('auth')->group(function () {
     // Make Items related routes
     Route::controller(MakeItemsController::class)->group(function () {
         Route::get('/make/item', 'index')->name('make.item');
+        Route::post('/add/make/item/catgoey', 'MakeItemCategory')->name('make.item.category');
     });
     // Transaction related route(n)
     Route::controller(EmployeeSalaryController::class)->group(function () {
