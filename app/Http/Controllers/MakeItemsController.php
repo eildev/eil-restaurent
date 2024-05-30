@@ -40,6 +40,7 @@ class MakeItemsController extends Controller
     }
     //Store Data
     public function MakeItemStore(Request $request){
+        // dd($request->total_cost_price);
         $validatedData = $request->validate([
             'make_category_id' => 'required|exists:item_categories,id',
             'item_name' => 'required|string|max:255',
@@ -49,7 +50,13 @@ class MakeItemsController extends Controller
             'unit' => 'required|exists:units,id',
             'apro_cost' => 'required',
         ]);
-
+        if($request->id != 0){
+            $cost_price = MaterialList::where('make_item_id',$request->id)->sum('apro_cost');
+            $cost_price = $cost_price + (float) $request->apro_cost;
+        }
+        else{
+            $cost_price = $request->apro_cost;
+        }
         if ($request->hasFile('picture')) {
             $imageName = rand() . '.' . $request->picture->extension();
             $request->picture->move(public_path('uploads/make_item/'), $imageName);
@@ -58,11 +65,12 @@ class MakeItemsController extends Controller
                     'id' => $request->id ?? 0,
              ],
                 [
-                'make_category_id' => $request->input('make_category_id'),
+               'make_category_id' => $request->input('make_category_id'),
                'item_name' => $request->input('item_name'),
+               'barcode' => rand(100000,123456789),
                'sale_price' => $request->input('sale_price'),
                'note' => $request->input('note'),
-               'cost_price' => $request->total_cost_price,
+               'cost_price' => $cost_price,
                'picture' => $requestData['picture'] ?? null,
                   // Add more fields as needed
                ]
@@ -74,9 +82,10 @@ class MakeItemsController extends Controller
                         [
                     'make_category_id' => $request->input('make_category_id'),
                     'item_name' => $request->input('item_name'),
+                    'barcode' => rand(100000,123456789),
                     'sale_price' => $request->input('sale_price'),
                     'note' => $request->input('note'),
-                    'cost_price' => $request->total_cost_price,
+                    'cost_price' => $cost_price,
                     'picture' => $requestData['picture'] ?? null,
                         // Add more fields as needed
                     ]);
@@ -97,15 +106,21 @@ class MakeItemsController extends Controller
             'status' => 200,
             'message' => 'Item created successfully!',
             'makeItem' => $makeItem,
-            'material' =>$material
+            'material' =>$material,
+            'makeItemId' => $makeItemId
         ]);
 
     }
     public function DestroyMaterials($id)
     {
+
         $material = MaterialList::findOrFail($id);
 
         if ($material) {
+            $MakeItem = MakeItem::findOrFail($material->make_item_id);
+            $cost = $MakeItem->cost_price - $material->apro_cost;
+            $MakeItem->cost_price = $cost;
+            $MakeItem->update();
             $material->delete();
             return response()->json([
                 'status' => 200,

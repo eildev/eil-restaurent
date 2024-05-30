@@ -10,7 +10,7 @@
                 <div class="card-body px-4 py-2">
                     <form id="myValidForm" class="myForm" method="POST" enctype="multipart/form-data">
                         @csrf
-                        <input type="hidden" name="id" value="0">
+                        <input type="hidden" name="id" value="0" class="makeItemId">
                         <input type="hidden" name="total_cost_price" value="0">
                     <div class="row" >
                         <div class="mb-1 col-md-4">
@@ -317,6 +317,7 @@ $(document).ready(function() {
                 $('.showData').append(newRow); // Append the new row to the table body
                  calculateTotalCost();
                 if (response.status === 200) {
+                   document.querySelector('.makeItemId').value = response.makeItemId;
                     toastr.success(response.message);
                 } else {
                     toastr.error('Failed to Create.');
@@ -330,14 +331,14 @@ $(document).ready(function() {
             }
         });
     });
-//last calculate Grand Total Function
+// last calculate Grand Total Function
     function calculateTotalCost() {
         var totalCost = 0;
         $('.apro-cost').each(function() {
             totalCost += parseFloat($(this).text());
         });
         $('#totalCost').text(totalCost.toFixed(2)); // Update the total cost display
-        $('input[name="total_cost_price"]').val(totalCost);
+        // $('input[name="total_cost_price"]').val(totalCost);
     }
 
 ///Delete
