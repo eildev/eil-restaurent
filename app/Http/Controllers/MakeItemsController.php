@@ -53,26 +53,32 @@ class MakeItemsController extends Controller
             $imageName = rand() . '.' . $request->picture->extension();
             $request->picture->move(public_path('uploads/make_item/'), $imageName);
              $requestData['picture'] = 'uploads/make_item/' . $imageName;
-
-             $values = [
-              'make_category_id' => $request->input('make_category_id'),
-             'item_name' => $request->input('item_name'),
-             'sale_price' => $request->input('sale_price'),
-             'note' => $request->input('note'),
-             'cost_price' => '20',
-             'picture' => $requestData['picture'] ?? null,
-                // Add more fields as needed
-             ];
-             $makeItem =  MakeItem::updateOrCreate($values);
-        }else{
-            $values = [
-               'make_category_id' => $request->input('make_category_id'),
+             $makeItem =  MakeItem::updateOrCreate([
+                    'id' => $request->id ?? 0,
+             ],
+                [
+                'make_category_id' => $request->input('make_category_id'),
                'item_name' => $request->input('item_name'),
                'sale_price' => $request->input('sale_price'),
-               'cost_price' => '20',
                'note' => $request->input('note'),
-               ];
-               $makeItem =  MakeItem::updateOrCreate($values);
+               'cost_price' => $request->total_cost_price,
+               'picture' => $requestData['picture'] ?? null,
+                  // Add more fields as needed
+               ]
+            );
+        }else{
+               $makeItem =  MakeItem::updateOrCreate([
+                            'id' => $request->id ?? 0,
+                    ],
+                        [
+                        'make_category_id' => $request->input('make_category_id'),
+                    'item_name' => $request->input('item_name'),
+                    'sale_price' => $request->input('sale_price'),
+                    'note' => $request->input('note'),
+                    'cost_price' => $request->total_cost_price,
+                    'picture' => $requestData['picture'] ?? null,
+                        // Add more fields as needed
+                    ]);
         }
 
         $makeItemId = $makeItem->id;
