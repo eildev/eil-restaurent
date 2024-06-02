@@ -14,7 +14,6 @@ class UnitController extends Controller
     }
     public function store(Request $request)
     {
-        // dd($request->all());
         $validator = Validator::make($request->all(), [
             'name' => 'required|max:39',
             'related_to_unit' => 'required|max:39',

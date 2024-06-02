@@ -10,7 +10,7 @@
                 <div class="card-body px-4 py-2">
                     <form id="myValidForm" class="myForm" method="POST" enctype="multipart/form-data">
                         @csrf
-                        <input type="hidden" name="id" value="0" class="makeItemId">
+                        <input type="hidden" name="id" class="makeItemId" value="">
                         <input type="hidden" name="total_cost_price" value="0">
                     <div class="row" >
                         <div class="mb-1 col-md-4">
