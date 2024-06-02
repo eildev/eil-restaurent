@@ -1,5 +1,5 @@
 @extends('master')
-@section('title','| Add Promotional Details')
+@section('title', '| Add Promotional Details')
 @section('admin')
     <div class="row">
         <div class="col-md-12 grid-margin stretch-card d-flex justify-content-end">
@@ -20,7 +20,7 @@
                                 <div class="mb-3 form-valid-groups">
                                     <label class="form-label">Promotion<span class="text-danger">*</span></label>
                                     <select class="form-select js-example-basic-single promotion_id" name="promotion_id"
-                                        aria-invalid="false" onclick="errorRemove(this);">
+                                        aria-invalid="false" onchange="errorRemove(this);">
                                         <option selected="" disabled="">Select Promotion</option>
                                         @foreach ($promotions as $promotion)
                                             <option value="{{ $promotion->id }}">{{ $promotion->promotion_name }}</option>
@@ -33,7 +33,7 @@
                                 <div class="mb-3 form-valid-groups">
                                     <label class="form-label">Promotion Type<span class="text-danger">*</span></label>
                                     <select class="form-select js-example-basic-single promotion_type" name="promotion_type"
-                                        aria-invalid="false" onclick="errorRemove(this);" onblur="errorRemove(this);">
+                                        aria-invalid="false"onchange="errorRemove(this);">
                                         <option selected="" disabled="">Select Promotion Type</option>
                                         <option value="wholesale">Wholesale</option>
                                         <option value="products">Products</option>
@@ -70,9 +70,15 @@
     <script>
         // error remove
         function errorRemove(element) {
+            tag = element.tagName.toLowerCase();
             if (element.value != '') {
-                $(element).siblings('span').hide();
-                $(element).css('border-color', 'green');
+                // console.log('ok');
+                if (tag == 'select') {
+                    $(element).closest('.mb-3').find('.text-danger').hide();
+                } else {
+                    $(element).siblings('span').hide();
+                    $(element).css('border-color', 'green');
+                }
             }
         }
 

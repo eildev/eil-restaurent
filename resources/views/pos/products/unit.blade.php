@@ -1,5 +1,5 @@
 @extends('master')
-@section('title','| Unit')
+@section('title', '| Unit')
 @section('admin')
     <nav class="page-breadcrumb">
         <ol class="breadcrumb">
@@ -64,8 +64,7 @@
                         </div>
                         <div class="mb-3 col-md-6">
                             <label for="ageSelect" class="form-label">Operator</label>
-                            <select class="form-select related_sign" name="related_sign" onclick="errorRemove(this);"
-                                onblur="errorRemove(this);">
+                            <select class="form-select related_sign" name="related_sign" onchange="errorRemove(this);">
                                 <option selected disabled>Select Operator Sign</option>
                                 <option value="+">(+)addition operator</option>
                                 <option value="-">(-)subtraction operator</option>
@@ -116,7 +115,7 @@
                         <div class="mb-3">
                             <label for="ageSelect" class="form-label">Operator</label>
                             <select class="form-select edit_related_sign" name="related_sign"
-                                onclick="errorRemove(this);" onblur="errorRemove(this);">
+                                onchange="errorRemove(this);">
                                 <option selected disabled>Select Operator Sign</option>
                                 <option value="+">(+)addition operator</option>
                                 <option value="-">(-)subtraction operator</option>

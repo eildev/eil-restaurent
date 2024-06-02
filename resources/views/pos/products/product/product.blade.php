@@ -1,5 +1,5 @@
 @extends('master')
-@section('title','| Add Product')
+@section('title', '| Add Product')
 @section('admin')
     <nav class="page-breadcrumb">
         <ol class="breadcrumb">
@@ -19,8 +19,8 @@
                             <div class="mb-3 col-md-6">
                                 <label for="name" class="form-label">Product Name <span
                                         class="text-danger">*</span></label>
-                                <input class="form-control name" onkeyup="generateCode(this);" name="name" type="text"
-                                    onkeyup="errorRemove(this);" onblur="errorRemove(this);">
+                                <input class="form-control name" onchange="generateCode(this);" name="name"
+                                    type="text" onkeyup="errorRemove(this);" onblur="errorRemove(this);">
                                 <span class="text-danger name_error"></span>
                             </div>
                             <div class="mb-3 col-md-6">
@@ -38,7 +38,7 @@
                                 <label for="ageSelect" class="form-label">Category <span
                                         class="text-danger">*</span></label>
                                 <select class="js-example-basic-single form-select category_id" id="category_name"
-                                    name="category_id" onclick="errorRemove(this);" onblur="errorRemove(this);">
+                                    name="category_id" onchange="errorRemove(this);">
                                     @if ($categories->count() > 0)
                                         <option selected disabled>Select category</option>
                                         @foreach ($categories as $category)
@@ -54,7 +54,7 @@
                                 <label for="ageSelect" class="form-label">Subcategory <span
                                         class="text-danger">*</span></label>
                                 <select class="js-example-basic-single form-select subcategory_id" name="subcategory_id"
-                                    onclick="errorRemove(this);" onblur="errorRemove(this);">
+                                    onchange="errorRemove(this);">
                                     <option selected disabled>Select Subcategory</option>
                                 </select>
                                 <span class="text-danger subcategory_id_error"></span>
@@ -65,7 +65,7 @@
                                 @endphp
                                 <label for="ageSelect" class="form-label">Brand <span class="text-danger">*</span></label>
                                 <select class="js-example-basic-single form-select brand_id" name="brand_id"
-                                    onclick="errorRemove(this);" onblur="errorRemove(this);">
+                                    onchange="errorRemove(this);">
                                     @if ($brands->count() > 0)
                                         <option selected disabled>Select Brand</option>
                                         @foreach ($brands as $brand)
@@ -130,7 +130,7 @@
                                 @endphp
                                 <label for="ageSelect" class="form-label">Unit <span class="text-danger">*</span></label>
                                 <select class="js-example-basic-single form-select unit_id" name="unit_id"
-                                    onclick="errorRemove(this);" onblur="errorRemove(this);">
+                                    onchange="errorRemove(this);">
                                     @if ($units->count() > 0)
                                         <option selected disabled>Select Unit</option>
                                         @foreach ($units as $unit)
@@ -168,12 +168,27 @@
 
     <script>
         // remove error
+        // function errorRemove(element) {
+        //     if (element.value != '') {
+        //         $(element).siblings('span').hide();
+        //         $(element).css('border-color', 'green');
+        //     }
+        // }
+
         function errorRemove(element) {
+            tag = element.tagName.toLowerCase();
             if (element.value != '') {
-                $(element).siblings('span').hide();
-                $(element).css('border-color', 'green');
+                // console.log('ok');
+                if (tag == 'select') {
+                    $(element).closest('.mb-3').find('.text-danger').hide();
+                } else {
+                    $(element).siblings('span').hide();
+                    $(element).css('border-color', 'green');
+                }
             }
         }
+
+
         $(document).ready(function() {
             // show error
             function showError(name, message) {
@@ -293,7 +308,7 @@
             if (nameInput !== "") {
                 var codeInput = input.parentElement.nextElementSibling.querySelector('input[name="barcode"]');
                 var randomNumber = Math.floor(Math.random() * 1000000) +
-                20; // Generate a random number between 1 and 1000000
+                    20; // Generate a random number between 1 and 1000000
                 var generatedCode = nameInput.replace(/\s+/g, '').toUpperCase() + randomNumber;
                 var generatedNumber = randomNumber; // Extract the generated number
 
