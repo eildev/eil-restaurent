@@ -10,9 +10,9 @@
                 <div class="card-body px-4 py-2">
                     <form id="myValidForm" class="myForm" method="POST" enctype="multipart/form-data">
                         @csrf
-                        <input type="hidden" name="id" value="0">
+                        <input type="hidden" name="id" class="makeItemId" value="0">
                         <input type="hidden" name="total_cost_price" value="0">
-                    <div class="row">
+                    <div class="row" >
                         <div class="mb-1 col-md-4">
                             @php
                                 $categories = App\Models\ItemCategory::all();
@@ -306,30 +306,43 @@ $(document).ready(function() {
                 var productName = response.material.product.name;
                 var productPrice = response.material.product.price;
                 var unitName = response.material.unit.name;
-                var quantitys = response.material.quantity;
-                var aproCosts = response.material.apro_cost;
-                var productId = response.material.product_id;
-                // alert(productId);
+                var productId = response.material.id;
+                var aproCost = response.material.apro_cost;
+                var newQuantity = response.material.quantity;
+                var newAproCost = parseFloat(aproCost);
+
                 var existingRow = $('.showData tr[data-id="' + productId + '"]');
-                // var existingId = existingRow.attr('data-id');
-                // alert(existingRow);
-                // console.log(existingId);
-                var newRow = '<tr data-id="' + response.material.id + '">' +
-                             '<td>' + productName + '</td>' +
-                             '<td>' + productPrice + '</td>' +
-                             '<td>' + response.material.quantity + '</td>' +
-                             '<td>' + unitName + '</td>' +
-                             '<td class="apro-cost">' + response.material.apro_cost + '</td>' +
-                             '<td><a type="button" class="btn btn-sm text-danger deleteRow"><i class="fas fa-trash-alt"></i></a></td>' +
-                             '</tr>';
-                $('.showData').append(newRow); // Append the new row to the table body
-                 calculateTotalCost();
+
+                if (existingRow.length) {
+                    // Update existing row
+                    // var existingQuantity = parseFloat(existingRow.find('#quantity').text());
+                    var existingAproCost = parseFloat(existingRow.find('.apro-cost').text());
+                    var updatedQuantity =newQuantity;
+                    var updatedAproCost = newAproCost;
+
+                    existingRow.find('.quantity').text(updatedQuantity);
+                    existingRow.find('.apro-cost').text(updatedAproCost.toFixed(2));
+                } else {
+                    // Add new row if product does not exist
+                    var newRow = '<tr data-id="' + productId + '">' +
+                                 '<td>' + productName + '</td>' +
+                                 '<td>' + productPrice + '</td>' +
+                                 '<td class="quantity">' + newQuantity + '</td>' +
+                                 '<td>' + unitName + '</td>' +
+                                 '<td class="apro-cost">' + aproCost + '</td>' +
+                                 '<td><a type="button" class="btn btn-sm text-danger deleteRow"><i class="fas fa-trash-alt"></i></a></td>' +
+                                 '</tr>';
+                    $('.showData').append(newRow); // Append the new row to the table body
+                }
+
+                calculateTotalCost();
+
                 if (response.status === 200) {
+                    document.querySelector('.makeItemId').value = response.makeItemId;
                     toastr.success(response.message);
                 } else {
                     toastr.error('Failed to Create.');
                 }
-
             },
 
             error: function(xhr, status, error) {
@@ -338,30 +351,21 @@ $(document).ready(function() {
             }
         });
     });
-//last calculate Grand Total Function
-    function calculateTotalCost() {
-        var totalCost = 0;
-        $('.apro-cost').each(function() {
-            totalCost += parseFloat($(this).text());
-        });
-        $('#totalCost').text(totalCost.toFixed(2)); // Update the total cost display
-        $('input[name="total_cost_price"]').val(totalCost);
-    }
-
-///Delete
-$(document).on('click', '.deleteRow', function() {
+    $(document).on('click', '.deleteRow', function() {
         var row = $(this).closest('tr');
         var id = row.data('id');
+
+        // Send an Ajax request to delete the material
         $.ajax({
-            type: 'GET',
+            type: 'get',
             url: '/delete/material/' + id,
             data: {
-                _token: '{{ csrf_token() }}'
+                _token: '{{ csrf_token() }}', // Include CSRF token for Laravel
             },
             success: function(response) {
                 if (response.status === 200) {
                     row.remove(); // Remove the row from the table
-                    calculateTotalCost();
+                    calculateTotalCost(); // Recalculate total cost after deletion
                     toastr.success(response.message);
                 } else {
                     toastr.error('Failed to delete the item.');
@@ -373,6 +377,15 @@ $(document).on('click', '.deleteRow', function() {
             }
         });
     });
+
+    function calculateTotalCost() {
+        var totalCost = 0;
+        $('.apro-cost').each(function() {
+            totalCost += parseFloat($(this).text());
+        });
+        $('#totalCost').text(totalCost.toFixed(2)); // Update the total cost display in the footer
+        $('input[name="total_cost_price"]').val(totalCost.toFixed(2)); // Set the calculated total cost as the value of the input field
+    }
 });
 
 //

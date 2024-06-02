@@ -5,64 +5,64 @@
     $mode = App\models\PosSetting::all()->first();
 @endphp
 <style>
-    .mybtn_white {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  outline: none;
-  cursor: pointer;
-  width: 100px;
-  height: 40px;
-  background-image: linear-gradient(to top, #D8D9DB 0%, #fff 80%, #FDFDFD 100%);
-  border-radius: 30px;
-  border: 1px solid #00a9f1;
-  transition: all 0.2s ease;
-  font-family: "Source Sans Pro", sans-serif;
-  font-size: 14px;
-  font-weight: 400;
-  color: #00a9f1;
-  text-shadow: 0 1px #00a9f1;
-}
-
-.mybtn_white:hover {
-  box-shadow: 0 3px 3px 1px #FCFCFC, 0 4px 6px #D6D7D9, 0 -2px 2px #CECFD1, 0 -2px 2px #FEFEFE, inset 0 0 2px 2px #CECFD1;
-}
-.mybtn_dark {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  outline: none;
-  cursor: pointer;
-  width: 100px;
-  height: 40px;
-  background-image: linear-gradient(to top, #172340 0%, #172340 80%, #172340 100%);
-  border-radius: 30px;
-  border: 1px solid #00a9f1;
-  transition: all 0.2s ease;
-  font-family: "Source Sans Pro", sans-serif;
-  font-size: 14px;
-  font-weight: 400;
-  color: #fff;
-  text-shadow: 0 1px #000;
-}
-
-.mybtn_dark:hover {
-  box-shadow: 0 3px 3px 1px #172340, 0 4px 6px #172340, 0 -2px 2px #172340, 0 -2px 2px #666, inset 0 0 2px 2px #000;
-}
-.my_select{
+        .mybtn_white {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    outline: none;
+    cursor: pointer;
+    width: 100px;
+    height: 40px;
+    background-image: linear-gradient(to top, #D8D9DB 0%, #fff 80%, #FDFDFD 100%);
+    border-radius: 30px;
     border: 1px solid #00a9f1;
+    transition: all 0.2s ease;
+    font-family: "Source Sans Pro", sans-serif;
+    font-size: 14px;
+    font-weight: 400;
     color: #00a9f1;
-    border-radius: 14px;
-    background: linear-gradient(182deg, #f0f0f0, #cacaca);
-    box-shadow: 0px 4px 7px #cecece, -2px -2px 5px #f2f2f2;
-}
-/* .mybtn_white:active {
-  box-shadow: 0 4px 3px 1px #00a9f1, 0 6px 8px #00a9f1, 0 -4px 4px #00a9f1, 0 -6px 4px #00a9f1, inset 0 0 5px 3px #00a9f1, inset 0 0 30px #00a9f1;
-}
+    text-shadow: 0 1px #00a9f1;
+    }
 
-.mybtn_white:focus {
-  box-shadow: 0 4px 3px 1px #FCFCFC, 0 6px 8px #D6D7D9, 0 -4px 4px #CECFD1, 0 -6px 4px #FEFEFE, inset 0 0 5px 3px rgba(0,169,241, .2), inset 0 0 30px rgba(0,169,241, .2);
-} */
+    .mybtn_white:hover {
+    box-shadow: 0 3px 3px 1px #FCFCFC, 0 4px 6px #D6D7D9, 0 -2px 2px #CECFD1, 0 -2px 2px #FEFEFE, inset 0 0 2px 2px #CECFD1;
+    }
+    .mybtn_dark {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    outline: none;
+    cursor: pointer;
+    width: 100px;
+    height: 40px;
+    background-image: linear-gradient(to top, #172340 0%, #172340 80%, #172340 100%);
+    border-radius: 30px;
+    border: 1px solid #00a9f1;
+    transition: all 0.2s ease;
+    font-family: "Source Sans Pro", sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    color: #fff;
+    text-shadow: 0 1px #000;
+    }
+
+    .mybtn_dark:hover {
+    box-shadow: 0 3px 3px 1px #172340, 0 4px 6px #172340, 0 -2px 2px #172340, 0 -2px 2px #666, inset 0 0 2px 2px #000;
+    }
+    .my_select{
+        border: 1px solid #00a9f1;
+        color: #00a9f1;
+        border-radius: 14px;
+        background: linear-gradient(182deg, #f0f0f0, #cacaca);
+        box-shadow: 0px 4px 7px #cecece, -2px -2px 5px #f2f2f2;
+    }
+    /* .mybtn_white:active {
+    box-shadow: 0 4px 3px 1px #00a9f1, 0 6px 8px #00a9f1, 0 -4px 4px #00a9f1, 0 -6px 4px #00a9f1, inset 0 0 5px 3px #00a9f1, inset 0 0 30px #00a9f1;
+    }
+
+    .mybtn_white:focus {
+    box-shadow: 0 4px 3px 1px #FCFCFC, 0 6px 8px #D6D7D9, 0 -4px 4px #CECFD1, 0 -6px 4px #FEFEFE, inset 0 0 5px 3px rgba(0,169,241, .2), inset 0 0 30px rgba(0,169,241, .2);
+    } */
 
 </style>
     <div class="row mt-0">
@@ -329,161 +329,6 @@
             </div>
         </div>
     </div>
-
-    {{-- table  --}}
-    <div class="row">
-        <div class="col-md-7 mb-1 grid-margin stretch-card">
-            <div class="card">
-                <div class="card-body px-4 py-2">
-                    <div class="mb-3">
-                        <h6 class="card-title">Items</h6>
-                    </div>
-
-                    <div id="" class="table-responsive">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>Product</th>
-                                    <th>Price</th>
-                                    <th>Qty</th>
-                                    <th>Discount</th>
-                                    <th>Sub Total</th>
-                                    <th>
-                                        <i class="fa-solid fa-trash-can"></i>
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody class="showData">
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-5 mb-1 grid-margin stretch-card">
-            <div class="card">
-                <div class="card-body px-4 py-2">
-                    <div class="row align-items-center mb-2">
-                        <div class="col-sm-4">
-                            Grand Total :
-                        </div>
-                        <div class="col-sm-8">
-                            <input type="number" class="form-control grandTotal border-0 " name="" readonly
-                                value="0.00" />
-                        </div>
-
-                        <input type="hidden" class="form-control total border-0 " name="total" readonly
-                            value="0.00" />
-
-                    </div>
-                    <div class="row align-items-center mb-2">
-                        <div class="col-sm-4">
-                            Discount :
-                        </div>
-                        <div class="col-sm-8">
-                            {{-- @php
-                                $promotions = App\Models\Promotion::get();
-                            @endphp --}}
-                            {{-- <input type="number" class="form-control discount_field border-0 " name="discount_field"
-                                readonly value="0.00" /> --}}
-                            {{-- <span class="ms-3 discount_field">00</span> --}}
-                            <select class="form-select discount_field" name="discount_field">
-
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="row align-items-center">
-                        <div class="col-sm-8">
-                            <input type="hidden" class="form-control grand_total border-0 " name="grand_total" readonly
-                                value="0.00" />
-                        </div>
-                    </div>
-                    <div class="row align-items-center mb-2">
-                        <div class="col-sm-4">
-                            <label for="name" class="form-label">Tax:</label>
-                        </div>
-                        <div class="col-sm-8">
-                            @php
-                                $taxs = App\Models\Tax::get();
-                            @endphp
-                            <select class="form-select tax" data-width="100%" onclick="errorRemove(this);"
-                                onblur="errorRemove(this);" value="">
-                                @if ($taxs->count() > 0)
-                                    <option selected disabled>0%</option>
-                                    @foreach ($taxs as $taxs)
-                                        <option value="{{ $taxs->percentage }}">
-                                            {{ $taxs->percentage }} %
-                                        </option>
-                                    @endforeach
-                                @else
-                                    <option selected disabled>Please Add Transaction</option>
-                                @endif
-                            </select>
-                        </div>
-                    </div>
-                    <div class="row align-items-center mb-2">
-                        <div class="col-sm-4">
-                            <label for="name" class="form-label">Pay Amount <span
-                                    class="text-danger">*</span>:</label>
-                        </div>
-                        <div class="col-sm-8">
-                            <input class="form-control total_payable" name="total_payable" type="number" value=""
-                                onkeyup="errorRemove(this);">
-                            <span class="text-danger total_payable_error"></span>
-                        </div>
-                    </div>
-                    <div class="row align-items-center">
-                        <div class="col-sm-4">
-                            Due/Return :
-                        </div>
-                        <div class="col-sm-8">
-                            <input type="number" class="form-control total_due border-0 " name="" readonly
-                                value="0.00" />
-                        </div>
-                    </div>
-                    <div class="row align-items-center">
-                        <div class="col-sm-4">
-                            <label for="name" class="form-label">Transaction Method <span
-                                    class="text-danger">*</span>:</label>
-                        </div>
-                        <div class="col-sm-8">
-                            @php
-                                $payments = App\Models\Bank::get();
-                            @endphp
-                            <select class="form-select payment_method" data-width="100%" onclick="errorRemove(this);"
-                                onblur="errorRemove(this);">
-                                @if ($payments->count() > 0)
-                                    @foreach ($payments as $payemnt)
-                                        <option value="{{ $payemnt->id }}">
-                                            {{ $payemnt->name }}
-                                        </option>
-                                    @endforeach
-                                @else
-                                    <option selected disabled>Please Add Transaction</option>
-                                @endif
-                            </select>
-                            <span class="text-danger payment_method_error"></span>
-                        </div>
-                    </div>
-
-                    <div class="my-3">
-                        <button class="btn btn-primary payment_btn"><i class="fa-solid fa-money-check-dollar"></i>
-                            Payment</button>
-                        <button id="printButton" class="btn btn-primary print_btn"><i
-                                class="fa-solid fa-money-check-dollar"></i>
-                            print</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <style>
-        #printFrame {
-            display: none;
-            /* Hide the iframe */
-        }
-    </style>
     <iframe id="printFrame" src="" width="0" height="0"></iframe>
     <!-- Modal -->
     <div class="modal fade" id="customerModal" tabindex="-1" aria-labelledby="exampleModalScrollableTitle"
