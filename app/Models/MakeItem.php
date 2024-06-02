@@ -17,5 +17,9 @@ class MakeItem extends Model
     {
         return $this->belongsTo(Product::class, 'product_id');
     }
+    public function category()
+    {
+        return $this->belongsTo(ItemCategory::class, 'make_category_id','id');
+    }
 
 }

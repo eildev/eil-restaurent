@@ -14,6 +14,7 @@
                                     <th>SN</th>
                                     <th>Product Name</th>
                                     <th>Quantity</th>
+                                    <th>Category</th>
                                     <th>Unit</th>
                                     {{-- <th>Category</th> --}}
                                     <th>Item Name</th>
@@ -30,12 +31,15 @@
                                             <td>{{ $key + 1 }}</td>
                                             <td>{{ $item['makeItem']['product_id']?? '' }}</td>
                                             <td>{{ $item['makeItem']['quantity'] ?? '' }}</td>
+                                            <td>{{ $item['category']['category_name'] ?? '' }}</td>
                                             <td>{{ $item['makeItem']['unit'] ?? '' }}</td>
                                             <td>{{ $item->item_name ?? '' }}</td>
                                             <td>{{ $item->barcode ?? '' }}</td>
                                             <td>{{ $item->cost_price ?? '' }}</td>
                                             <td><img src="{{asset('/uploads/make_item/'.$item->picture)}}" alt=""></td>
-
+                                            <td>
+                                                <a class="btn btn-sm bg-info" href="">Edit</a>
+                                                <a class="btn btn-sm bg-danger" href="">Delete</a></td>
                                         </tr>
                                     @endforeach
                                 @else
