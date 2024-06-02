@@ -1,5 +1,5 @@
 @extends('master')
-@section('title','| SMS Marketing')
+@section('title', '| SMS Marketing')
 @section('admin')
     <nav class="page-breadcrumb">
         <ol class="breadcrumb">

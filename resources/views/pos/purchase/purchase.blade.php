@@ -25,8 +25,7 @@
                             <div class="mb-3 col-md-6">
                                 <label for="ageSelect" class="form-label">Supplier</label>
                                 <select class="js-example-basic-single form-select select-supplier supplier_id"
-                                    data-width="100%" onclick="errorRemove(this);" onblur="errorRemove(this);"
-                                    name="supplier_id">
+                                    data-width="100%" onchange="errorRemove(this);" name="supplier_id">
                                     <option value="">Select Supplier</option>
                                 </select>
                                 <span class="text-danger supplier_id_error"></span>
@@ -55,7 +54,7 @@
                                 @endphp
                                 <label for="ageSelect" class="form-label">Product</label>
                                 <select class="js-example-basic-single form-select product_select" data-width="100%"
-                                    onclick="errorRemove(this);" onblur="errorRemove(this);">
+                                    onchange="errorRemove(this);">
                                     @if ($products->count() > 0)
                                         <option selected disabled>Select Product</option>
                                         @foreach ($products as $product)
@@ -304,8 +303,8 @@
                                 @php
                                     $payments = App\Models\Bank::get();
                                 @endphp
-                                <select class="form-select payment_method" data-width="100%" onclick="errorRemove(this);"
-                                    onblur="errorRemove(this);" name="payment_method">
+                                <select class="form-select payment_method" data-width="100%"
+                                    onchange="errorRemove(this);" name="payment_method">
                                     @if ($payments->count() > 0)
                                         <option selected disabled>Select Payment Method</option>
                                         @foreach ($payments as $payemnt)
@@ -325,8 +324,8 @@
                                 @php
                                     $taxs = App\Models\Tax::get();
                                 @endphp
-                                <select class="form-select tax" data-width="100%" onclick="errorRemove(this);"
-                                    onblur="errorRemove(this);" value="" name="tax">
+                                <select class="form-select tax" data-width="100%" onchange="errorRemove(this);"
+                                    value="" name="tax">
                                     @if ($taxs->count() > 0)
                                         <option selected disabled>Select Taxes</option>
                                         @foreach ($taxs as $taxs)
@@ -369,11 +368,18 @@
     <script>
         // error remove
         function errorRemove(element) {
+            tag = element.tagName.toLowerCase();
             if (element.value != '') {
-                $(element).siblings('span').hide();
-                $(element).css('border-color', 'green');
+                // console.log('ok');
+                if (tag == 'select') {
+                    $(element).closest('.mb-3').find('.text-danger').hide();
+                } else {
+                    $(element).siblings('span').hide();
+                    $(element).css('border-color', 'green');
+                }
             }
         }
+
         $(document).ready(function() {
 
             // var currentDate = new Date().toISOString().split('T')[0];
