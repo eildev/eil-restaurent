@@ -316,6 +316,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/add/make/item/catgoey', 'MakeItemCategory')->name('make.item.category');
         Route::post('/store/make/item/', 'MakeItemStore')->name('make.item.store');
         Route::get('/delete/material/{id}', 'DestroyMaterials');
+        Route::get('/make/item/manage', 'MakeItemManage')->name('make.item.manage');
     });
     // Transaction related route(n)
     Route::controller(EmployeeSalaryController::class)->group(function () {

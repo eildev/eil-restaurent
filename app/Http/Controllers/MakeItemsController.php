@@ -136,5 +136,10 @@ class MakeItemsController extends Controller
             ]);
         }
     }
-
+        /////////////////////////////////////Make Item Manage //////////////////////////
+        public function MakeItemManage(){
+            $items = MakeItem::with('product')->get();
+            return view('pos.make-item.make-item-manage',compact('items'));
+        }//
+        /////////////////////////////////////EndMake Item Manage //////////////////////////
 }

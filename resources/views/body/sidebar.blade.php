@@ -71,6 +71,12 @@
                     <span class="link-title">Make Items</span>
                 </a>
             </li>
+            <li class="nav-item">
+                <a href="{{ route('make.item.manage') }}" class="nav-link {{ request()->routeIs('make.item.manage') ? 'nav_active' : '' }}">
+                    <i class="ms-2 ms-2 link-icon" data-feather="shopping-cart"></i>
+                    <span class="link-title">Make Items Manage</span>
+                </a>
+            </li>
             @if (Auth::user()->can('pos-manage.menu'))
                 <li class="nav-item">
                     <a href="{{ route('sale.view') }}"
