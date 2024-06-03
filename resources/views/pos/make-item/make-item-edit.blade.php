@@ -1,5 +1,5 @@
 @extends('master')
-@section('title', '| Make Items')
+@section('title', '| Make Item Edit')
 @section('admin')
 
     <div class="row mt-0">
@@ -25,7 +25,7 @@
                                         @if ($categories->count() > 0)
                                             <option selected disabled>Select Category</option>
                                             @foreach ($categories as $category)
-                                                <option value="{{ $category->id }}" >{{ $category->category_name }} </option>
+                                                <option value="{{ $category->id }}" {{ $itemEditId->make_category_id == $category->id ? 'selected' : '' }} >{{ $category->category_name }} </option>
                                             @endforeach
                                         @else
                                             <option selected disabled>Please Select Category</option>
@@ -46,14 +46,14 @@
                         <div class="mb-2 col-md-4 form-valid-groups">
                             <label for="ageSelect" class="form-label">Item Name</label>
                             <div class="">
-                                <input type="text" name="item_name" value="{{ old('item_name') }}" class="form-control barcode_input" placeholder="Item Name"
+                                <input type="text" name="item_name"  class="form-control barcode_input" value="{{$itemEditId->item_name}}" placeholder="Item Name"
                                      aria-describedby="btnGroupAddon">
                             </div>
                         </div>
                         <div class="mb-2 col-md-4 form-valid-groups">
                             <label for="ageSelect" class="form-label">Item Price</label>
                             <div class="">
-                                <input type="number" name="sale_price" value="{{ old('sale_price') }}" class="form-control barcode_input" placeholder="Item Price"
+                                <input type="number" name="sale_price" value="{{$itemEditId->sale_price}}" class="form-control barcode_input" placeholder="Item Price"
                                      aria-describedby="btnGroupAddon">
                             </div>
                         </div>
@@ -88,7 +88,7 @@
                                 @if ($products->count() > 0)
                                     <option selected disabled>Select Product</option>
                                     @foreach ($products as $product)
-                                        <option value="{{ $product->id }}" data-price="{{ $product->price }}"">{{ $product->name }} ({{ $product->stock }}
+                                        <option value="{{ $product->id }}" data-price="{{ $product->price }}">{{ $product->name }} ({{ $product->stock }}
                                             {{ $product->unit->name }} Available )
                                         </option>
                                     @endforeach
@@ -139,7 +139,7 @@
                                 <input type="text" class="form-control barcode_input" id="itemCost" placeholder="Item Cost" name="apro_cost"
                                      aria-describedby="btnGroupAddon" readonly>
                                 <button type="submit" class="btn btn-primary ms-2"
-                                   >Add</button>
+                                   >add</button>
                             </div>
                         </div>
                     </div>
@@ -292,13 +292,13 @@ $('#myValidForm').validate({
 $(document).ready(function() {
     $('.myForm').submit(function(event) {
         event.preventDefault(); // Prevent the default form submission
-
+        let id = '{{ $itemEditId->id }}';
         var formData = new FormData(this); // Create a FormData object to send form data including files
 
         // Send an Ajax request
         $.ajax({
             type: 'POST',
-            url: '/store/make/item',
+            url: '/update/make/item',
             data: formData,
             processData: false, // Prevent jQuery from automatically processing the form data
             contentType: false, // Prevent jQuery from automatically setting the Content-Type header
@@ -327,8 +327,7 @@ $(document).ready(function() {
                     var newRow = '<tr data-id="' + productId + '">' +
                                  '<td>' + productName + '</td>' +
                                  '<td>' + productPrice + '</td>' +
-                                  '<td class="quantity">' + newQuantity + '</td>' +
-                                // '<td class="quantity"><input type="number" class="form-control" value="' + newQuantity + '" min="1"></td>' +
+                                 '<td class="quantity">' + newQuantity + '</td>' +
                                  '<td>' + unitName + '</td>' +
                                  '<td class="apro-cost">' + aproCost + '</td>' +
                                  '<td><a type="button" class="btn btn-sm text-danger deleteRow"><i class="fas fa-trash-alt"></i></a></td>' +
@@ -351,7 +350,52 @@ $(document).ready(function() {
                 console.error(xhr.responseText);
             }
         });
+
     });
+
+    // Selected Product Show Start
+    function showSelectedItems() {
+                let id = '{{ $itemEditId->id }}';
+                $.ajax({
+                    url: '/make/item/find/' + id,
+                    type: 'GET',
+                    dataType: 'JSON',
+                    success: function(res) {
+                        if (res.status == 200) {
+                            const items = res.materialsItems;
+                            // console.log(items);
+                            items.forEach(item => {
+                                // console.log(item)
+                                var ItemId = item.id;
+                                var ProductId = item.product_id;
+                                const productName = item.product.name;
+                                const productPrice = item.product.price;
+                                const unitName = item.unit.name;
+                                const quantity = item.quantity;
+                                const aproCost = item.apro_cost;
+                                var newRow = `
+                            <tr data-id="${ItemId}">
+                                <td>${productName}</td>
+                                <td>${productPrice}</td>
+                                <td>${quantity}</td>
+
+                                <td>${unitName}</td>
+                                <td class="apro-cost">${aproCost}</td>
+                                <td><a type="button" class="btn btn-sm text-danger deleteRow"><i class="fas fa-trash-alt"></i></a></td>
+                            </tr>`;
+                    $('.showData').append(newRow);
+                            });
+
+                            calculateTotalCost();
+                        } else {
+                            toastr.warning(res.error);
+                        }
+                    }
+                });
+            }
+        showSelectedItems();
+    //
+    //Selected Product Show End
     $(document).on('click', '.deleteRow', function() {
         var row = $(this).closest('tr');
         var id = row.data('id');
@@ -378,13 +422,6 @@ $(document).ready(function() {
             }
         });
     });
-    // $(document).on('input', '.quantity input', function() {
-    //     var quantity = parseInt($(this).val());
-    //     var productPrice = parseFloat($(this).closest('tr').find('td:eq(1)').text()); // Get product price from the second column
-    //     var aproCost = (quantity * productPrice).toFixed(2);
-    //     $(this).closest('tr').find('.apro-cost').text(aproCost);
-    //     calculateTotalCost();
-    // });//
 
     function calculateTotalCost() {
         var totalCost = 0;
@@ -396,7 +433,8 @@ $(document).ready(function() {
     }
 });
 
-//
+
+
         //Category add
         const saveCategory = document.querySelector('.save_category');
         saveCategory.addEventListener('click', function(e) {

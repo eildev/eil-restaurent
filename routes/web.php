@@ -317,6 +317,10 @@ Route::middleware('auth')->group(function () {
         Route::post('/store/make/item/', 'MakeItemStore')->name('make.item.store');
         Route::get('/delete/material/{id}', 'DestroyMaterials');
         Route::get('/make/item/manage', 'MakeItemManage')->name('make.item.manage');
+        Route::get('/make/item/edit/{id}', 'MakeItemEdit')->name('make.item.edit');
+        Route::get('/make/item/find/{id}', 'MakeItemFind')->name('make.item.find');
+        Route::post('/update/make/item', 'UpdateMakeItem')->name('update.make.item');
+        Route::get('/make/item/delete/{id}', 'MakeItemDelete')->name('make.item.delete');
     });
     // Transaction related route(n)
     Route::controller(EmployeeSalaryController::class)->group(function () {

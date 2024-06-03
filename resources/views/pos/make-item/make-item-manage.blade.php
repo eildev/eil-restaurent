@@ -29,17 +29,24 @@
                                     @foreach ($items as $key => $item)
                                         <tr>
                                             <td>{{ $key + 1 }}</td>
-                                            <td>{{ $item['makeItem']['product_id']?? '' }}</td>
-                                            <td>{{ $item['makeItem']['quantity'] ?? '' }}</td>
+                                            <td>
+                                            @foreach($item->makeItem as $makeItems)
+                                              {{ $makeItems->product->name ?? '' }} <br>
+                                             @endforeach
+                                            </td>
+                                            {{-- <td>{{ $item['makeItemlist']['product']['name']?? '' }}</td> --}}
+                                            <td>{{ $item['makeItemlist']['quantity'] ?? '' }}</td>
                                             <td>{{ $item['category']['category_name'] ?? '' }}</td>
-                                            <td>{{ $item['makeItem']['unit'] ?? '' }}</td>
+                                            <td>{{ $item['makeItemlist']['myUnitName']['name'] ?? '' }}</td>
                                             <td>{{ $item->item_name ?? '' }}</td>
                                             <td>{{ $item->barcode ?? '' }}</td>
                                             <td>{{ $item->cost_price ?? '' }}</td>
-                                            <td><img src="{{asset('/uploads/make_item/'.$item->picture)}}" alt=""></td>
+                                            <td> <img src="{{ asset($item->picture) }}" alt="Image"></td>
                                             <td>
-                                                <a class="btn btn-sm bg-info" href="">Edit</a>
-                                                <a class="btn btn-sm bg-danger" href="">Delete</a></td>
+                                                <a class="btn btn-sm border text-warning" href="{{route('make.item.edit',$item->id)}}"><i class="fas fa-edit"></i></a>
+
+                                                <a class="btn btn-sm border delete-btn text-danger" href="{{route('make.item.delete',$item->id)}}"><i class="fas fa-trash-alt"></i></a>
+                                            </td>
                                         </tr>
                                     @endforeach
                                 @else
