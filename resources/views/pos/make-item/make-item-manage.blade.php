@@ -13,10 +13,9 @@
                                 <tr>
                                     <th>SN</th>
                                     <th>Product Name</th>
+                                    <th>Unit</th>
                                     <th>Quantity</th>
                                     <th>Category</th>
-                                    <th>Unit</th>
-                                    {{-- <th>Category</th> --}}
                                     <th>Item Name</th>
                                     <th>Barcode</th>
                                     <th>Total Cost</th>
@@ -34,10 +33,19 @@
                                               {{ $makeItems->product->name ?? '' }} <br>
                                              @endforeach
                                             </td>
-                                            {{-- <td>{{ $item['makeItemlist']['product']['name']?? '' }}</td> --}}
-                                            <td>{{ $item['makeItemlist']['quantity'] ?? '' }}</td>
-                                            <td>{{ $item['category']['category_name'] ?? '' }}</td>
-                                            <td>{{ $item['makeItemlist']['myUnitName']['name'] ?? '' }}</td>
+                                            <td>
+                                                @foreach($item->makeItem as $unitItems)
+                                                {{ $unitItems->myUnitName->name ?? '-' }} <br>
+                                               @endforeach
+                                            </td>
+                                            <td>
+                                                @foreach($item->makeItem as $quantitys)
+                                                {{ $quantitys->quantity ?? '-' }} <br>
+                                               @endforeach
+                                            </td>
+                                            <td>{{ $item['category']['category_name'] ?? '-' }}</td>
+
+                                            {{-- <td>{{ $item['makeItemlist']['myUnitName']['name'] ?? '' }}</td> --}}
                                             <td>{{ $item->item_name ?? '' }}</td>
                                             <td>{{ $item->barcode ?? '' }}</td>
                                             <td>{{ $item->cost_price ?? '' }}</td>

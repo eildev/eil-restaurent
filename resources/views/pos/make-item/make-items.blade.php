@@ -102,7 +102,7 @@
                         <div class="mb-2 col-md-3 form-valid-groups">
                             <label for="ageSelect" class="form-label">Quantity</label>
                             <div class="">
-                                <input type="number" id="quantity" class="form-control" name="quantity" placeholder="Quantity"
+                                <input type="number" id="quantity" class="form-control" name="quantity" placeholder="Quantity" min="1"
                                      aria-describedby="btnGroupAddon" oninput="updateCost();">
                             </div>
                             <div id="quantityError" class="text-danger"></div>

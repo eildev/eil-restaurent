@@ -23,4 +23,5 @@ class MakeItem extends Model
         return $this->hasMany(MaterialList::class);
     }
 
+
 }
