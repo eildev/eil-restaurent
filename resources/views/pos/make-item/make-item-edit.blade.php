@@ -176,6 +176,7 @@
 </div>
 <!--------Category Modal-------->
     {{-- table  --}}
+    
     <div class="row">
         <div class="col-md-12 mb-1 grid-margin stretch-card">
             <div class="card">

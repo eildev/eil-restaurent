@@ -40,7 +40,34 @@ class MakeItemsController extends Controller
         ]);
 
     }
-    //Store Data
+    public function MakeItemCategoryView(){
+        $allCat = ItemCategory::all();
+        return view('pos.make-item.make-item-category-view', compact('allCat'));
+    }//
+    public function MakeItemCategoryEdit($id){
+
+        $categoryEdit = ItemCategory::findOrFail($id);
+        return view('pos.make-item.make-item-category-edit', compact('categoryEdit'));
+    }
+    public function MakeItemCategoryUpdate(Request $request,$id){
+        $categoryItem = ItemCategory::findOrFail($id);
+        $categoryItem->update([
+            'category_name' => $request->category_name,
+        ]);
+        $notification = [
+            'message' => 'Item Category Updated Successfully',
+            'alert-type' => 'info'
+        ];
+        return redirect()->route('make.item.category.view')->with($notification);
+    }
+    public function MakeItemCategoryDelete($id){
+        ItemCategory::findOrFail($id)->delete();
+        $notification = [
+            'message' => 'Item Category Delete Successfully',
+            'alert-type' => 'info'
+        ];
+        return redirect()->back()->with($notification);
+    }
     public function MakeItemStore(Request $request){
         // Validate the request
         $validatedData = $request->validate([
@@ -81,7 +108,6 @@ class MakeItemsController extends Controller
         ]);
 
         $makeItemId = $makeItem->id;
-
         // Check if the material already exists
         $material = MaterialList::where([
             ['make_item_id', '=', $makeItemId],
@@ -106,7 +132,6 @@ class MakeItemsController extends Controller
 
         $material->load('product','unit');
 
-
         return response()->json([
             'status' => 200,
             'message' => 'Item created successfully!',
@@ -118,7 +143,6 @@ class MakeItemsController extends Controller
 
     public function DestroyMaterials($id)
     {
-
         $material = MaterialList::findOrFail($id);
 
         if ($material) {
