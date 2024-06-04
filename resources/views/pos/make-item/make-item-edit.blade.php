@@ -10,7 +10,7 @@
                 <div class="card-body px-4 py-2">
                     <form id="myValidForm" class="myForm" method="POST" enctype="multipart/form-data">
                         @csrf
-                        <input type="hidden" name="id" class="makeItemId" value="0">
+                        <input type="hidden" name="id" class="makeItemId" value="{{$itemEditId->id ?? 0}}">
                         <input type="hidden" name="total_cost_price" value="0">
                     <div class="row" >
                         <div class="mb-1 col-md-4">
@@ -59,8 +59,10 @@
                         </div>
                         <div class="mb-2 col-md-6">
                             <h6 class="card-title">Product Image</h6>
-                            <input type="file" class="categoryImage" name="picture" id="myDropify" />
+                            <input type="file" class="categoryImage" name="picture" id="myDropify" data-default-file="{{ $itemEditId->picture ? asset($itemEditId->picture) : '' }}" />
                         </div>
+
+
                         <div class="mb-2 col-md-6">
                             <label for="" class="form-label">Item Note</label>
                             <textarea class="form-control" value="{{ old('note') }}" name="note" id="" rows="9"></textarea>
@@ -83,7 +85,7 @@
                                 $products = App\Models\Product::where('stock', '>', 0)->get();
                             @endphp
                             <label for="ageSelect" class="form-label">Materials Name</label>
-                            <select class="js-example-basic-single  form-select product_select @error('product_id') is-invalid @enderror" name="product_id" data-width="100%"
+                            <select class="js-example-basic-single  form-select product_select" name="product_id" id ="productValid" data-width="100%"
                                 onclick="errorRemove(this);" onblur="errorRemove(this);"  onchange="updateCost();">
                                 @if ($products->count() > 0)
                                     <option selected disabled>Select Product</option>
@@ -96,28 +98,23 @@
                                     <option selected disabled>Please Add Product</option>
                                 @endif
                             </select>
-                            @error('product_id')
-                            <div class="text-danger">{{ $message }}</div>
-                          @enderror
-                            {{-- <span class="text-danger product_select_error"></span> --}}
+                            <div id="productError" class="text-danger"></div>
                         </div>
                         <div class="mb-2 col-md-3 form-valid-groups">
                             <label for="ageSelect" class="form-label">Quantity</label>
                             <div class="">
-                                <input type="number" id="quantity" class="form-control @error('quantity') is-invalid @enderror" name="quantity" placeholder="Quantity"
+                                <input type="number" id="quantity" class="form-control" name="quantity" placeholder="Quantity"
                                      aria-describedby="btnGroupAddon" oninput="updateCost();">
                             </div>
-                            @error('quantity')
-                            <div class="text-danger">{{ $message }}</div>
-                          @enderror
+                            <div id="quantityError" class="text-danger"></div>
                         </div>
-                        <div class="mb-1 col-md-3 form-valid-groups">
+                        <div class="mb-1 col-md-3 ">
                             <label for="password" class="form-label">Unit</label>
                             @php
                             $units = App\Models\unit::all();
                             @endphp
                         <label for="ageSelect" class="form-label">Materials Name</label>
-                        <select class="js-example-basic-single form-select @error('unit') is-invalid @enderror" name="unit" data-width="100%"
+                        <select id="unit" class="js-example-basic-single form-select" name="unit" data-width="100%"
                             onclick="errorRemove(this);" onblur="errorRemove(this);">
                             @if ($units->count() > 0)
                                 <option selected disabled>Select Unit</option>
@@ -128,10 +125,8 @@
                                 <option selected disabled>Please Add Unit</option>
                             @endif
                         </select>
-                        @error('unit')
-                            <div class="text-danger">{{ $message }}</div>
-                        @enderror
-                        <span class="text-danger product_select_error"></span>
+                        <div id="unitError" class="text-danger"></div>
+
                         </div>
                         <div class="mb-1 col-md-3">
                             <label for="password" class="form-label">Total Cost</label>
@@ -243,15 +238,6 @@ $('#myValidForm').validate({
         make_category_id: {
             required: true,
         },
-        product_id: {
-            required: true,
-        },
-        quantity: {
-            required: true,
-        },
-        unit: {
-            required: true,
-        },
     },
     messages: {
 
@@ -263,15 +249,6 @@ $('#myValidForm').validate({
         },
         make_category_id: {
             required: 'Select Category Field Required',
-        },
-        product_id: {
-            required: 'Select Materials Name Required',
-        },
-        quantity: {
-            required: 'Select Materials Name Required',
-        },
-        unit: {
-            required: 'Please Select a Unit',
         },
     },
     errorElement: 'span',
@@ -292,16 +269,33 @@ $('#myValidForm').validate({
 $(document).ready(function() {
     $('.myForm').submit(function(event) {
         event.preventDefault(); // Prevent the default form submission
-        let id = '{{ $itemEditId->id }}';
         var formData = new FormData(this); // Create a FormData object to send form data including files
-
-        // Send an Ajax request
+        //validation
+        $('#quantityError').text('');
+        $('#productError').text('');
+        var quantity = $('#quantity').val();
+        var product = $('#productValid').val();
+        $('#unitError').text('');
+        var unit = $('#unit').val();
+        if (!product) {
+            $('#productError').text('Product is required.');
+            return;
+        }
+        if (!quantity) {
+            $('#quantityError').text('Quantity is required.');
+            return;
+        }
+        if (!unit) {
+            $('#unitError').text('Unit is required.');
+            return;
+        }
+        //validation End
         $.ajax({
             type: 'POST',
             url: '/update/make/item',
             data: formData,
-            processData: false, // Prevent jQuery from automatically processing the form data
-            contentType: false, // Prevent jQuery from automatically setting the Content-Type header
+            processData: false,
+            contentType: false,
             success: function(response) {
                 var productName = response.material.product.name;
                 var productPrice = response.material.product.price;
@@ -320,7 +314,7 @@ $(document).ready(function() {
                     var updatedQuantity =newQuantity;
                     var updatedAproCost = newAproCost;
 
-                    existingRow.find('.quantity').text(updatedQuantity);
+                    existingRow.find('.quantity').text(newQuantity);
                     existingRow.find('.apro-cost').text(updatedAproCost.toFixed(2));
                 } else {
                     // Add new row if product does not exist
@@ -352,7 +346,16 @@ $(document).ready(function() {
         });
 
     });
-
+    //validation
+    $('#quantity').on('input', function() {
+        $('#quantityError').text('');
+    });
+    $('#unit').change(function() {
+        $('#unitError').text('');
+    });
+    $('#productValid').change(function() {
+        $('#productError').text('');
+    });
     // Selected Product Show Start
     function showSelectedItems() {
                 let id = '{{ $itemEditId->id }}';
@@ -377,7 +380,7 @@ $(document).ready(function() {
                             <tr data-id="${ItemId}">
                                 <td>${productName}</td>
                                 <td>${productPrice}</td>
-                                <td>${quantity}</td>
+                                <td class="quantity">${quantity}</td>
 
                                 <td>${unitName}</td>
                                 <td class="apro-cost">${aproCost}</td>

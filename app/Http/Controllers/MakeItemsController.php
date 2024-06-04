@@ -140,7 +140,8 @@ class MakeItemsController extends Controller
     }
         /////////////////////////////////////Make Item Manage //////////////////////////
         public function MakeItemManage(){
-            $items = MakeItem::all();
+            $items = MakeItem::where('cost_price', '>', 0)
+            ->get();
             return view('pos.make-item.make-item-manage',compact('items'));
         }//
         public function MakeItemEdit($id){
@@ -155,7 +156,7 @@ class MakeItemsController extends Controller
                 'materialsItems' => $materialsItems,
             ]);
         }
-        //////////// //
+        ////////////
 
         public function UpdateMakeItem(Request $request ){
             // Validate the request
@@ -224,7 +225,7 @@ class MakeItemsController extends Controller
             return response()->json([
                 'status' => 200,
                 'message' => 'Item created successfully!',
-                'makeItem' => $makeItem,
+                // 'makeItem' => $makeItem,
                 'material' => $material,
                 'makeItemId' => $makeItemId
             ]);

@@ -83,7 +83,7 @@
                                 $products = App\Models\Product::where('stock', '>', 0)->get();
                             @endphp
                             <label for="ageSelect" class="form-label">Materials Name</label>
-                            <select class="js-example-basic-single  form-select product_select @error('product_id') is-invalid @enderror" name="product_id" data-width="100%"
+                            <select class="js-example-basic-single  form-select product_select" name="product_id" id ="productValid" data-width="100%"
                                 onclick="errorRemove(this);" onblur="errorRemove(this);"  onchange="updateCost();">
                                 @if ($products->count() > 0)
                                     <option selected disabled>Select Product</option>
@@ -96,20 +96,16 @@
                                     <option selected disabled>Please Add Product</option>
                                 @endif
                             </select>
-                            @error('product_id')
-                            <div class="text-danger">{{ $message }}</div>
-                          @enderror
-                            {{-- <span class="text-danger product_select_error"></span> --}}
+
+                            <div id="productError" class="text-danger"></div>
                         </div>
                         <div class="mb-2 col-md-3 form-valid-groups">
                             <label for="ageSelect" class="form-label">Quantity</label>
                             <div class="">
-                                <input type="number" id="quantity" class="form-control @error('quantity') is-invalid @enderror" name="quantity" placeholder="Quantity"
+                                <input type="number" id="quantity" class="form-control" name="quantity" placeholder="Quantity"
                                      aria-describedby="btnGroupAddon" oninput="updateCost();">
                             </div>
-                            @error('quantity')
-                            <div class="text-danger">{{ $message }}</div>
-                          @enderror
+                            <div id="quantityError" class="text-danger"></div>
                         </div>
                         <div class="mb-1 col-md-3 form-valid-groups">
                             <label for="password" class="form-label">Unit</label>
@@ -117,7 +113,7 @@
                             $units = App\Models\unit::all();
                             @endphp
                         <label for="ageSelect" class="form-label">Materials Name</label>
-                        <select class="js-example-basic-single form-select @error('unit') is-invalid @enderror" name="unit" data-width="100%"
+                        <select class="js-example-basic-single form-select" id="unit" name="unit" data-width="100%"
                             onclick="errorRemove(this);" onblur="errorRemove(this);">
                             @if ($units->count() > 0)
                                 <option selected disabled>Select Unit</option>
@@ -128,9 +124,7 @@
                                 <option selected disabled>Please Add Unit</option>
                             @endif
                         </select>
-                        @error('unit')
-                            <div class="text-danger">{{ $message }}</div>
-                        @enderror
+                        <div id="unitError" class="text-danger"></div>
                         <span class="text-danger product_select_error"></span>
                         </div>
                         <div class="mb-1 col-md-3">
@@ -243,15 +237,7 @@ $('#myValidForm').validate({
         make_category_id: {
             required: true,
         },
-        product_id: {
-            required: true,
-        },
-        quantity: {
-            required: true,
-        },
-        unit: {
-            required: true,
-        },
+
     },
     messages: {
 
@@ -264,15 +250,7 @@ $('#myValidForm').validate({
         make_category_id: {
             required: 'Select Category Field Required',
         },
-        product_id: {
-            required: 'Select Materials Name Required',
-        },
-        quantity: {
-            required: 'Select Materials Name Required',
-        },
-        unit: {
-            required: 'Please Select a Unit',
-        },
+
     },
     errorElement: 'span',
     errorPlacement: function(error, element) {
@@ -291,17 +269,34 @@ $('#myValidForm').validate({
 //form insert
 $(document).ready(function() {
     $('.myForm').submit(function(event) {
-        event.preventDefault(); // Prevent the default form submission
+        event.preventDefault();
 
-        var formData = new FormData(this); // Create a FormData object to send form data including files
-
+        var formData = new FormData(this);
+        $('#quantityError').text('');
+        $('#productError').text('');
+        var quantity = $('#quantity').val();
+        var product = $('#productValid').val();
+        $('#unitError').text('');
+        var unit = $('#unit').val();
+        if (!product) {
+            $('#productError').text('Product is required.');
+            return;
+        }
+        if (!quantity) {
+            $('#quantityError').text('Quantity is required.');
+            return;
+        }
+        if (!unit) {
+            $('#unitError').text('Unit is required.');
+            return;
+        }
         // Send an Ajax request
         $.ajax({
             type: 'POST',
             url: '/store/make/item',
             data: formData,
-            processData: false, // Prevent jQuery from automatically processing the form data
-            contentType: false, // Prevent jQuery from automatically setting the Content-Type header
+            processData: false,
+            contentType: false,
             success: function(response) {
                 var productName = response.material.product.name;
                 var productPrice = response.material.product.price;
@@ -352,6 +347,16 @@ $(document).ready(function() {
             }
         });
     });
+      //validation
+      $('#quantity').on('input', function() {
+        $('#quantityError').text('');
+    });
+    $('#unit').change(function() {
+        $('#unitError').text('');
+    });
+    $('#productValid').change(function() {
+        $('#productError').text('');
+    });
     $(document).on('click', '.deleteRow', function() {
         var row = $(this).closest('tr');
         var id = row.data('id');
@@ -378,13 +383,6 @@ $(document).ready(function() {
             }
         });
     });
-    // $(document).on('input', '.quantity input', function() {
-    //     var quantity = parseInt($(this).val());
-    //     var productPrice = parseFloat($(this).closest('tr').find('td:eq(1)').text()); // Get product price from the second column
-    //     var aproCost = (quantity * productPrice).toFixed(2);
-    //     $(this).closest('tr').find('.apro-cost').text(aproCost);
-    //     calculateTotalCost();
-    // });//
 
     function calculateTotalCost() {
         var totalCost = 0;
