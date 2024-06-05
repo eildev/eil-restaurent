@@ -186,12 +186,21 @@
            <div class="modal-footer">
                <button type="button" class="btn btn-secondary"
                    data-bs-dismiss="modal">Close</button>
-               <button type="button" class="btn btn-primary save_category">Save</button>
+               <button type="button" class="btn btn-primary save_set_category
+               ">Save</button>
            </div>
            </form>
        </div>
    </div>
 </div>
+<style>
+    .modal.fade .modal-dialog {
+        transition: transform 0.0s ease-out; /* Adjust duration (e.g., 0.2s for 200ms) */
+    }
+    .modal.fade.show .modal-dialog {
+        transform: translateY(0);
+    }
+</style>
 <!--------Category Modal-------->
     {{-- table  --}}
     <div class="row">
@@ -288,7 +297,7 @@ $('#myValidForm').validate({
 //form insert
 $(document).ready(function() {
         //Category add
-        const saveCategory = document.querySelector('.save_category');
+        const saveCategory = document.querySelector('.save_set_category');
         saveCategory.addEventListener('click', function(e) {
                 e.preventDefault();
                 // alert('ok')
@@ -299,7 +308,7 @@ $(document).ready(function() {
                     }
                 });
                 $.ajax({
-                    url: '/add/make/item/catgoey',
+                    url: '/set/item/catgoey',
                     type: 'POST',
                     data: formData,
                     processData: false,
