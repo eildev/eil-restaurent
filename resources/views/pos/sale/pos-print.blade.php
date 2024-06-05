@@ -19,7 +19,6 @@
             margin: 0;
             padding: 0;
         }
-
         body {
             font-family: "Space Mono", monospace;
             font-weight: 500;

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Branch;
 use App\Models\Customer;
+use App\Models\MakeItem;
 use Illuminate\Http\Request;
 use App\Models\Promotion;
 use App\Models\Product;
@@ -193,7 +194,8 @@ class PromotionController extends Controller
                     'wholesale' => $wholesale
                 ]);
             } else if ($type == 'products') {
-                $products = Product::where('branch_id', Auth::user()->branch_id)->where('stock', ">", 0)->get();
+                $products = MakeItem::all();
+                // $products = MakeItem::where('branch_id', Auth::user()->branch_id)->where('stock', ">", 0)->get();
                 return response()->json([
                     "status" => 200,
                     'products' => $products

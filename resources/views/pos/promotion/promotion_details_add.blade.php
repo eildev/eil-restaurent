@@ -128,8 +128,8 @@
                                             <input type="hidden" value="${product.id}">
                                         </td>
 
-                                        <td>${product.name}</td>
-                                        <td>${product.stock}</td>
+                                        <td>${product.item_name}</td>
+                                        <td></td>
                                     </tr>`;
                                 });
                                 productHTML += `</tbody></table></div>`;

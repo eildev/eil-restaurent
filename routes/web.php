@@ -309,6 +309,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/sale/promotions/{id}', 'salePromotions')->name('sale.promotions');
         Route::get('/product/barcode/find/{id}', 'findProductWithBarcode')->name('product.barcode.find');
         Route::get('/sale/product/find/{id}', 'saleProductFind')->name('sale.product.find');
+        Route::get('/show/queue', 'showTableQueue');
     });
     // Make Items related routes
     Route::controller(MakeItemsController::class)->group(function () {

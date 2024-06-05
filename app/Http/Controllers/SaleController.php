@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\AccountTransaction;
 use App\Models\ActualPayment;
 use App\Models\Customer;
+use App\Models\MakeItem;
 use App\Models\Product;
 use App\Models\Promotion;
 use App\Models\PromotionDetails;
@@ -14,13 +15,16 @@ use App\Models\Transaction;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Validator;
 
 class SaleController extends Controller
 {
     public function index()
     {
-        return view('pos.sale.sale');
+        $sale_items = '';
+        $sales = '';
+        return view('pos.sale.sale', compact('sale_items','sales'));
     }
     public function getCustomer()
     {
@@ -67,138 +71,180 @@ class SaleController extends Controller
     public function store(Request $request)
     {
         // dd($request->all());
-        $validator = Validator::make($request->all(), [
-            'customer_id' => 'required',
-            'sale_date' => 'required',
-            'payment_method' => 'required',
-            'paid' => 'required',
-        ]);
-
-        if ($validator->passes()) {
-
-            // product Cost 
-            $productCost = 0;
-            $productAll = $request->products;
-            foreach ($productAll as $product) {
-                $items = Product::findOrFail($product['product_id']);
-                $productCost += $items->cost;
+        $productInfo = MakeItem::findOrFail($request->product_id);
+        $status = 'active';
+        $promotionDetails = PromotionDetails::whereHas('promotion', function ($query) use ($status) {
+            return $query->where('status', '=', $status);
+        })->where('promotion_type', 'products')->where('logic', $request->product_id)->first();
+        if ($promotionDetails) {
+            if ($promotionDetails->promotion->discount_type == 'percentage') {
+                $itemDiscount = (($productInfo->sale_price - ($productInfo->sale_price * $promotionDetails->promotion->discount_value) / 100));
+                $itemDiscountAmount = (($productInfo->sale_price * $promotionDetails->promotion->discount_value) / 100);
+                // dd($itemDiscount);
+            } elseif ($promotionDetails->promotion->discount_type == 'fixed_amount') {
+                $itemDiscount = $productInfo->sale_price - $promotionDetails->promotion->discount_value;
+                $itemDiscountAmount = $promotionDetails->promotion->discount_value;
             }
+        } else {
+            $itemDiscount = 0;
+            $itemDiscountAmount = 0;
+        }
+        // $totalQuantity = 1;
+        $saleItems = '';
+        if ($request->sale_id != '0') {
+            $saleItems = Saleitem::where('sale_id', $request->sale_id)->get();
+        }
+        if ($saleItems) {
+            $totalQuantity = $saleItems->sum('qty') + 1;
+            $totalRate = $saleItems->sum('rate') + $productInfo->sale_price;
+            $totalCosPrice = $saleItems->sum('cost_price') + $productInfo->cost_price;
+            $subTotalAmount = ($saleItems->sum('sub_total') + $productInfo->sale_price * 1) - $itemDiscountAmount;
+            $TotalDiscount = $saleItems->sum('discount') + $itemDiscount;
+            // dd($saleItems);
+            $totalProfit = ($totalRate - ($totalCosPrice + $TotalDiscount));
+        } else {
+            $totalQuantity = 1;
+            $totalRate = $productInfo->sale_price;
+            $totalCosPrice = $productInfo->cost_price;
+            $subTotalAmount = ($productInfo->sale_price * 1) - $itemDiscountAmount;
+            $TotalDiscount = $itemDiscount;
+            $totalProfit = ($totalRate - ($productInfo->cost_price + $TotalDiscount));
+        }
+        $sale = Sale::updateOrCreate(
+            [
+                'id' => $request->sale_id ?? 0,
+            ],
+            [
+                'branch_id' => Auth::user()->branch_id,
+                'customer_id' => $request->customer_id,
+                'sale_date' => Carbon::now(),
+                'sale_by' => Auth::user()->id,
+                'invoice_number' => $request->invoice_number,
+                'order_type' => "general",
+                'quantity' => $totalQuantity,
+                'total' => $subTotalAmount,
+                'discount' => $request->sale_discount,
+                'change_amount' => $subTotalAmount - $request->sale_discount,
+                'tax' => $request->tax,
+                'receivable' => $subTotalAmount,
+                'final_receivable' => $subTotalAmount - $request->sale_discount,
+                'payment_method' => $request->payment_method,
+                'profit' => ($totalProfit - $request->sale_discount),
+                'dine_id' => $request->dine,
+                'note' => $request->note,
+                'created_at' => Carbon::now(),
+            ]
+        );
+        $saleId = $sale->id;
+        $saleItem = SaleItem::where('product_id', $request->product_id)
+            ->where('sale_id', $saleId)
+            ->first();
 
-            // Sale Table CRUD 
-            $sale = new Sale;
-            $sale->branch_id = Auth::user()->branch_id;
-            $sale->customer_id = $request->customer_id;
-            $sale->sale_date = $request->sale_date;
-            $sale->sale_by = 0;
-            $sale->invoice_number = rand(123456, 99999);
-            $sale->order_type = "general";
-            $sale->quantity = $request->quantity;
-            $sale->total = $request->total_amount;
-            $sale->discount = $request->discount;
-            $sale->change_amount = $request->total;
-            $sale->actual_discount = $request->actual_discount;
-            $sale->tax = $request->tax;
-            $sale->receivable = $request->change_amount;
-            // $sale->paid = $request->paid;
-            $sale->due = $request->due;
-            if ($request->due < 0) {
-                $sale->paid = $request->paid + $request->due;
-            } else {
-                $sale->paid = $request->paid;
-            }
-            // $sale->returned = $request->due;
-            $sale->final_receivable = $request->change_amount;
-            $sale->payment_method = $request->payment_method;
-            $sale->profit = $request->change_amount - $productCost;
-            $sale->note = $request->note;
-            $sale->created_at = Carbon::now();
-            $sale->save();
-
-
-            $saleId = $sale->id;
-
-            // products table CRUD 
-            $products = $request->products;
-            foreach ($products as $product) {
-                $items2 = Product::findOrFail($product['product_id']);
-                $items = new SaleItem;
-                $items->sale_id = $saleId;
-                $items->product_id = $product['product_id']; // Access 'product_id' as an array key
-                $items->rate = $product['unit_price']; // Access 'unit_price' as an array key
-                $items->qty = $product['quantity'];
-                $items->discount = $product['discount'];
-                $items->sub_total = $product['total_price'];
-                $items->total_purchase_cost = $items2->cost * $product['quantity'];
-                $items->save();
-
-
-                $items2->stock = $items2->stock - $product['quantity'];
-                $items2->total_sold = $items2->total_sold + $product['quantity'];
-                $items2->save();
-            }
-
-            // customer table CRUD 
-            $customer = Customer::findOrFail($request->customer_id);
-            $customer->total_receivable = $customer->total_receivable + $request->change_amount;
-            $customer->total_payable = $customer->total_payable + $request->paid;
-            $customer->wallet_balance = $customer->wallet_balance + ($request->change_amount - $request->paid);
-            $customer->save();
-
-            // actual Payment 
-            $actualPayment = new ActualPayment;
-            $actualPayment->branch_id =  Auth::user()->branch_id;
-            $actualPayment->payment_type =  'receive';
-            $actualPayment->payment_method =  $request->payment_method;
-            $actualPayment->customer_id = $request->customer_id;
-            $actualPayment->amount = $request->paid;
-            $actualPayment->date = $request->sale_date;
-            $actualPayment->save();
-
-            // accountTransaction table 
-            $accountTransaction = new AccountTransaction;
-            $accountTransaction->branch_id =  Auth::user()->branch_id;
-            $accountTransaction->purpose =  'Withdraw';
-            $accountTransaction->account_id =  $request->payment_method;
-            $accountTransaction->credit = $request->paid;
-            // $accountTransaction->balance = $accountTransaction->balance + $request->paid;
-            $accountTransaction->save();
-
-            $transaction = Transaction::where('customer_id', $request->customer_id)->first();
-
-            if ($transaction) {
-                // Update existing transaction
-                $transaction->date =  $request->sale_date;
-                $transaction->payment_type = 'receive';
-                $transaction->particulars = 'Sale#' . $saleId;
-                $transaction->credit = $transaction->credit + $request->change_amount;
-                $transaction->debit = $transaction->debit + $request->paid;
-                $transaction->balance = $transaction->balance + ($request->change_amount - $request->paid);
-                $transaction->payment_method = $request->payment_method;
-                $transaction->save();
-            } else {
-                // Create new transaction
-                $transaction = new Transaction;
-                $transaction->date =  $request->sale_date;
-                $transaction->payment_type = 'receive';
-                $transaction->particulars = 'Sale#' . $saleId;
-                $transaction->customer_id = $request->customer_id;
-                $transaction->credit = $request->change_amount;
-                $transaction->debit = $request->paid;
-                $transaction->balance = $request->change_amount - $request->paid;
-                $transaction->payment_method = $request->payment_method;
-                $transaction->save();
-            }
-
-            return response()->json([
-                'status' => 200,
-                'saleId' => $saleId,
-                'message' => 'successfully save',
+        if ($saleItem) {
+            // Update the existing SaleItem and increment qty
+            $saleItem->update([
+                'qty' => $saleItem->qty + 1,
+                'rate' => $productInfo->sale_price,
+                'cost_price' => $productInfo->cost_price,
+                'discount' => $saleItem->discount + $itemDiscountAmount,
+                'sub_total' => ($saleItem->sub_total + ($productInfo->sale_price - $itemDiscountAmount)),
+                'total_purchase_cost' => ($saleItem->total_purchase_cost + $productInfo->cost_price),
             ]);
         } else {
-            return response()->json([
-                'status' => '500',
-                'error' => $validator->messages(),
+            // Create a new SaleItem if it does not exist
+            SaleItem::create([
+                'sale_id' => $saleId,
+                'product_id' => $request->product_id ?? 0,
+                'rate' => $productInfo->sale_price,
+                'cost_price' => $productInfo->cost_price,
+                'qty' => 1,
+                'discount' => $itemDiscountAmount,
+                'sub_total' => (($productInfo->sale_price * 1) - $itemDiscountAmount),
+                'total_purchase_cost' => $productInfo->cost_price * 1,
             ]);
+        }
+
+        $sale_items = SaleItem::where('sale_id', $sale->id)->get();
+        $renderedHtml = view('pos.sale.sales_detailes_ramder_data', compact('sale_items', 'sale'))->render();
+
+        // Return the rendered HTML as a JSON response
+        return response()->json(['html' => $renderedHtml]);
+        // return response()->json([
+        //     'sale_items' => $sale_items,
+        //     'sale' => $sale,
+        // ]);
+        //     // customer table CRUD
+        //     $customer = Customer::findOrFail($request->customer_id);
+        //     $customer->total_receivable = $customer->total_receivable + $request->change_amount;
+        //     $customer->total_payable = $customer->total_payable + $request->paid;
+        //     $customer->wallet_balance = $customer->wallet_balance + ($request->change_amount - $request->paid);
+        //     $customer->save();
+
+        //     // actual Payment
+        //     $actualPayment = new ActualPayment;
+        //     $actualPayment->branch_id =  Auth::user()->branch_id;
+        //     $actualPayment->payment_type =  'receive';
+        //     $actualPayment->payment_method =  $request->payment_method;
+        //     $actualPayment->customer_id = $request->customer_id;
+        //     $actualPayment->amount = $request->paid;
+        //     $actualPayment->date = $request->sale_date;
+        //     $actualPayment->save();
+
+        //     // accountTransaction table
+        //     $accountTransaction = new AccountTransaction;
+        //     $accountTransaction->branch_id =  Auth::user()->branch_id;
+        //     $accountTransaction->purpose =  'Withdraw';
+        //     $accountTransaction->account_id =  $request->payment_method;
+        //     $accountTransaction->credit = $request->paid;
+        //     // $accountTransaction->balance = $accountTransaction->balance + $request->paid;
+        //     $accountTransaction->save();
+
+        //     $transaction = Transaction::where('customer_id', $request->customer_id)->first();
+
+        //     if ($transaction) {
+        //         // Update existing transaction
+        //         $transaction->date =  $request->sale_date;
+        //         $transaction->payment_type = 'receive';
+        //         $transaction->particulars = 'Sale#' . $saleId;
+        //         $transaction->credit = $transaction->credit + $request->change_amount;
+        //         $transaction->debit = $transaction->debit + $request->paid;
+        //         $transaction->balance = $transaction->balance + ($request->change_amount - $request->paid);
+        //         $transaction->payment_method = $request->payment_method;
+        //         $transaction->save();
+        //     } else {
+        //         // Create new transaction
+        //         $transaction = new Transaction;
+        //         $transaction->date =  $request->sale_date;
+        //         $transaction->payment_type = 'receive';
+        //         $transaction->particulars = 'Sale#' . $saleId;
+        //         $transaction->customer_id = $request->customer_id;
+        //         $transaction->credit = $request->change_amount;
+        //         $transaction->debit = $request->paid;
+        //         $transaction->balance = $request->change_amount - $request->paid;
+        //         $transaction->payment_method = $request->payment_method;
+        //         $transaction->save();
+        //     }
+
+        //     return response()->json([
+        //         'status' => 200,
+        //         'saleId' => $saleId,
+        //         'message' => 'successfully save',
+        //     ]);
+        // } else {
+        //     return response()->json([
+        //         'status' => '500',
+        //         'error' => $validator->messages(),
+        //     ]);
+        // }
+    }
+    public function showTableQueue(){
+        try {
+            $sales = Sale::whereDate('sale_date',Carbon::now())->where('status', 'kitchen')->get();
+            return response()->json([
+                'sales' => $sales,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to retrieve sales data.'], 500);
         }
     }
     public function invoice($id)
@@ -248,7 +294,7 @@ class SaleController extends Controller
 
         if ($validator->passes()) {
 
-            // product Cost 
+            // product Cost
             $productCost = 0;
             $productAll = $request->products;
             foreach ($productAll as $product) {
@@ -256,7 +302,7 @@ class SaleController extends Controller
                 $productCost += $items->cost;
             }
 
-            // Sale Table CRUD 
+            // Sale Table CRUD
             $sale = Sale::findOrFail($id);
             $sale->branch_id = Auth::user()->branch_id;
             $sale->customer_id = $request->customer_id;
@@ -289,7 +335,7 @@ class SaleController extends Controller
 
             // $saleId = $sale->id;
 
-            // products table CRUD 
+            // products table CRUD
             $products = $request->products;
             foreach ($products as $product) {
                 $items2 = Product::findOrFail($product['product_id']);
@@ -309,14 +355,14 @@ class SaleController extends Controller
                 $items2->save();
             }
 
-            // customer table CRUD 
+            // customer table CRUD
             $customer = Customer::findOrFail($request->customer_id);
             $customer->total_receivable = $customer->total_receivable + $request->change_amount;
             $customer->total_payable = $customer->total_payable + $request->paid;
             $customer->wallet_balance = $customer->wallet_balance + ($request->change_amount - $request->paid);
             $customer->save();
 
-            // actual Payment 
+            // actual Payment
             $actualPayment = new ActualPayment;
             $actualPayment->branch_id =  Auth::user()->branch_id;
             $actualPayment->payment_type =  'receive';
@@ -326,7 +372,7 @@ class SaleController extends Controller
             $actualPayment->date = $request->sale_date;
             $actualPayment->save();
 
-            // accountTransaction table 
+            // accountTransaction table
             $accountTransaction = new AccountTransaction;
             $accountTransaction->branch_id =  Auth::user()->branch_id;
             $accountTransaction->purpose =  'Withdraw';
@@ -441,7 +487,7 @@ class SaleController extends Controller
             $customer->wallet_balance = $customer->wallet_balance - $request->amount;
             $customer->save();
 
-            // accountTransaction table 
+            // accountTransaction table
             $accountTransaction = new AccountTransaction;
             $accountTransaction->branch_id =  Auth::user()->branch_id;
             $accountTransaction->purpose =  'Withdraw';
