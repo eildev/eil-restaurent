@@ -1,5 +1,5 @@
 @extends('master')
-@section('title', '| Make Items')
+@section('title', '| Set Items')
 @section('admin')
 
     <div class="row mt-0">
@@ -15,25 +15,22 @@
                     <div class="row" >
                         <div class="mb-1 col-md-4">
                             @php
-                                $categories = App\Models\ItemCategory::all();
+                                $categories = App\Models\SetCategory::all();
                             @endphp
                             <div  class="row">
                                 <div class="col-md-10 form-valid-groups">
-                                    <label for="ageSelect" class="form-label">Category</label>
-                                    <select class="js-example-basic-single  form-select category_select @error('make_category_id') is-invalid @enderror" data-width="100%" name="make_category_id"
-                                        onclick="errorRemove(this);" onblur="errorRemove(this);">
+                                    <label for="ageSelect" class="form-label">Category name</label>
+                                    <select class="js-example-basic-single form-select category_select" data-width="100%" name="make_category_id"
+                                       >
                                         @if ($categories->count() > 0)
                                             <option selected disabled>Select Category</option>
                                             @foreach ($categories as $category)
-                                                <option value="{{ $category->id }}" >{{ $category->category_name }} </option>
+                                                <option value="{{ $category->id }}" >{{ $category->name }} </option>
                                             @endforeach
                                         @else
                                             <option selected disabled>Please Select Category</option>
                                         @endif
                                     </select>
-                                    @error('make_category_id')
-                                    <div class="text-danger">{{ $message }}</div>
-                                   @enderror
                                     <span class="text-danger product_select_error"></span>
                                 </div>
                                 <div class="col-md-2"  style="margin-top: 10px">
@@ -56,14 +53,6 @@
                                 <input type="number" name="sale_price" value="{{ old('sale_price') }}" class="form-control barcode_input" placeholder="Item Price"
                                      aria-describedby="btnGroupAddon">
                             </div>
-                        </div>
-                        <div class="mb-2 col-md-6">
-                            <h6 class="card-title">Product Image</h6>
-                            <input type="file" class="categoryImage" name="picture" id="myDropify" />
-                        </div>
-                        <div class="mb-2 col-md-6">
-                            <label for="" class="form-label">Item Note</label>
-                            <textarea class="form-control" value="{{ old('note') }}" name="note" id="" rows="9"></textarea>
                         </div>
                     </div>
                     {{-- <button type="submit" class="btn btn-primary ms-2"
@@ -145,35 +134,73 @@
         </div>
 
     </div>
-   {{-- /////////////////Category Add Modal//////////////// --}}
+   {{-- /////////////////Set Category Add Modal//////////////// --}}
 <div class="modal fade" id="exampleModalLongScollable" tabindex="-1"
    aria-labelledby="exampleModalScrollableTitle" aria-hidden="true">
    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
        <div class="modal-content">
            <div class="modal-header">
-               <h5 class="modal-title" id="exampleModalScrollableTitle">Add  Category</h5>
+               <h5 class="modal-title" id="exampleModalScrollableTitle">Add Set Category</h5>
                <button type="button" class="btn-close" data-bs-dismiss="modal"
                    aria-label="btn-close"></button>
            </div>
            <div class="modal-body">
                <form id="signupForm" class="categoryForm">
-                   <div class="mb-3">
-                       <label for="name" class="form-label">Category Name</label>
-                       <input id="defaultconfig" class="form-control category_name"
-                           maxlength="250" name="category_name" type="text"
-                           onkeyup="errorRemove(this);" onblur="errorRemove(this);">
-                       <span class="text-danger category_name_error"></span>
-                   </div>
+                  <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Category Name</label>
+                            <input id="defaultconfig" class="form-control category_name"
+                                maxlength="250" name="category_name" type="text">
+                            <span class="text-danger category_name_error"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Discount Amount</label>
+                            <input id="defaultconfig" class="form-control discount_amount"
+                                maxlength="250" name="category_name" type="text">
+                            <span class="text-danger category_name_error"></span>
+                        </div>
+                    </div>
+
+                  </div>
+                  <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Category Image</label>
+                            <input type="file" class="categoryImage" name="picture" id="myDropify" />
+                            <span class="text-danger category_name_error"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Note</label>
+                           <textarea name="note" class="form-control" id="" cols="30" rows="9"></textarea>
+                            <span class="text-danger category_name_error"></span>
+                        </div>
+                    </div>
+
+                  </div>
            </div>
            <div class="modal-footer">
                <button type="button" class="btn btn-secondary"
                    data-bs-dismiss="modal">Close</button>
-               <button type="button" class="btn btn-primary save_category">Save</button>
+               <button type="button" class="btn btn-primary save_set_category
+               ">Save</button>
            </div>
            </form>
        </div>
    </div>
 </div>
+<style>
+    .modal.fade .modal-dialog {
+        transition: transform 0.0s ease-out; /* Adjust duration (e.g., 0.2s for 200ms) */
+    }
+    .modal.fade.show .modal-dialog {
+        transform: translateY(0);
+    }
+</style>
 <!--------Category Modal-------->
     {{-- table  --}}
     <div class="row">
@@ -269,126 +296,8 @@ $('#myValidForm').validate({
 });
 //form insert
 $(document).ready(function() {
-    $('.myForm').submit(function(event) {
-        event.preventDefault();
-
-        var formData = new FormData(this);
-        $('#quantityError').text('');
-        $('#productError').text('');
-        var quantity = $('#quantity').val();
-        var product = $('#productValid').val();
-        $('#unitError').text('');
-        var unit = $('#unit').val();
-        if (!product) {
-            $('#productError').text('Product is required.');
-            return;
-        }
-        if (!quantity) {
-            $('#quantityError').text('Quantity is required.');
-            return;
-        }
-        if (!unit) {
-            $('#unitError').text('Unit is required.');
-            return;
-        }
-        $.ajax({
-            type: 'POST',
-            url: '/store/make/item',
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: function(response) {
-                var productName = response.material.product.name;
-                var productPrice = response.material.product.price;
-                var unitName = response.material.unit.name;
-                var productId = response.material.id;
-                var aproCost = response.material.apro_cost;
-                var newQuantity = response.material.quantity;
-                var newAproCost = parseFloat(aproCost);
-
-                var existingRow = $('.showData tr[data-id="' + productId + '"]');
-
-                if (existingRow.length) {
-                    // Update existing row
-                    // var existingQuantity = parseFloat(existingRow.find('#quantity').text());
-                    var existingAproCost = parseFloat(existingRow.find('.apro-cost').text());
-                    var updatedQuantity =newQuantity;
-                    var updatedAproCost = newAproCost;
-
-                    existingRow.find('.quantity').text(updatedQuantity);
-                    existingRow.find('.apro-cost').text(updatedAproCost.toFixed(2));
-                } else {
-                    // Add new row if product does not exist
-                    var newRow = '<tr data-id="' + productId + '">' +
-                                 '<td>' + productName + '</td>' +
-                                 '<td>' + productPrice + '</td>' +
-                                // '<td class="quantity">' + newQuantity + '</td>' +
-                                '<td class="quantity"><input type="number" class="form-control" value="' + newQuantity + '" min="1"></td>' +
-                                 '<td>' + unitName + '</td>' +
-                                 '<td class="apro-cost">' + aproCost + '</td>' +
-                                 '<td><a type="button" class="btn btn-sm text-danger deleteRow"><i class="fas fa-trash-alt"></i></a></td>' +
-                                 '</tr>';
-                    $('.showData').append(newRow);
-                }
-                calculateTotalCost();
-                if (response.status === 200) {
-                    document.querySelector('.makeItemId').value = response.makeItemId;
-                    toastr.success(response.message);
-                } else {
-                    toastr.error('Failed to Create.');
-                }
-            },
-            error: function(xhr, status, error) {
-                console.error(xhr.responseText);
-            }
-        });
-    });
-      //validation
-      $('#quantity').on('input', function() {
-        $('#quantityError').text('');
-    });
-    $('#unit').change(function() {
-        $('#unitError').text('');
-    });
-    $('#productValid').change(function() {
-        $('#productError').text('');
-    });
-    $(document).on('click', '.deleteRow', function() {
-        var row = $(this).closest('tr');
-        var id = row.data('id');
-        $.ajax({
-            type: 'get',
-            url: '/delete/material/' + id,
-            data: {
-                _token: '{{ csrf_token() }}',
-            },
-            success: function(response) {
-                if (response.status === 200) {
-                    row.remove();
-                    calculateTotalCost();
-                    toastr.success(response.message);
-                } else {
-                    toastr.error('Failed to delete the item.');
-                }
-            },
-            error: function(xhr, status, error) {
-                console.error(xhr.responseText);
-                toastr.error('Failed to delete the item.');
-            }
-        });
-    });
-
-    function calculateTotalCost() {
-        var totalCost = 0;
-        $('.apro-cost').each(function() {
-            totalCost += parseFloat($(this).text());
-        });
-        $('#totalCost').text(totalCost.toFixed(2));
-        $('input[name="total_cost_price"]').val(totalCost.toFixed(2));
-    }
-   });
         //Category add
-        const saveCategory = document.querySelector('.save_category');
+        const saveCategory = document.querySelector('.save_set_category');
         saveCategory.addEventListener('click', function(e) {
                 e.preventDefault();
                 // alert('ok')
@@ -399,7 +308,7 @@ $(document).ready(function() {
                     }
                 });
                 $.ajax({
-                    url: '/add/make/item/catgoey',
+                    url: '/set/item/catgoey',
                     type: 'POST',
                     data: formData,
                     processData: false,
@@ -425,22 +334,7 @@ $(document).ready(function() {
                     }
                 });
             })
-    ///Item Cost // Show realtime update total cot
-        function updateCost() {
-        const productSelect = document.querySelector('.product_select');
-        const quantityInput = document.getElementById('quantity');
-        $('.product_select').change(function() {
-        $('#quantity').val('');
-          });
-        const itemCostInput = document.getElementById('itemCost');
-
-        const selectedOption = productSelect.options[productSelect.selectedIndex];
-        const price = parseFloat(selectedOption.getAttribute('data-price')) || 0;
-        const quantity = parseFloat(quantityInput.value) || 0;
-        const totalCost = price * quantity;
-        itemCostInput.value = totalCost.toFixed(2);
-
-    }
+        });
     </script>
 
 

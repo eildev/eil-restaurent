@@ -1,5 +1,5 @@
 @extends('master')
-@section('title', '| Make Items')
+@section('title', '| Make Item Edit')
 @section('admin')
 
     <div class="row mt-0">
@@ -10,7 +10,7 @@
                 <div class="card-body px-4 py-2">
                     <form id="myValidForm" class="myForm" method="POST" enctype="multipart/form-data">
                         @csrf
-                        <input type="hidden" name="id" class="makeItemId" value="0">
+                        <input type="hidden" name="id" class="makeItemId" value="{{$itemEditId->id ?? 0}}">
                         <input type="hidden" name="total_cost_price" value="0">
                     <div class="row" >
                         <div class="mb-1 col-md-4">
@@ -25,7 +25,7 @@
                                         @if ($categories->count() > 0)
                                             <option selected disabled>Select Category</option>
                                             @foreach ($categories as $category)
-                                                <option value="{{ $category->id }}" >{{ $category->category_name }} </option>
+                                                <option value="{{ $category->id }}" {{ $itemEditId->make_category_id == $category->id ? 'selected' : '' }} >{{ $category->category_name }} </option>
                                             @endforeach
                                         @else
                                             <option selected disabled>Please Select Category</option>
@@ -46,21 +46,23 @@
                         <div class="mb-2 col-md-4 form-valid-groups">
                             <label for="ageSelect" class="form-label">Item Name</label>
                             <div class="">
-                                <input type="text" name="item_name" value="{{ old('item_name') }}" class="form-control barcode_input" placeholder="Item Name"
+                                <input type="text" name="item_name"  class="form-control barcode_input" value="{{$itemEditId->item_name}}" placeholder="Item Name"
                                      aria-describedby="btnGroupAddon">
                             </div>
                         </div>
                         <div class="mb-2 col-md-4 form-valid-groups">
                             <label for="ageSelect" class="form-label">Item Price</label>
                             <div class="">
-                                <input type="number" name="sale_price" value="{{ old('sale_price') }}" class="form-control barcode_input" placeholder="Item Price"
+                                <input type="number" name="sale_price" value="{{$itemEditId->sale_price}}" class="form-control barcode_input" placeholder="Item Price"
                                      aria-describedby="btnGroupAddon">
                             </div>
                         </div>
                         <div class="mb-2 col-md-6">
                             <h6 class="card-title">Product Image</h6>
-                            <input type="file" class="categoryImage" name="picture" id="myDropify" />
+                            <input type="file" class="categoryImage" name="picture" id="myDropify" data-default-file="{{ $itemEditId->picture ? asset($itemEditId->picture) : '' }}" />
                         </div>
+
+
                         <div class="mb-2 col-md-6">
                             <label for="" class="form-label">Item Note</label>
                             <textarea class="form-control" value="{{ old('note') }}" name="note" id="" rows="9"></textarea>
@@ -88,7 +90,7 @@
                                 @if ($products->count() > 0)
                                     <option selected disabled>Select Product</option>
                                     @foreach ($products as $product)
-                                        <option value="{{ $product->id }}" data-price="{{ $product->price }}"">{{ $product->name }} ({{ $product->stock }}
+                                        <option value="{{ $product->id }}" data-price="{{ $product->price }}">{{ $product->name }} ({{ $product->stock }}
                                             {{ $product->unit->name }} Available )
                                         </option>
                                     @endforeach
@@ -96,7 +98,6 @@
                                     <option selected disabled>Please Add Product</option>
                                 @endif
                             </select>
-
                             <div id="productError" class="text-danger"></div>
                         </div>
                         <div class="mb-2 col-md-3 form-valid-groups">
@@ -104,17 +105,16 @@
                             <div class="">
                                 <input type="number" id="quantity" class="form-control" name="quantity" placeholder="Quantity"
                                      aria-describedby="btnGroupAddon" oninput="updateCost();">
-                                     {{--  min="1" if i use then call it --}}
                             </div>
                             <div id="quantityError" class="text-danger"></div>
                         </div>
-                        <div class="mb-1 col-md-3 form-valid-groups">
+                        <div class="mb-1 col-md-3 ">
                             <label for="password" class="form-label">Unit</label>
                             @php
                             $units = App\Models\unit::all();
                             @endphp
                         <label for="ageSelect" class="form-label">Materials Name</label>
-                        <select class="js-example-basic-single form-select" id="unit" name="unit" data-width="100%"
+                        <select id="unit" class="js-example-basic-single form-select" name="unit" data-width="100%"
                             onclick="errorRemove(this);" onblur="errorRemove(this);">
                             @if ($units->count() > 0)
                                 <option selected disabled>Select Unit</option>
@@ -126,7 +126,7 @@
                             @endif
                         </select>
                         <div id="unitError" class="text-danger"></div>
-                        <span class="text-danger product_select_error"></span>
+
                         </div>
                         <div class="mb-1 col-md-3">
                             <label for="password" class="form-label">Total Cost</label>
@@ -134,7 +134,7 @@
                                 <input type="text" class="form-control barcode_input" id="itemCost" placeholder="Item Cost" name="apro_cost"
                                      aria-describedby="btnGroupAddon" readonly>
                                 <button type="submit" class="btn btn-primary ms-2"
-                                   >Add</button>
+                                   >add</button>
                             </div>
                         </div>
                     </div>
@@ -176,6 +176,7 @@
 </div>
 <!--------Category Modal-------->
     {{-- table  --}}
+    
     <div class="row">
         <div class="col-md-12 mb-1 grid-margin stretch-card">
             <div class="card">
@@ -238,7 +239,6 @@ $('#myValidForm').validate({
         make_category_id: {
             required: true,
         },
-
     },
     messages: {
 
@@ -251,7 +251,6 @@ $('#myValidForm').validate({
         make_category_id: {
             required: 'Select Category Field Required',
         },
-
     },
     errorElement: 'span',
     errorPlacement: function(error, element) {
@@ -270,9 +269,9 @@ $('#myValidForm').validate({
 //form insert
 $(document).ready(function() {
     $('.myForm').submit(function(event) {
-        event.preventDefault();
-
-        var formData = new FormData(this);
+        event.preventDefault(); // Prevent the default form submission
+        var formData = new FormData(this); // Create a FormData object to send form data including files
+        //validation
         $('#quantityError').text('');
         $('#productError').text('');
         var quantity = $('#quantity').val();
@@ -291,9 +290,10 @@ $(document).ready(function() {
             $('#unitError').text('Unit is required.');
             return;
         }
+        //validation End
         $.ajax({
             type: 'POST',
-            url: '/store/make/item',
+            url: '/update/make/item',
             data: formData,
             processData: false,
             contentType: false,
@@ -315,22 +315,23 @@ $(document).ready(function() {
                     var updatedQuantity =newQuantity;
                     var updatedAproCost = newAproCost;
 
-                    existingRow.find('.quantity').text(updatedQuantity);
+                    existingRow.find('.quantity').text(newQuantity);
                     existingRow.find('.apro-cost').text(updatedAproCost.toFixed(2));
                 } else {
                     // Add new row if product does not exist
                     var newRow = '<tr data-id="' + productId + '">' +
                                  '<td>' + productName + '</td>' +
                                  '<td>' + productPrice + '</td>' +
-                                // '<td class="quantity">' + newQuantity + '</td>' +
-                                '<td class="quantity"><input type="number" class="form-control" value="' + newQuantity + '" min="1"></td>' +
+                                 '<td class="quantity">' + newQuantity + '</td>' +
                                  '<td>' + unitName + '</td>' +
                                  '<td class="apro-cost">' + aproCost + '</td>' +
                                  '<td><a type="button" class="btn btn-sm text-danger deleteRow"><i class="fas fa-trash-alt"></i></a></td>' +
                                  '</tr>';
-                    $('.showData').append(newRow);
+                    $('.showData').append(newRow); // Append the new row to the table body
                 }
+
                 calculateTotalCost();
+
                 if (response.status === 200) {
                     document.querySelector('.makeItemId').value = response.makeItemId;
                     toastr.success(response.message);
@@ -338,13 +339,16 @@ $(document).ready(function() {
                     toastr.error('Failed to Create.');
                 }
             },
+
             error: function(xhr, status, error) {
+                // Handle errors
                 console.error(xhr.responseText);
             }
         });
+
     });
-      //validation
-      $('#quantity').on('input', function() {
+    //validation
+    $('#quantity').on('input', function() {
         $('#quantityError').text('');
     });
     $('#unit').change(function() {
@@ -353,19 +357,64 @@ $(document).ready(function() {
     $('#productValid').change(function() {
         $('#productError').text('');
     });
+    // Selected Product Show Start
+    function showSelectedItems() {
+                let id = '{{ $itemEditId->id }}';
+                $.ajax({
+                    url: '/make/item/find/' + id,
+                    type: 'GET',
+                    dataType: 'JSON',
+                    success: function(res) {
+                        if (res.status == 200) {
+                            const items = res.materialsItems;
+                            // console.log(items);
+                            items.forEach(item => {
+                                // console.log(item)
+                                var ItemId = item.id;
+                                var ProductId = item.product_id;
+                                const productName = item.product.name;
+                                const productPrice = item.product.price;
+                                const unitName = item.unit.name;
+                                const quantity = item.quantity;
+                                const aproCost = item.apro_cost;
+                                var newRow = `
+                            <tr data-id="${ItemId}">
+                                <td>${productName}</td>
+                                <td>${productPrice}</td>
+                                <td class="quantity">${quantity}</td>
+
+                                <td>${unitName}</td>
+                                <td class="apro-cost">${aproCost}</td>
+                                <td><a type="button" class="btn btn-sm text-danger deleteRow"><i class="fas fa-trash-alt"></i></a></td>
+                            </tr>`;
+                    $('.showData').append(newRow);
+                            });
+
+                            calculateTotalCost();
+                        } else {
+                            toastr.warning(res.error);
+                        }
+                    }
+                });
+            }
+        showSelectedItems();
+    //
+    //Selected Product Show End
     $(document).on('click', '.deleteRow', function() {
         var row = $(this).closest('tr');
         var id = row.data('id');
+
+        // Send an Ajax request to delete the material
         $.ajax({
             type: 'get',
             url: '/delete/material/' + id,
             data: {
-                _token: '{{ csrf_token() }}',
+                _token: '{{ csrf_token() }}', // Include CSRF token for Laravel
             },
             success: function(response) {
                 if (response.status === 200) {
-                    row.remove();
-                    calculateTotalCost();
+                    row.remove(); // Remove the row from the table
+                    calculateTotalCost(); // Recalculate total cost after deletion
                     toastr.success(response.message);
                 } else {
                     toastr.error('Failed to delete the item.');
@@ -383,10 +432,13 @@ $(document).ready(function() {
         $('.apro-cost').each(function() {
             totalCost += parseFloat($(this).text());
         });
-        $('#totalCost').text(totalCost.toFixed(2));
-        $('input[name="total_cost_price"]').val(totalCost.toFixed(2));
+        $('#totalCost').text(totalCost.toFixed(2)); // Update the total cost display in the footer
+        $('input[name="total_cost_price"]').val(totalCost.toFixed(2)); // Set the calculated total cost as the value of the input field
     }
-   });
+});
+
+
+
         //Category add
         const saveCategory = document.querySelector('.save_category');
         saveCategory.addEventListener('click', function(e) {

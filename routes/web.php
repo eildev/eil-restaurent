@@ -27,6 +27,7 @@ use App\Http\Controllers\DamageController;
 use App\Http\Controllers\CustomeMailControler;
 use App\Http\Controllers\RolePermissionController;
 use App\Http\Controllers\MakeItemsController;
+use App\Http\Controllers\SetController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -315,8 +316,21 @@ Route::middleware('auth')->group(function () {
     Route::controller(MakeItemsController::class)->group(function () {
         Route::get('/make/item', 'index')->name('make.item');
         Route::post('/add/make/item/catgoey', 'MakeItemCategory')->name('make.item.category');
+        Route::get('/make/item/catgoey/view', 'MakeItemCategoryView')->name('make.item.category.view');
+        Route::get('/make/item/catgoey/edit/{id}', 'MakeItemCategoryEdit')->name('make.item.category.edit');
+        Route::get('/make/item/catgoey/delete/{id}', 'MakeItemCategoryDelete')->name('make.item.category.delete');
+        Route::post('/make/item/catgoey/update/{id}', 'MakeItemCategoryUpdate')->name('update.item.category');
         Route::post('/store/make/item/', 'MakeItemStore')->name('make.item.store');
         Route::get('/delete/material/{id}', 'DestroyMaterials');
+        Route::get('/make/item/manage', 'MakeItemManage')->name('make.item.manage');
+        Route::get('/make/item/edit/{id}', 'MakeItemEdit')->name('make.item.edit');
+        Route::get('/make/item/find/{id}', 'MakeItemFind')->name('make.item.find');
+        Route::post('/update/make/item', 'UpdateMakeItem')->name('update.make.item');
+        Route::get('/make/item/delete/{id}', 'MakeItemDelete')->name('make.item.delete');
+    });
+    // Set Categoy & Set Items related routes
+    Route::controller(SetController::class)->group(function () {
+        Route::get('/set/item', 'Setitem')->name('set.item');
     });
     // Transaction related route(n)
     Route::controller(EmployeeSalaryController::class)->group(function () {
