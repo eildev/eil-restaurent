@@ -322,8 +322,8 @@ $(document).ready(function() {
                     var newRow = '<tr data-id="' + productId + '">' +
                                  '<td>' + productName + '</td>' +
                                  '<td>' + productPrice + '</td>' +
-                                // '<td class="quantity">' + newQuantity + '</td>' +
-                                '<td class="quantity"><input type="number" class="form-control" value="' + newQuantity + '" min="1"></td>' +
+                               '<td class="quantity">' + newQuantity + '</td>' +
+                                // '<td class="quantity"><input type="number" class="form-control" value="' + newQuantity + '" min="1"></td>' +
                                  '<td>' + unitName + '</td>' +
                                  '<td class="apro-cost">' + aproCost + '</td>' +
                                  '<td><a type="button" class="btn btn-sm text-danger deleteRow"><i class="fas fa-trash-alt"></i></a></td>' +

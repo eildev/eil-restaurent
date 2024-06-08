@@ -7,8 +7,7 @@ use App\Models\ItemCategory;
 use App\Models\MakeItem;
 use App\Models\MaterialList;
 use Illuminate\Support\Facades\File;
-
-use Validator;
+use Illuminate\Support\Facades\Validator;
 class MakeItemsController extends Controller
 {
     public function index(){
