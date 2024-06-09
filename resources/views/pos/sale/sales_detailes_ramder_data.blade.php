@@ -36,9 +36,9 @@
         <thead>
             <tr>
                 <td>
-                    <h4>Total</h5> (Items: {{$sale_items->count()}}, Quantity: {{$sale_items->sum('qty')}})
+                    <h4>Total</h5> (Items: <span class="sale_items_count">{{$sale_items->count()}}</span>, Quantity: <span class="sale_item_quantity">{{$sale_items->sum('qty')}}</span>
                 </td>
-                <td>S.T ৳{{ $sale->receivable }}</td>
+                <td>S.T ৳<span class="total_sale_receivable">{{ $sale->receivable }}</span></td>
                 <input type="hidden" class="final_receivable_main_value" value="{{ $sale->final_receivable }}">
                 <td>G.T ৳<span class="final_receivable">{{ $sale->final_receivable }}<span></td>
             </tr>
@@ -54,7 +54,7 @@
                             <select
                                 class="form-select select_dine {{ $mode->dark_mode == 1 ? 'my_select_dark' : 'my_select_white' }} me-2"
                                 name="dine" id="ageSelect" style="border-color:#00a9f1 !important;">
-                                <option selected="" disabled="" value="1">Select Dine
+                                <option selected="" disabled="" value="">Select Dine
                                 </option>
                                 @php
                                     $dines = App\Models\Dine::all();

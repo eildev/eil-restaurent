@@ -200,10 +200,12 @@
                                         <table class="table">
                                             <thead>
                                                 <tr>
+                                                    @php $customers = App\Models\Customer::first(); @endphp
+
                                                     <th style="font-size: 10px; padding: 0 20px 10px 13px">
                                                         Customer Info:<br>
-                                                        <span> name: Md Majidul Islam</span>
-                                                        <input type="hidden" class="customer_id" value="1">
+                                                        <span class="customer_name">{{ $customers->name }}</span>
+                                                        <input type="hidden" class="customer_id" value="{{$customers->id}}">
                                                         <input type="hidden" value="0" class="sale_id">
                                                         <input type="hidden" value="<?php echo rand(123456, 99999) ?>" class="invoice_number">
                                                         <input type="hidden" value="0" class="payment_method"
@@ -211,11 +213,11 @@
                                                     </th>
                                                     <th style="font-size: 10px; padding: 0 20px 10px 13px">
 
-                                                        <span> address: Banasree, Dhaka</span><br>
-                                                        <span> P. Total: 50000</span>
+                                                        <span class="customer_address">{{ !empty($customers->phone) ? $customers->phone : $customers->address }}</span><br>
+                                                        <span> P. Total: <span class="customer_total_receivable">{{ $customers->total_receivable }}</span></span>
                                                     </th>
                                                     <th>
-                                                        <button
+                                                        <button data-bs-target="#customerModal" data-bs-toggle="modal"
                                                             class="{{ $mode->dark_mode == 1 ? 'mybtn_white' : 'mybtn_dark' }}"
                                                             style="width: 35px; height: 25px; border-radius:5px;font-size:10px;padding-left: 0px;"><i
                                                                 class="fa fa-pencil"></i></button>
@@ -257,19 +259,37 @@
         <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalScrollableTitle">Add Customer Info</h5>
+                    <h5 class="modal-title" id="exampleModalScrollableTitle">Add or Select Customer</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="btn-close"></button>
                 </div>
                 <div class="modal-body">
                     <form class="customerForm row">
-                        <div class="mb-3 col-md-6">
+                        <div class="col-md-12 form-valid-groups pe-0">
+                            <label for="ageSelect" class="form-label">Choose Customer</label>
+                            @php $customers = App\Models\Customer::all(); @endphp
+                            <select class=" form-select select_customer" data-width="100%" name="make_category_id">
+                                @if ($customers)
+                                    <option selected disabled>Please Select Customer</option>
+                                    @foreach ($customers as $customer)
+                                        <option value="{{ $customer->id }}" >{{ $customer->name }} </option>
+                                    @endforeach
+                                @else
+                                    <option selected disabled>Please Select Customer</option>
+                                @endif
+                            </select>
+                            @error('make_category_id')
+                            <div class="text-danger">{{ $message }}</div>
+                           @enderror
+                            <span class="text-danger product_select_error"></span>
+                        </div>
+                        <div class="mb-3 col-md-6 mt-3">
                             <label for="name" class="form-label">Customer Name <span
                                     class="text-danger">*</span></label>
                             <input id="defaultconfig" class="form-control customer_name" maxlength="255" name="name"
                                 type="text" onkeyup="errorRemove(this);" onblur="errorRemove(this);">
                             <span class="text-danger customer_name_error"></span>
                         </div>
-                        <div class="mb-3 col-md-6">
+                        <div class="mb-3 col-md-6 mt-3">
                             <label for="name" class="form-label">Phone Nnumber <span
                                     class="text-danger">*</span></label>
                             <input id="defaultconfig" class="form-control phone" maxlength="39" name="phone"
@@ -301,6 +321,53 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     <button type="button" class="btn btn-primary save_new_customer">Save</button>
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="saleModal" tabindex="-1" aria-labelledby="exampleModalScrollableTitle"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalScrollableTitle">Payment Section</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="btn-close"></button>
+                </div>
+                <div class="modal-body">
+                    <form class="customerForm row">
+                        <div class="mb-3 col-md-6">
+                            <label for="name" class="form-label">Sub Total</label>
+                            <input id="defaultconfig" class="form-control modal_subtotal" maxlength="39" type="number">
+                        </div>
+                        <div class="mb-3 col-md-6">
+                            <label for="name" class="form-label">Tax</label>
+                            <select name="" id="" class="form-control">
+                                <option value="0">0%</option>
+                                <option value="5">5%</option>
+                                <option value="7">7%</option>
+                                <option value="15">15%</option>
+                            </select>
+                        </div>
+                        <div class="mb-3 col-md-6">
+                            <label for="name" class="form-label">Grand Total</label>
+                            <input id="defaultconfig" class="form-control opening_payable" maxlength="39"
+                                name="opening_payable" type="number">
+                        </div>
+                        <div class="mb-3 col-md-6">
+                            <label for="name" class="form-label">Pay Amount</label>
+                            <input id="defaultconfig" class="form-control opening_payable" maxlength="39"
+                                name="opening_payable" type="number">
+                        </div>
+                        <div class="mb-3 col-md-6">
+                            <label for="name" class="form-label">Cash Back</label>
+                            <input id="defaultconfig" class="form-control opening_payable" maxlength="39"
+                                name="opening_payable" type="number">
+                        </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary save_new_customer"><i class="fa fa-print"></i> Print</button>
                 </div>
                 </form>
             </div>
@@ -344,8 +411,8 @@
                             </div>
                             <div class="card-footer" style="padding: 5px!important">
                                 <div class="d-flex" style="flex-wrap:wrap;justify-content:center">
-                                    <button class="{{ $mode->dark_mode == 1 ? 'mybtn_white' : 'mybtn_dark' }}"
-                                        style="; max-width:48px;border-radius:10px; margin-top:5px">Cash</button>
+                                    <button class="cashby_tablequeue {{ $mode->dark_mode == 1 ? 'mybtn_white' : 'mybtn_dark' }}"
+                                        style="; max-width:48px;border-radius:10px; margin-top:5px" value="${val.final_receivable}">Cash</button>
                                     <button class="{{ $mode->dark_mode == 1 ? 'mybtn_white' : 'mybtn_dark' }}"
                                         style="margin-left:5px; max-width:48px;border-radius:10px; margin-top:5px">bKash</button>
                                     <button class="{{ $mode->dark_mode == 1 ? 'mybtn_white' : 'mybtn_dark' }}"
@@ -363,7 +430,21 @@
 
             });
         }
-
+        // let cashby_tablequeue = document.querySelectorAll('.cashby_tablequeue');
+        // console.log(cashby_tablequeue)
+        // cashby_tablequeue.forEach(btn =>{
+        //     btn.addEventListener('click',function(e){
+        //         e.preventDefault();
+        //         let value = e.target.value;
+        //         alert(vale)
+        //     });
+        // });
+        $(document).on('click','.cashby_tablequeue',function(e){
+            e.preventDefault();
+            let value = e.target.value;
+            $('#saleModal').modal('show');
+            document.querySelector('.modal_subtotal').value = value;
+        });
         const Item__div = document.querySelectorAll('.Item__div');
         Item__div.forEach(element => {
             element.addEventListener('click', function(e) {
@@ -375,6 +456,7 @@
                 const dine = document.querySelector('.select_dine').value ?? 0;
                 const invoice_number = document.querySelector('.invoice_number').value;
                 const note = "Note dynamic korte hobe";
+                const tax = 1;
                 $.ajaxSetup({
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -391,7 +473,8 @@
                         sale_discount,
                         dine,
                         invoice_number,
-                        note
+                        note,
+                        tax
                     },
                     success: function(res) {
                         // Assuming the response is in JSON format and contains the HTML
@@ -434,8 +517,59 @@
             });
             const btn_add_queu = document.querySelector('.btn_add_queu');
             btn_add_queu.addEventListener('click', function(event) {
-                showTableQueue();
-                toastr.success('Qrder Queue Successfully Added');
+
+                const select_dine = document.querySelector('.select_dine');
+                const customer_id = document.querySelector('.customer_id').value;
+                const sale_id = document.querySelector('.sale_id').value;
+                const payment_method = document.querySelector('.payment_method').value;
+                const sale_discount = document.querySelector('.sale_discount').value ?? 0;
+                const tax = 1;
+                const note = "Note dynamic korte hobe";
+                if(select_dine.value === ''){
+                    toastr.error('Please Select Dine');
+                    select_dine.focus();
+                    return false;
+                }
+
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+                $.ajax({
+                    url: '/update/sale',
+                    type: 'POST',
+                    data: {
+                        customer_id,
+                        sale_id,
+                        payment_method,
+                        sale_discount,
+                        note,
+                        tax
+                    },
+                    success: function(res) {
+
+                        if (res && res.html) {
+                            toastr.success('Qrder Queue Successfully Added');
+                            document.querySelector('.renderData').innerHTML = res.html;
+                            showTableQueue();
+                            attachEventListeners();
+                            disableDiv('controls');
+                            document.querySelector('.sale_id').value = "0";
+                            document.querySelector('.sale_items_count').textContent = "0";
+                            document.querySelector('.sale_item_quantity').textContent = "0";
+                            document.querySelector('.total_sale_receivable').textContent = "0";
+                            document.querySelector('.final_receivable').textContent = "0";
+                            document.querySelector('.final_receivable_main_value').value = "0";
+                        } else {
+                            console.error('Invalid response format:', res);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('AJAX error:', error);
+                    }
+                });
+
             });
 
         }
@@ -473,5 +607,76 @@
             // Remove the class that indicates the div is disabled
             div.classList.remove('disabled-div');
         }
+
+        const select_customer = document.querySelector('.select_customer');
+        select_customer.addEventListener('change', function(e) {
+            // toastr.success('Please select');
+            const customer_id = document.querySelector('.select_customer').value;
+            $.ajax({
+                url:'select/customer/for-pos/' + customer_id,
+                type:'get',
+                success:function(res){
+                    toastr.success('Customer Successfully Added');
+                    $('#customerModal').modal('hide');
+                    document.querySelector('.customer_name').textContent = res.data.name;
+                    let phoneoraddress;
+                    if(res.data.phone !== null){
+                        phoneoraddress = res.data.phone
+                    }
+                    else{
+                        phoneoraddress = res.data.address
+                    }
+                    document.querySelector('.customer_address').textContent = phoneoraddress;
+                    document.querySelector('.customer_total_receivable').textContent = res.data.total_receivable;
+                    document.querySelector('.customer_id').value = res.data.id;
+                }
+            });
+        });
+
+        const saveCustomer = document.querySelector('.save_new_customer');
+            saveCustomer.addEventListener('click', function(e) {
+                e.preventDefault();
+                // alert('ok')
+                let formData = new FormData($('.customerForm')[0]);
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+                $.ajax({
+                    url: '/add/customer',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(res) {
+                        if (res.status == 200) {
+                            // console.log(res);
+                            $('#customerModal').modal('hide');
+                            $('.customerForm')[0].reset();
+                            toastr.success(res.message);
+                            document.querySelector('.customer_name').textContent = res.data.name;
+                            let phoneoraddress;
+                            if(res.data.phone !== null){
+                                phoneoraddress = res.data.phone
+                            }
+                            else{
+                                phoneoraddress = res.data.address
+                            }
+                            document.querySelector('.customer_address').textContent = phoneoraddress;
+                            document.querySelector('.customer_total_receivable').textContent = res.data.total_receivable;
+                            document.querySelector('.customer_id').value = res.data.id;
+                        } else {
+                            // console.log(res);
+                            if (res.error.name) {
+                                showError('.customer_name', res.error.name);
+                            }
+                            if (res.error.phone) {
+                                showError('.phone', res.error.phone);
+                            }
+                        }
+                    }
+                });
+            })
     </script>
 @endsection

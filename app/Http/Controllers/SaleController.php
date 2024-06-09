@@ -41,7 +41,6 @@ class SaleController extends Controller
             'name' => 'required',
             'phone' => 'required',
         ]);
-
         if ($validator->passes()) {
             $customer = new Customer;
             $customer->branch_id = Auth::user()->branch_id;
@@ -59,6 +58,7 @@ class SaleController extends Controller
             return response()->json([
                 'status' => 200,
                 'message' => 'successfully save',
+                'data' => $customer,
             ]);
         } else {
             return response()->json([
@@ -67,7 +67,13 @@ class SaleController extends Controller
             ]);
         }
     }
-
+    public function SelectCustomer($id){
+        $customer = Customer::findOrFail($id);
+        return response()->json([
+            "status" => 200,
+            "data" => $customer
+        ]);
+    }
     public function store(Request $request)
     {
         // dd($request->all());
@@ -246,6 +252,25 @@ class SaleController extends Controller
         } catch (\Exception $e) {
             return response()->json(['error' => 'Failed to retrieve sales data.'], 500);
         }
+    }
+    public function SaleUpdate(Request $request){
+        // dd($request->all());
+        $sale = Sale::findOrFail($request->sale_id);
+        $sale->customer_id = $request->customer_id;
+        $sale->order_type = "general";
+        $sale->discount = $request->sale_discount;
+        $sale->change_amount = $sale->change_amount - $request->sale_discount;
+        $sale->tax = $request->tax;
+        $sale->receivable = $sale->receivable - $request->sale_discount;
+        $sale->final_receivable =  $sale->final_receivable - $request->sale_discount;
+        $sale->payment_method = $request->payment_method;
+        $sale->profit = $sale->profit - $request->sale_discount;
+        $sale->dine_id = $request->dine;
+        $sale->note = $request->note;
+        $sale->update();
+        $sale_items = SaleItem::where('sale_id', $request->sale_id);
+        $renderedHtml = view('pos.sale.sales_detailes_ramder_data', compact('sale_items', 'sale'))->render();
+        return response()->json(['html' => $renderedHtml]);
     }
     public function invoice($id)
     {

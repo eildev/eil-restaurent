@@ -300,6 +300,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/sale/destroy/{id}', 'destroy')->name('sale.destroy');
         Route::get('/get/customer', 'getCustomer')->name('get.customer');
         Route::post('/add/customer', 'addCustomer')->name('add.customer');
+        Route::post('/update/sale', 'SaleUpdate');
+        Route::get('/select/customer/for-pos/{id}', 'SelectCustomer');
         Route::get('/sale/invoice/{id}', 'invoice')->name('sale.invoice');
         Route::get('/sale/print/{id}', 'print')->name('sale.print');
         Route::get('/sale/filter', 'filter')->name('sale.filter');
