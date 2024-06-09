@@ -333,6 +333,10 @@ Route::middleware('auth')->group(function () {
     // Set Categoy & Set Items related routes
     Route::controller(SetController::class)->group(function () {
         Route::get('/set/item', 'Setitem')->name('set.item');
+        Route::post('/set/menu/store', 'SetMenuStore')->name('set.menu.store');
+        Route::get('/get-item-price', 'getItemPrice')->name('get.item.price');
+        Route::post('/store/set/item', 'StoreSetItem')->name('store.set.item');
+        Route::get('/delete/menu-item/{id}', 'DeleteMenuItem')->name('delete.menu.item');
     });
     // Transaction related route(n)
     Route::controller(EmployeeSalaryController::class)->group(function () {
