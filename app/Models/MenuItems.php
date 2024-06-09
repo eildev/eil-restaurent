@@ -18,4 +18,5 @@ class MenuItems extends Model
     {
         return $this->belongsTo(SetMenu::class, 'menu_id','id');
     }
+
 }
