@@ -445,6 +445,7 @@ $(document).ready(function () {
                                      '<td>' + menuName + '</td>' +
                                      '<td>' + itemName + '</td>' +
                                      '<td class="quantity">' + newQuantity + '</td>' +
+                                    //  '<td class="quantity"><input type="number" class="form-control" value="' + newQuantity + '" min="1"></td>' +
                                      '<td class="cost-price">' + newCost + '</td>' +
                                      '<td><a type="button" class="btn btn-sm text-danger deleteRow"><i class="fas fa-trash-alt"></i></a></td>' +
                                  '</tr>';
@@ -460,7 +461,9 @@ $(document).ready(function () {
                 console.error(xhr.responseText);
             }
         });
+
     });
+
 //Delete
 $(document).on('click', '.deleteRow', function() {
         var row = $(this).closest('tr');

@@ -326,7 +326,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/make/item/edit/{id}', 'MakeItemEdit')->name('make.item.edit');
         Route::get('/make/item/find/{id}', 'MakeItemFind')->name('make.item.find');
         Route::post('/update/make/item', 'UpdateMakeItem')->name('update.make.item');
-        Route::get('/make/item/delete/{id}', 'MakeItemDelete')->name('make.item.delete');
+        // Route::get('/make/item/delete/{id}', 'MakeItemDelete')->name('make.item.delete');
     });
     // Set Categoy & Set Items related routes
     Route::controller(SetController::class)->group(function () {
@@ -335,6 +335,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/get-item-price', 'getItemPrice')->name('get.item.price');
         Route::post('/store/set/item', 'StoreSetItem')->name('store.set.item');
         Route::get('/delete/menu-item/{id}', 'DeleteMenuItem')->name('delete.menu.item');
+        Route::post('/update/quantity', 'updateQuantity')->name('update.quantity');
     });
     // Transaction related route(n)
     Route::controller(EmployeeSalaryController::class)->group(function () {
