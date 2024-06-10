@@ -176,7 +176,7 @@
 </div>
 <!--------Category Modal-------->
     {{-- table  --}}
-    
+
     <div class="row">
         <div class="col-md-12 mb-1 grid-margin stretch-card">
             <div class="card">
@@ -404,17 +404,17 @@ $(document).ready(function() {
         var row = $(this).closest('tr');
         var id = row.data('id');
 
-        // Send an Ajax request to delete the material
+
         $.ajax({
             type: 'get',
             url: '/delete/material/' + id,
             data: {
-                _token: '{{ csrf_token() }}', // Include CSRF token for Laravel
+                _token: '{{ csrf_token() }}',
             },
             success: function(response) {
                 if (response.status === 200) {
-                    row.remove(); // Remove the row from the table
-                    calculateTotalCost(); // Recalculate total cost after deletion
+                    row.remove();
+                    calculateTotalCost();
                     toastr.success(response.message);
                 } else {
                     toastr.error('Failed to delete the item.');

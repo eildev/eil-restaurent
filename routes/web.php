@@ -301,8 +301,6 @@ Route::middleware('auth')->group(function () {
         Route::get('/sale/destroy/{id}', 'destroy')->name('sale.destroy');
         Route::get('/get/customer', 'getCustomer')->name('get.customer');
         Route::post('/add/customer', 'addCustomer')->name('add.customer');
-        Route::post('/update/sale', 'SaleUpdate');
-        Route::get('/select/customer/for-pos/{id}', 'SelectCustomer');
         Route::get('/sale/invoice/{id}', 'invoice')->name('sale.invoice');
         Route::get('/sale/print/{id}', 'print')->name('sale.print');
         Route::get('/sale/filter', 'filter')->name('sale.filter');
@@ -337,7 +335,18 @@ Route::middleware('auth')->group(function () {
         Route::post('/set/menu/store', 'SetMenuStore')->name('set.menu.store');
         Route::get('/get-item-price', 'getItemPrice')->name('get.item.price');
         Route::post('/store/set/item', 'StoreSetItem')->name('store.set.item');
+        Route::post('/update/set/item', 'UpdateSetItem')->name('update.set.item');
         Route::get('/delete/menu-item/{id}', 'DeleteMenuItem')->name('delete.menu.item');
+        Route::post('/update/menu/store/{itemId}', 'SetMenuUpdate')->name('update.menu.store');
+        Route::get('/set/menu/delete/{id}', 'SetMenuDelete')->name('set.menu.delete');
+        // Route::post('/update/quantity', 'updateQuantity')->name('update.quantity');
+                             //Set item Manage//
+        Route::get('/manage/set/menu', 'ManageSetMenu')->name('manage.set.menu');
+        Route::get('/manage/set/item', 'ManageSetItem')->name('manage.set.item');
+        Route::get('/menu/item/edit/{id}', 'ManageItemEdit')->name('menu.item.edit');
+        Route::get('/menu/item/find/{id}', 'MenuItemFind')->name('menu.item.find');
+
+
     });
     // Transaction related route(n)
     Route::controller(EmployeeSalaryController::class)->group(function () {

@@ -1,12 +1,9 @@
 @extends('master')
 @section('title', '| Set Items')
 @section('admin')
-
     <div class="row mt-0">
-
         <div class="col-lg-12 grid-margin stretch-card mb-3">
             <div class="card">
-
                 <div class="card-body px-4 py-2">
                     <form id="myValidForm" class="myForms" method="POST">
                         @csrf
@@ -24,7 +21,7 @@
                                         @if ($setMenus->count() > 0)
                                             <option selected disabled>Select Set Menu</option>
                                             @foreach ($setMenus as $setMenu)
-                                                <option value="{{ $setMenu->id }}" >{{ $setMenu->menu_name }} </option>
+                                                <option value="{{ $setMenu->id }}" {{$menuItems->menu_id  == $setMenu->id ? 'selected': ''}}>{{ $setMenu->menu_name }} </option>
                                             @endforeach
                                         @else
                                             <option selected disabled>Please Select Set Menu</option>
@@ -49,7 +46,7 @@
                                 @if ($makeItems->count() > 0)
                                     <option selected disabled>Select Items</option>
                                     @foreach ($makeItems as $makeItem)
-                                        <option value="{{ $makeItem->id }}">{{ $makeItem->item_name }}
+                                        <option value="{{ $makeItem->id }}" {{$menuItems->item_id  == $makeItem->id ? 'selected': ''}}>{{ $makeItem->item_name }}
                                         </option>
                                     @endforeach
                                 @else
@@ -61,14 +58,14 @@
                         <div class="mb-2 col-md-4">
                             <label for="ageSelect11" class="form-label">Sale Price</label>
                             <div class="">
-                                <input type="number" id="salePrice" name="sale_price" class="form-control" placeholder="0.00"
+                                <input type="number" id="salePrice" value="{{$menuItems['makeItems']['sale_price']}}" name="sale_price" class="form-control" placeholder="0.00"
                                      aria-describedby="btnGroupAddon" >
                             </div>
                         </div>
                         <div class="mb-2 col-md-3 form-valid-groups">
                             <label for="ageSelect" class="form-label">Quantity</label>
                             <div class="">
-                                <input type="number" id="quantity" class="form-control" name="quantity" placeholder="0"
+                                <input type="number" id="quantity" value= "{{$menuItems->quantity}}" class="form-control" name="quantity" placeholder="0"
                                      aria-describedby="btnGroupAddon">
                             </div>
                             <div id="quantityError" class="text-danger"></div>
@@ -76,7 +73,7 @@
                         <div class="mb-1 col-md-5">
                             <label for="password" class="form-label">Total Cost</label>
                             <div class="d-flex g-3">
-                                <input type="text" class="form-control barcode_input" id="costPrice" placeholder="0.00" name="apro_cost"
+                                <input type="text" class="form-control barcode_input" id="costPrice" placeholder="0.00" value="{{$menuItems->apro_cost}}" name="apro_cost"
                                      aria-describedby="btnGroupAddon" readonly>
                                 <button type="submit" class="btn btn-primary ms-2"
                                    >Add</button>
@@ -422,13 +419,14 @@ $(document).ready(function () {
 
         $.ajax({
             type: 'POST',
-            url: '/store/set/item',
+            url: '/update/set/item',
             data: formData,
             processData: false,
             contentType: false,
             success: function(response) {
                 // console.log(response.data.menuItem);
                 if (response.status === 200) {
+
                     var menuName = response.data.menuItem.menu_items.menu_name;
                     var itemName = response.data.menuItem.make_items.item_name;
                     var newQuantity = response.data.menuItem.quantity;
@@ -453,6 +451,7 @@ $(document).ready(function () {
                     $('.showData').append(newRow);
                 }
                 updateGrandTotal()
+
                     $('.menuItemId').val(response.menuItemId);
                     // console.log()
                 }
@@ -490,7 +489,6 @@ $(document).on('click', '.deleteRow', function() {
             }
         });
     });
-
     //
     function updateGrandTotal() {
     var grandTotal = 0;
@@ -499,6 +497,56 @@ $(document).on('click', '.deleteRow', function() {
     });
     $('#totalCost').text(grandTotal.toFixed(2));
 }
+//Edit Show Data
+function showAllSelectedItems() {
+    let id = '{{ $menuItems->id }}';
+    $.ajax({
+        url: '/menu/item/find/' + id,
+        type: 'GET',
+        dataType: 'JSON',
+        success: function(res) {
+            if (res.status == 200) {
+                const items = res.menuItemsAll;
+                // console.log(items);
+                $('.showData').empty();
+                items.forEach(item => {
+                    const ItemId = item.id;
+                    const itemName = item.make_items.item_name;
+                    const menuName = item.menu_items.menu_name;
+                    const quantity = item.quantity;
+                    const aproCost = item.apro_cost;
+
+                    // Find existing row with the same ItemId
+                    let existingRow = $(`.showData tr[data-id="${ItemId}"]`);
+
+                    if (existingRow.length) {
+                        // Update the existing row
+                        existingRow.find('.menu-name').text(menuName);
+                        existingRow.find('.item-name').text(itemName);
+                        existingRow.find('.quantity').text(quantity);
+                        existingRow.find('.apro-cost').text(aproCost);
+                    } else {
+                        // Append the new row
+                        var newRow = `
+                            <tr data-id="${ItemId}">
+                                <td class="menu-name">${menuName}</td>
+                                <td class="item-name">${itemName}</td>
+                                <td class="quantity">${quantity}</td>
+                                <td class="apro-cost">${aproCost}</td>
+                                <td><a type="button" class="btn btn-sm text-danger deleteRow"><i class="fas fa-trash-alt"></i></a></td>
+                            </tr>`;
+                        $('.showData').append(newRow);
+                    }
+                    updateGrandTotal();
+
+                });
+            } else {
+                toastr.warning(res.error);
+            }
+        }
+    });
+}
+showAllSelectedItems();
     });
 
 </script>

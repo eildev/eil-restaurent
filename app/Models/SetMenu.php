@@ -9,4 +9,8 @@ class SetMenu extends Model
 {
     use HasFactory;
     protected $guarded = [];
+    public function menuItemHas()
+    {
+        return $this->hasMany(MakeItem::class);
+    }
 }
