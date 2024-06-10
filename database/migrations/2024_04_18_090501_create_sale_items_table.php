@@ -24,6 +24,7 @@ return new class extends Migration
             $table->integer('qty')->nullable();
             $table->decimal('sub_total',12,2)->nullable();
             $table->decimal('total_purchase_cost', 12, 2)->nullable();
+            $table->integer('set_menu')->default(1);
             $table->timestamps();
         });
     }

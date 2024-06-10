@@ -16,7 +16,7 @@
             @foreach ($sale_items as $sale_item)
             <tr style="">
                 <td>
-                    <span style="color: #00a9f1;">{{ $sale_item->makeitem->item_name }}</span> <br>
+                    <span style="color: #00a9f1;">{{ ($sale_item->set_menu == 0) ? $sale_item->makeitem->item_name :  $sale_item->setmenu->menu_name}}</span> <br>
                     <span style="font-size: 11px">{{ $sale_item->rate }}| {{ $sale_item->makeitem->barcode }} | Dis: {{ $sale_item->discount }}</span>
                 </td>
                 <td style="padding-top: 15px !important">x {{ $sale_item->qty }}</td>

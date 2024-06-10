@@ -119,15 +119,17 @@
                                     <div class="col-md-2 pe-0">
                                         <div class="nav nav-tabs nav-tabs-vertical" id="v-tab" role="tablist"
                                             aria-orientation="vertical">
+                                            <a class="nav-link " id="v-mytabmajid-tab" data-bs-toggle="pill"
+                                                href="#v-mytabmajid" role="tab" aria-controls="v-mytabmajid"
+                                                aria-selected="true">Set Menu</a>
                                             @php
                                                 $categories = App\Models\ItemCategory::all();
                                             @endphp
                                             @if ($categories->count() > 0)
                                                 @foreach ($categories as $key => $category)
-                                                    <a class="nav-link {{ $key == 0 ? 'active' : '' }}"
-                                                        id="v-mytab{{ $category->id }}-tab" data-bs-toggle="pill"
-                                                        href="#v-mytab{{ $category->id }}" role="tab"
-                                                        aria-controls="v-mytab{{ $category->id }}"
+                                                    <a class="nav-link " id="v-mytab{{ $category->id }}-tab"
+                                                        data-bs-toggle="pill" href="#v-mytab{{ $category->id }}"
+                                                        role="tab" aria-controls="v-mytab{{ $category->id }}"
                                                         aria-selected="true">{{ $category->category_name }}</a>
                                                 @endforeach
                                             @else
@@ -138,13 +140,48 @@
                                     <div class="col-md-5 ps-0">
                                         <div class="tab-content tab-content-vertical border px-3 py-0" id="v-tabContent">
                                             @php
+                                                $setmenus = App\Models\SetMenu::all();
+                                            @endphp
+                                            @if ($setmenus->count() > 0)
+
+                                                    <div class="tab-pane fade active show" id="v-mytabmajid" role="tabpanel"
+                                                        aria-labelledby="v-mytabmajid-tab">
+                                                        <div class="row" style="max-height: 400px; overflow-y: scroll;">
+                                                            <style>
+                                                                .product_image {
+                                                                    position: relative;
+                                                                }
+                                                            </style>
+                                                            @foreach ($setmenus as $key => $setmenu)
+                                                            <div class="col-lg-4 col-md-6 p-1 my-1 product_image"
+                                                                style="">
+                                                                <div class="setmenu__div w-100"
+                                                                    set_menu_id="{{ $setmenu->id }}"
+                                                                    style="cursor: pointer; ">
+                                                                    <img class="w-100" height="90"
+                                                                        style="border-radius:5px 5px 0 0;border-left: 1px solid;border-top: 1px solid;border-right: 1px solid;border-color:#00a9f1"
+                                                                        src="{{ !empty($setmenu->image) ? asset('uploads/menu_items/' . $setmenu->image) : asset('assets/images/empty.png') }}">
+                                                                    <div class="info"
+                                                                        style="border-radius:0 0 5px 5px;color:black;background: rgba(255,255,255,.7);text-align:center;border-left: 1px solid;border-bottom: 1px solid;border-right: 1px solid;border-color:#00a9f1">
+                                                                        <p>{{ Str::limit($setmenu->menu_name, 16, '') }}
+                                                                        </p>
+                                                                        <p>৳{{ $setmenu->sale_price }}</p>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            @endforeach
+                                                        </div>
+                                                    </div>
+
+                                            @endif
+
+                                            @php
                                                 $categories = App\Models\ItemCategory::all();
                                             @endphp
                                             @if ($categories->count() > 0)
                                                 @foreach ($categories as $key => $category)
-                                                    <div class="tab-pane fade {{ $key == 0 ? 'show active' : '' }}"
-                                                        id="v-mytab{{ $category->id }}" role="tabpanel"
-                                                        aria-labelledby="v-mytab{{ $category->id }}-tab">
+                                                    <div class="tab-pane fade " id="v-mytab{{ $category->id }}"
+                                                        role="tabpanel" aria-labelledby="v-mytab{{ $category->id }}-tab">
                                                         @php
                                                             $items = App\Models\MakeItem::where(
                                                                 'make_category_id',
@@ -183,7 +220,8 @@
                                                                 <div class="col-lg-12">
                                                                     <div class="card" style="width:18rem;">
                                                                         <div class="card-body">
-                                                                            <h5 class="card-title">Product Not Found</h5>
+                                                                            <h5 class="card-title">Product Not Found
+                                                                            </h5>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -205,16 +243,20 @@
                                                     <th style="font-size: 10px; padding: 0 20px 10px 13px">
                                                         Customer Info:<br>
                                                         <span class="customer_name">{{ $customers->name }}</span>
-                                                        <input type="hidden" class="customer_id" value="{{$customers->id}}">
+                                                        <input type="hidden" class="customer_id"
+                                                            value="{{ $customers->id }}">
                                                         <input type="hidden" value="0" class="sale_id">
-                                                        <input type="hidden" value="<?php echo rand(123456, 99999) ?>" class="invoice_number">
+                                                        <input type="hidden" value="<?php echo rand(123456, 99999); ?>"
+                                                            class="invoice_number">
                                                         <input type="hidden" value="0" class="payment_method"
                                                             value="0">
                                                     </th>
                                                     <th style="font-size: 10px; padding: 0 20px 10px 13px">
 
-                                                        <span class="customer_address">{{ !empty($customers->phone) ? $customers->phone : $customers->address }}</span><br>
-                                                        <span> P. Total: <span class="customer_total_receivable">{{ $customers->total_receivable }}</span></span>
+                                                        <span
+                                                            class="customer_address">{{ !empty($customers->phone) ? $customers->phone : $customers->address }}</span><br>
+                                                        <span> P. Total: <span
+                                                                class="customer_total_receivable">{{ $customers->total_receivable }}</span></span>
                                                     </th>
                                                     <th>
                                                         <button data-bs-target="#customerModal" data-bs-toggle="modal"
@@ -271,15 +313,15 @@
                                 @if ($customers)
                                     <option selected disabled>Please Select Customer</option>
                                     @foreach ($customers as $customer)
-                                        <option value="{{ $customer->id }}" >{{ $customer->name }} </option>
+                                        <option value="{{ $customer->id }}">{{ $customer->name }} </option>
                                     @endforeach
                                 @else
                                     <option selected disabled>Please Select Customer</option>
                                 @endif
                             </select>
                             @error('make_category_id')
-                            <div class="text-danger">{{ $message }}</div>
-                           @enderror
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
                             <span class="text-danger product_select_error"></span>
                         </div>
                         <div class="mb-3 col-md-6 mt-3">
@@ -338,11 +380,11 @@
                     <form class="customerForm row">
                         <div class="mb-3 col-md-6">
                             <label for="name" class="form-label">Sub Total</label>
-                            <input id="defaultconfig" class="form-control modal_subtotal" maxlength="39" type="number">
+                            <input id="defaultconfig" class="form-control modal_subtotal" readonly maxlength="39" type="number">
                         </div>
                         <div class="mb-3 col-md-6">
                             <label for="name" class="form-label">Tax</label>
-                            <select name="" id="" class="form-control">
+                            <select name="" id="" class="form-control modal_tax" onchange="finalCalculate()">
                                 <option value="0">0%</option>
                                 <option value="5">5%</option>
                                 <option value="7">7%</option>
@@ -351,29 +393,56 @@
                         </div>
                         <div class="mb-3 col-md-6">
                             <label for="name" class="form-label">Grand Total</label>
-                            <input id="defaultconfig" class="form-control opening_payable" maxlength="39"
-                                name="opening_payable" type="number">
+                            <input id="defaultconfig" class="form-control modal_grandtotal" maxlength="39"
+                                readonly type="number">
                         </div>
                         <div class="mb-3 col-md-6">
                             <label for="name" class="form-label">Pay Amount</label>
-                            <input id="defaultconfig" class="form-control opening_payable" maxlength="39"
+                            <input id="defaultconfig" class="form-control modal_payamount" onkeyup="finalCalculate()" maxlength="39"
                                 name="opening_payable" type="number">
                         </div>
-                        <div class="mb-3 col-md-6">
+                        <div class="mb-3 col-md-12">
                             <label for="name" class="form-label">Cash Back</label>
-                            <input id="defaultconfig" class="form-control opening_payable" maxlength="39"
+                            <input id="defaultconfig" class="form-control modal_cashback" readonly maxlength="39"
                                 name="opening_payable" type="number">
                         </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary save_new_customer"><i class="fa fa-print"></i> Print</button>
+                    <button type="button" class="btn btn-primary save_new_customer"><i class="fa fa-print"></i>
+                        Print</button>
                 </div>
                 </form>
             </div>
         </div>
     </div>
     <script>
+
+    function finalCalculate(){
+        // Select elements
+        const modal_subtotal = document.querySelector('.modal_subtotal');
+        const modal_tax = document.querySelector('.modal_tax');
+        const modal_grandtotal = document.querySelector('.modal_grandtotal');
+        const modal_payamount = document.querySelector('.modal_payamount');
+        const modal_cashback = document.querySelector('.modal_cashback');
+
+        // Check if elements are found and parse their values
+        const subtotalValue = modal_subtotal ? parseFloat(modal_subtotal.value) : 0;
+        const taxValue = modal_tax ? parseInt(modal_tax.value) : 0;
+        const payamountValue = modal_payamount ? parseFloat(modal_payamount.value) : 0;
+
+        // Calculate tax and grand total
+        const tax = (subtotalValue * taxValue) / 100;
+        const grandtotal = subtotalValue + tax;
+
+        // Calculate cash back
+        const cashBack = grandtotal - payamountValue;
+
+        // Set the calculated values to the respective elements
+        if (modal_grandtotal) modal_grandtotal.value = grandtotal.toFixed(2);
+        if (modal_cashback) modal_cashback.value = cashBack.toFixed(2);
+    }
+
         showTableQueue();
 
         function showTableQueue() {
@@ -439,11 +508,66 @@
         //         alert(vale)
         //     });
         // });
-        $(document).on('click','.cashby_tablequeue',function(e){
+        $(document).on('click', '.cashby_tablequeue', function(e) {
             e.preventDefault();
             let value = e.target.value;
             $('#saleModal').modal('show');
             document.querySelector('.modal_subtotal').value = value;
+            finalCalculate();
+
+            $('#saleModal').on('shown.bs.modal', function () {
+                document.querySelector('.modal_payamount').focus();
+            });
+        });
+        const setmenu__div = document.querySelectorAll('.setmenu__div');
+        setmenu__div.forEach(element => {
+            element.addEventListener('click', function(e) {
+                const set_menu_id = element.getAttribute('set_menu_id');
+                const customer_id = document.querySelector('.customer_id').value;
+                const sale_id = document.querySelector('.sale_id').value;
+                const payment_method = document.querySelector('.payment_method').value;
+                const sale_discount = document.querySelector('.sale_discount').value ?? 0;
+                const dine = document.querySelector('.select_dine').value ?? 0;
+                const invoice_number = document.querySelector('.invoice_number').value;
+                const note = "Note dynamic korte hobe";
+                const tax = 1;
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+                $.ajax({
+                    url: '/sale/store/setmenu',
+                    type: 'POST',
+                    data: {
+                        set_menu_id,
+                        customer_id,
+                        sale_id,
+                        payment_method,
+                        sale_discount,
+                        dine,
+                        invoice_number,
+                        note,
+                        tax
+                    },
+                    success: function(res) {
+                        // Assuming the response is in JSON format and contains the HTML
+                        if (res && res.html) {
+                            enableDiv('controls');
+                            document.querySelector('.renderData').innerHTML = res.html;
+                            document.querySelector('.sale_id').value = document.querySelector(
+                                '.render_sale_id').value;
+                            // Re-attach event listeners to the newly added elements
+                            attachEventListeners();
+                        } else {
+                            console.error('Invalid response format:', res);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('AJAX error:', error);
+                    }
+                });
+            });
         });
         const Item__div = document.querySelectorAll('.Item__div');
         Item__div.forEach(element => {
@@ -525,7 +649,7 @@
                 const sale_discount = document.querySelector('.sale_discount').value ?? 0;
                 const tax = 1;
                 const note = "Note dynamic korte hobe";
-                if(select_dine.value === ''){
+                if (select_dine.value === '') {
                     toastr.error('Please Select Dine');
                     select_dine.focus();
                     return false;
@@ -613,70 +737,70 @@
             // toastr.success('Please select');
             const customer_id = document.querySelector('.select_customer').value;
             $.ajax({
-                url:'select/customer/for-pos/' + customer_id,
-                type:'get',
-                success:function(res){
+                url: 'select/customer/for-pos/' + customer_id,
+                type: 'get',
+                success: function(res) {
                     toastr.success('Customer Successfully Added');
                     $('#customerModal').modal('hide');
                     document.querySelector('.customer_name').textContent = res.data.name;
                     let phoneoraddress;
-                    if(res.data.phone !== null){
+                    if (res.data.phone !== null) {
                         phoneoraddress = res.data.phone
-                    }
-                    else{
+                    } else {
                         phoneoraddress = res.data.address
                     }
                     document.querySelector('.customer_address').textContent = phoneoraddress;
-                    document.querySelector('.customer_total_receivable').textContent = res.data.total_receivable;
+                    document.querySelector('.customer_total_receivable').textContent = res.data
+                        .total_receivable;
                     document.querySelector('.customer_id').value = res.data.id;
                 }
             });
         });
 
         const saveCustomer = document.querySelector('.save_new_customer');
-            saveCustomer.addEventListener('click', function(e) {
-                e.preventDefault();
-                // alert('ok')
-                let formData = new FormData($('.customerForm')[0]);
-                $.ajaxSetup({
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    }
-                });
-                $.ajax({
-                    url: '/add/customer',
-                    type: 'POST',
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    success: function(res) {
-                        if (res.status == 200) {
-                            // console.log(res);
-                            $('#customerModal').modal('hide');
-                            $('.customerForm')[0].reset();
-                            toastr.success(res.message);
-                            document.querySelector('.customer_name').textContent = res.data.name;
-                            let phoneoraddress;
-                            if(res.data.phone !== null){
-                                phoneoraddress = res.data.phone
-                            }
-                            else{
-                                phoneoraddress = res.data.address
-                            }
-                            document.querySelector('.customer_address').textContent = phoneoraddress;
-                            document.querySelector('.customer_total_receivable').textContent = res.data.total_receivable;
-                            document.querySelector('.customer_id').value = res.data.id;
+        saveCustomer.addEventListener('click', function(e) {
+            e.preventDefault();
+            // alert('ok')
+            let formData = new FormData($('.customerForm')[0]);
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+            $.ajax({
+                url: '/add/customer',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(res) {
+                    if (res.status == 200) {
+                        // console.log(res);
+                        $('#customerModal').modal('hide');
+                        $('.customerForm')[0].reset();
+                        toastr.success(res.message);
+                        document.querySelector('.customer_name').textContent = res.data.name;
+                        let phoneoraddress;
+                        if (res.data.phone !== null) {
+                            phoneoraddress = res.data.phone
                         } else {
-                            // console.log(res);
-                            if (res.error.name) {
-                                showError('.customer_name', res.error.name);
-                            }
-                            if (res.error.phone) {
-                                showError('.phone', res.error.phone);
-                            }
+                            phoneoraddress = res.data.address
+                        }
+                        document.querySelector('.customer_address').textContent = phoneoraddress;
+                        document.querySelector('.customer_total_receivable').textContent = res.data
+                            .total_receivable;
+                        document.querySelector('.customer_id').value = res.data.id;
+                    } else {
+                        // console.log(res);
+                        if (res.error.name) {
+                            showError('.customer_name', res.error.name);
+                        }
+                        if (res.error.phone) {
+                            showError('.phone', res.error.phone);
                         }
                     }
-                });
-            })
+                }
+            });
+        })
     </script>
 @endsection
