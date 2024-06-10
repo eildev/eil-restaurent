@@ -209,7 +209,7 @@
                                 </tr>
 
                             </thead>
-                            <tbody class="showData">
+                            <tbody class="showData newShow">
                                 <tr>
                                     <td></td>
                                     <td></td>
@@ -414,9 +414,7 @@ document.addEventListener('DOMContentLoaded', function() {
 $(document).ready(function () {
     $('.myForms').submit(function(event) {
         event.preventDefault();
-
         var formData = new FormData(this);
-
         $.ajax({
             type: 'POST',
             url: '/update/set/item',
@@ -424,15 +422,16 @@ $(document).ready(function () {
             processData: false,
             contentType: false,
             success: function(response) {
+
                 // console.log(response.data.menuItem);
                 if (response.status === 200) {
-
                     var menuName = response.data.menuItem.menu_items.menu_name;
                     var itemName = response.data.menuItem.make_items.item_name;
                     var newQuantity = response.data.menuItem.quantity;
                     var newCost = response.data.menuItem.apro_cost;
                     var itemId = response.data.menuItem.id;
-                var existingRow = $('.showData').find('tr[data-item-id="' + itemId + '"]');
+
+                var existingRow = $('.newShow').find('tr[data-item-id="' + itemId + '"]');
                 if (existingRow.length) {
                     var updatedQuantity = newQuantity;
                     var updatedCost = newCost;
@@ -448,7 +447,7 @@ $(document).ready(function () {
                                      '<td><a type="button" class="btn btn-sm text-danger deleteRow"><i class="fas fa-trash-alt"></i></a></td>' +
                                  '</tr>';
 
-                    $('.showData').append(newRow);
+                    $('.newShow').append(newRow);
                 }
                 updateGrandTotal()
 
@@ -460,9 +459,51 @@ $(document).ready(function () {
                 console.error(xhr.responseText);
             }
         });
-
     });
+    function showAllSelectedItems() {
+    let id = '{{ $menuItems->id }}';
+    $.ajax({
+        url: '/menu/item/find/' + id,
+        type: 'GET',
+        dataType: 'JSON',
+        success: function(res) {
+            if (res.status == 200) {
+                const items = res.menuItemsAll;
+                items.forEach(item => {
+                    const itemId = item.id;
+                    const itemName = item.make_items.item_name;
+                    const menuName = item.menu_items.menu_name;
+                    const quantity = item.quantity;
+                    const aproCost = item.apro_cost;
 
+                    // Find existing row with the same ItemId
+                    let existingRow = $('.showData').find(`tr[data-id="${itemId}"]`);
+
+                    if (existingRow.length) {
+                        // Update existing row
+                        existingRow.find('.quantity').text(quantity);
+                        existingRow.find('.apro-cost').text(aproCost);
+                    } else {
+                        // Append new row
+                        var newRow = `
+                            <tr data-id="${itemId}">
+                                <td class="menu-name">${menuName}</td>
+                                <td class="item-name">${itemName}</td>
+                                <td class="quantity">${quantity}</td>
+                                <td class="apro-cost">${aproCost}</td>
+                                <td><a type="button" class="btn btn-sm text-danger deleteRow"><i class="fas fa-trash-alt"></i></a></td>
+                            </tr>`;
+                        $('.showData').append(newRow);
+                    }
+                    updateGrandTotal();
+                });
+            } else {
+                toastr.warning(res.error);
+            }
+        }
+    });
+}
+showAllSelectedItems();
 //Delete
 $(document).on('click', '.deleteRow', function() {
         var row = $(this).closest('tr');
@@ -498,55 +539,7 @@ $(document).on('click', '.deleteRow', function() {
     $('#totalCost').text(grandTotal.toFixed(2));
 }
 //Edit Show Data
-function showAllSelectedItems() {
-    let id = '{{ $menuItems->id }}';
-    $.ajax({
-        url: '/menu/item/find/' + id,
-        type: 'GET',
-        dataType: 'JSON',
-        success: function(res) {
-            if (res.status == 200) {
-                const items = res.menuItemsAll;
-                // console.log(items);
-                $('.showData').empty();
-                items.forEach(item => {
-                    const ItemId = item.id;
-                    const itemName = item.make_items.item_name;
-                    const menuName = item.menu_items.menu_name;
-                    const quantity = item.quantity;
-                    const aproCost = item.apro_cost;
 
-                    // Find existing row with the same ItemId
-                    let existingRow = $(`.showData tr[data-id="${ItemId}"]`);
-
-                    if (existingRow.length) {
-                        // Update the existing row
-                        existingRow.find('.menu-name').text(menuName);
-                        existingRow.find('.item-name').text(itemName);
-                        existingRow.find('.quantity').text(quantity);
-                        existingRow.find('.apro-cost').text(aproCost);
-                    } else {
-                        // Append the new row
-                        var newRow = `
-                            <tr data-id="${ItemId}">
-                                <td class="menu-name">${menuName}</td>
-                                <td class="item-name">${itemName}</td>
-                                <td class="quantity">${quantity}</td>
-                                <td class="apro-cost">${aproCost}</td>
-                                <td><a type="button" class="btn btn-sm text-danger deleteRow"><i class="fas fa-trash-alt"></i></a></td>
-                            </tr>`;
-                        $('.showData').append(newRow);
-                    }
-                    updateGrandTotal();
-
-                });
-            } else {
-                toastr.warning(res.error);
-            }
-        }
-    });
-}
-showAllSelectedItems();
     });
 
 </script>

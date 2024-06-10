@@ -198,7 +198,6 @@
                                         <i class="fa-solid fa-trash-can"></i>
                                     </th>
                                 </tr>
-
                             </thead>
                             <tbody class="showData">
                                 <tr>
@@ -305,7 +304,6 @@ $(document).ready(function() {
                 var aproCost = response.material.apro_cost;
                 var newQuantity = response.material.quantity;
                 var newAproCost = parseFloat(aproCost);
-
                 var existingRow = $('.showData tr[data-id="' + productId + '"]');
 
                 if (existingRow.length) {
@@ -329,9 +327,7 @@ $(document).ready(function() {
                                  '</tr>';
                     $('.showData').append(newRow); // Append the new row to the table body
                 }
-
                 calculateTotalCost();
-
                 if (response.status === 200) {
                     document.querySelector('.makeItemId').value = response.makeItemId;
                     toastr.success(response.message);
