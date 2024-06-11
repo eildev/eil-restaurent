@@ -345,6 +345,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/manage/set/item', 'ManageSetItem')->name('manage.set.item');
         Route::get('/menu/item/edit/{id}', 'ManageItemEdit')->name('menu.item.edit');
         Route::get('/menu/item/find/{id}', 'MenuItemFind')->name('menu.item.find');
+        Route::get('/menu/item/delete/{id}', 'MenuItemDelete')->name('menu.item.delete');
 
 
     });
@@ -397,12 +398,9 @@ Route::middleware('auth')->group(function () {
             //
             Route::get('/report/purchase', 'purchaseReport')->name('report.purchase');
 
-
             Route::get('/report/damage', 'damageReport')->name('report.damage');
             Route::post('/damage/print', 'damageReportPrint')->name('damage.report.print');
             Route::get('/damage/product/filter', 'DamageProductFilter')->name('damage.product.filter.view');
-
-
 
             Route::get('/purchese/product/filter', 'PurchaseProductFilter')->name('purches.product.filter.view');
             Route::get('/purchese/details/invoice/{id}', 'PurchaseDetailsInvoice')->name('purchse.details.invoice');
