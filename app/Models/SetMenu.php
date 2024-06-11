@@ -13,8 +13,8 @@ class SetMenu extends Model
     {
         return $this->hasMany(MakeItem::class);
     }
-    // public function items()
-    // {
-    //     return $this->hasMany(MakeItem::class, 'menu_id');
-    // }
+    public function items()
+    {
+        return $this->hasMany(MakeItem::class);
+    }
 }

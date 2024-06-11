@@ -18,9 +18,9 @@ class MenuItems extends Model
     {
         return $this->belongsTo(SetMenu::class, 'menu_id','id');
     }
-    // public function menu()
-    // {
-    //     return $this->belongsTo(SetMenu::class, 'menu_id');
-    // }
+    public function items()
+    {
+        return $this->hasMany(MenuItems::class,'item_id');
+    }
 
 }

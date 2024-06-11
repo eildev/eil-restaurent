@@ -414,9 +414,7 @@ document.addEventListener('DOMContentLoaded', function() {
 $(document).ready(function () {
     $('.myForms').submit(function(event) {
         event.preventDefault();
-
         var formData = new FormData(this);
-
         $.ajax({
             type: 'POST',
             url: '/update/set/item',
@@ -424,6 +422,7 @@ $(document).ready(function () {
             processData: false,
             contentType: false,
             success: function(response) {
+
                 // console.log(response.data.menuItem);
                 if (response.status === 200) {
                     var menuName = response.data.menuItem.menu_items.menu_name;
@@ -431,23 +430,24 @@ $(document).ready(function () {
                     var newQuantity = response.data.menuItem.quantity;
                     var newCost = response.data.menuItem.apro_cost;
                     var itemId = response.data.menuItem.id;
-                var existingRow = $('.newShow').find('tr[data-item-id="' + itemId + '"]');
+                    let existingRow = $('.showData').find(`tr[data-id="${itemId}"]`);
                 if (existingRow.length) {
-                    var updatedQuantity = newQuantity;
-                    var updatedCost = newCost;
-                    existingRow.find('.quantity').text(updatedQuantity);
-                    existingRow.find('.cost-price').text(updatedCost);
+                    existingRow.find('.menu-name').text(menuName);
+                        existingRow.find('.item-name').text(itemName);
+                        existingRow.find('.quantity').text(newQuantity);
+                        existingRow.find('.apro_cost').text(newCost);
                 } else {
-                    var newRow = '<tr data-item-id="' + itemId + '">' +
-                                     '<td>' + menuName + '</td>' +
-                                     '<td>' + itemName + '</td>' +
-                                     '<td class="quantity">' + newQuantity + '</td>' +
-                                    //  '<td class="quantity"><input type="number" class="form-control" value="' + newQuantity + '" min="1"></td>' +
-                                     '<td class="cost-price">' + newCost + '</td>' +
-                                     '<td><a type="button" class="btn btn-sm text-danger deleteRow"><i class="fas fa-trash-alt"></i></a></td>' +
-                                 '</tr>';
+                    var newRow = `
+                            <tr data-id="${itemId}">
+                                <td class="menu-name">${menuName}</td>
+                                <td class="item-name">${itemName}</td>
+                                <td class="quantity">${newQuantity}</td>
+                                <td class="apro_cost">${newCost}</td>
+                                <td><a type="button" class="btn btn-sm text-danger deleteRow"><i class="fas fa-trash-alt"></i></a></td>
+                            </tr>`;
 
-                    $('.newShow').append(newRow);
+                    $('.showData').append(newRow);
+
                 }
                 updateGrandTotal()
 
@@ -459,13 +459,52 @@ $(document).ready(function () {
                 console.error(xhr.responseText);
             }
         });
-
     });
+    function showAllSelectedItems() {
+    let id = '{{ $menuItems->id }}';
+    $.ajax({
+        url: '/menu/item/find/' + id,
+        type: 'GET',
+        dataType: 'JSON',
+        success: function(res) {
+            if (res.status == 200) {
+                const items = res.menuItemsAll;
+                items.forEach(item => {
+                    const itemId = item.id;
+                    const itemName = item.make_items.item_name;
+                    const menuName = item.menu_items.menu_name;
+                    const quantity = item.quantity;
+                    const apro_cost = item.apro_cost;
+                    let existingRow = $('.showData').find(`tr[data-id="${itemId}"]`);
+                    if (existingRow.length > 0) {
+                        // Update the existing row
+                        existingRow.find('.quantity').text(quantity);
+                        existingRow.find('.apro_cost').text(aproCost);
+                    }else{
+                     var newRow = `
+                            <tr data-id="${itemId}">
+                                <td>${menuName}</td>
+                                <td>${itemName}</td>
+                                <td class="quantity">${quantity}</td>
+                                <td class="apro_cost">${apro_cost}</td>
+                                <td><a type="button" class="btn btn-sm text-danger deleteRow"><i class="fas fa-trash-alt"></i></a></td>
+                            </tr>`;
+                        $('.showData').append(newRow);
 
+                        }
+                });
+                updateGrandTotal();
+            } else {
+                toastr.warning(res.error);
+            }
+        }
+    });
+}
+showAllSelectedItems()
 //Delete
 $(document).on('click', '.deleteRow', function() {
         var row = $(this).closest('tr');
-        var id = row.data('item-id');
+        let id = row.data('id');
         // console.log(row.data('item-id'));
         $.ajax({
             type: 'get',
@@ -491,61 +530,13 @@ $(document).on('click', '.deleteRow', function() {
     //
     function updateGrandTotal() {
     var grandTotal = 0;
-    $('.cost-price').each(function() {
+    $('.apro_cost').each(function() {
         grandTotal += parseFloat($(this).text());
     });
     $('#totalCost').text(grandTotal.toFixed(2));
 }
 //Edit Show Data
-function showAllSelectedItems() {
-    let id = '{{ $menuItems->id }}';
-    $.ajax({
-        url: '/menu/item/find/' + id,
-        type: 'GET',
-        dataType: 'JSON',
-        success: function(res) {
-            if (res.status == 200) {
-                const items = res.menuItemsAll;
-                // console.log(items);
 
-                items.forEach(item => {
-                    const ItemId = item.id;
-                    const itemName = item.make_items.item_name;
-                    const menuName = item.menu_items.menu_name;
-                    const quantity = item.quantity;
-                    const aproCost = item.apro_cost;
-
-                    // Find existing row with the same ItemId
-                    let existingRow = $(`.showData tr[data-id="${ItemId}"]`);
-
-                    if (existingRow.length) {
-                        // Update the existing row
-                        existingRow.find('.menu-name').text(menuName);
-                        existingRow.find('.item-name').text(itemName);
-                        existingRow.find('.quantity').text(quantity);
-                        existingRow.find('.apro-cost').text(aproCost);
-                    } else {
-                        // Append the new row
-                        var newRow = `
-                            <tr data-id="${ItemId}">
-                                <td class="menu-name">${menuName}</td>
-                                <td class="item-name">${itemName}</td>
-                                <td class="quantity">${quantity}</td>
-                                <td class="apro-cost">${aproCost}</td>
-                                <td><a type="button" class="btn btn-sm text-danger deleteRow"><i class="fas fa-trash-alt"></i></a></td>
-                            </tr>`;
-                        $('.showData').append(newRow);
-                    }
-                    updateGrandTotal();
-
-                });
-            } else {
-                toastr.warning(res.error);
-            }
-        }
-    });
-}
-showAllSelectedItems();
     });
 
 </script>
