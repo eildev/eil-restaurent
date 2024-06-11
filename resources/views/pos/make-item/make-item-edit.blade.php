@@ -378,6 +378,7 @@ $(document).ready(function() {
                                 <td>${productName}</td>
                                 <td>${productPrice}</td>
                                 <td class="quantity">${quantity}</td>
+
                                 <td>${unitName}</td>
                                 <td class="apro-cost">${aproCost}</td>
                                 <td><a type="button" class="btn btn-sm text-danger deleteRow"><i class="fas fa-trash-alt"></i></a></td>
