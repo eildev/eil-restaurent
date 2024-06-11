@@ -123,7 +123,6 @@
                                 <option value="percentage">Percentage</option>
                                     <option value="solid">Amount</option>
                                 </select>
-
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -131,7 +130,6 @@
                                 <label for="name" class="form-label">Discount Amount</label>
                                 <input id="defaultconfigDiscount"  value="{{$item->discount}}" class="form-control discount"
                                     maxlength="250" name="discount" type="number">
-
                             </div>
                         </div>
                       </div>
@@ -152,13 +150,12 @@
 
                             </div>
                         </div>
-
                       </div>
                </div>
                <div class="modal-footer">
                    <button type="button" class="btn btn-secondary"
                        data-bs-dismiss="modal">Close</button>
-                   <button type="submit" class="btn btn-primary update_set_menu">Save</button>
+                   <button type="submit" class="btn btn-primary update_set_menu">Update</button>
                </div>
                </form>
            </div>

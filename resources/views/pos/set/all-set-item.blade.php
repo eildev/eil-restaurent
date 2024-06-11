@@ -34,7 +34,6 @@
                                                 {{$item->quantity}}
                                             </td>
                                             <td> {{$item->apro_cost}}</td>
-
                                             <td>
                                                 <a class="btn btn-sm border text-warning" href="{{route('menu.item.edit',$item->id)}}"><i class="fas fa-edit"></i></a>
 

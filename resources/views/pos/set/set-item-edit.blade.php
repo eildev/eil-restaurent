@@ -209,7 +209,7 @@
                                 </tr>
 
                             </thead>
-                            <tbody class="showData">
+                            <tbody class="showData newShow">
                                 <tr>
                                     <td></td>
                                     <td></td>
@@ -426,13 +426,12 @@ $(document).ready(function () {
             success: function(response) {
                 // console.log(response.data.menuItem);
                 if (response.status === 200) {
-
                     var menuName = response.data.menuItem.menu_items.menu_name;
                     var itemName = response.data.menuItem.make_items.item_name;
                     var newQuantity = response.data.menuItem.quantity;
                     var newCost = response.data.menuItem.apro_cost;
                     var itemId = response.data.menuItem.id;
-                var existingRow = $('.showData').find('tr[data-item-id="' + itemId + '"]');
+                var existingRow = $('.newShow').find('tr[data-item-id="' + itemId + '"]');
                 if (existingRow.length) {
                     var updatedQuantity = newQuantity;
                     var updatedCost = newCost;
@@ -448,7 +447,7 @@ $(document).ready(function () {
                                      '<td><a type="button" class="btn btn-sm text-danger deleteRow"><i class="fas fa-trash-alt"></i></a></td>' +
                                  '</tr>';
 
-                    $('.showData').append(newRow);
+                    $('.newShow').append(newRow);
                 }
                 updateGrandTotal()
 
@@ -508,7 +507,7 @@ function showAllSelectedItems() {
             if (res.status == 200) {
                 const items = res.menuItemsAll;
                 // console.log(items);
-                $('.showData').empty();
+
                 items.forEach(item => {
                     const ItemId = item.id;
                     const itemName = item.make_items.item_name;

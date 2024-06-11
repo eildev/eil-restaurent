@@ -99,7 +99,6 @@ class SetController extends Controller
                 @unlink($path);
             }
             $menuItem->delete();
-
             $notification = [
                 'message' => 'Menu  Deleted Successfully',
                 'alert-type' => 'success'
@@ -163,7 +162,6 @@ class SetController extends Controller
                 'status' => 200,
                 'message' => 'Menu Item Deleted successfully!',
             ]);
-
     }
     public function ManageSetItem(){
         $menuItems = MenuItems::all();
