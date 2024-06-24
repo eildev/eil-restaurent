@@ -22,6 +22,10 @@ class DatabaseSeeder extends Seeder
             branchSeed::class,
             userSeed::class,
             settingSeed::class,
+            PermissionSeeder::class,
+            RoleSeeder::class,
+            RoleHasPermission::class,
+            ModelHasRolesSeeder::class,
         ]);
     }
 }

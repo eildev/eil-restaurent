@@ -99,7 +99,6 @@ class SetController extends Controller
                 @unlink($path);
             }
             $menuItem->delete();
-
             $notification = [
                 'message' => 'Menu  Deleted Successfully',
                 'alert-type' => 'success'
@@ -163,10 +162,9 @@ class SetController extends Controller
                 'status' => 200,
                 'message' => 'Menu Item Deleted successfully!',
             ]);
-
     }
     public function ManageSetItem(){
-        $menuItems = MenuItems::all();
+        $menuItems = MenuItems::with('items')->get();
         return view('pos.set.all-set-item',compact('menuItems'));
     }//
     public function ManageSetMenu(){
@@ -179,9 +177,8 @@ class SetController extends Controller
     }
     public function MenuItemFind($id){
         $status = 'active';
-        $menuItems = MenuItems::where('id', $id)->get();
-        $menuItems->load('makeItems', 'menuItems');
-
+        $menuItems = MenuItems::where('id', $id)->with('makeItems', 'menuItems')->get();
+        // $menuItems->load('makeItems', 'menuItems');
 
         return response()->json([
             'status' => '200',
@@ -228,6 +225,15 @@ class SetController extends Controller
                 'menuItem' => $material,
             ]
         ]);
+    }
+
+    public function MenuItemDelete($id){
+        MenuItems::findOrFail($id)->delete();
+        $notification = [
+            'message' => 'Menu Item Deleted Successfully',
+            'alert-type' => 'info'
+        ];
+        return redirect()->back()->with($notification);
     }
 }
 

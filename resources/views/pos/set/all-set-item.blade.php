@@ -34,11 +34,10 @@
                                                 {{$item->quantity}}
                                             </td>
                                             <td> {{$item->apro_cost}}</td>
-
                                             <td>
                                                 <a class="btn btn-sm border text-warning" href="{{route('menu.item.edit',$item->id)}}"><i class="fas fa-edit"></i></a>
 
-                                                <a class="btn btn-sm border delete-btn text-danger" href="{{route('make.item.delete',$item->id)}}"><i class="fas fa-trash-alt"></i></a>
+                                                <a class="btn btn-sm border delete-btn text-danger" href="{{route('menu.item.delete',$item->id)}}"><i class="fas fa-trash-alt"></i></a>
                                             </td>
                                         </tr>
                                     @endforeach
