@@ -76,11 +76,51 @@ class SaleController extends Controller
             "data" => $customer
         ]);
     }
+    public function SalePay(Request $request){
+        // dd($request->all());
+        $tax = (($request->modal_subtotal * $request->modal_tax)/100);
+        $due = (($tax+$request->modal_subtotal) - $request->modal_payamount);
+        // dd("Tax".$tax."due".$due."return".$returned);
+        if($due < 0){
+            $returned = $due;
+            $due = 0;
+            // dd("Tax".$tax."due".$due);
+        }
+        else{
+            $due = $due;
+            $returned = 0;
+        }
+        // dd("Tax".$tax."due".$due."return".$returned);
+        try{
+            $sale = Sale::findOrFail($request->modal_sale_id);
+            $sale->change_amount=$request->modal_subtotal;
+            $sale->tax=((($request->modal_subtotal * $request->modal_tax))/100);
+            $sale->receivable=$request->modal_subtotal;
+            $sale->final_receivable = ((($request->modal_subtotal * $request->modal_tax))/100)+$request->modal_subtotal;
+            $sale->payment_method=$request->modal_payment_method;
+            $sale->profit = ($sale->profit + ((($request->modal_subtotal * $request->modal_tax))/100));
+            $sale->due=$due;
+            $sale->paid=$request->modal_payamount;
+            $sale->returned=$returned;
+            $sale->status = 'delivered';
+            $sale->update();
+
+            $sale_items = SaleItem::where('sale_id', $request->modal_sale_id)->get();
+            $renderedHtml = view('pos.sale.sales_detailes_ramder_data', compact('sale_items', 'sale'))->render();
+            return response()->json(['html' => $renderedHtml]);
+        }
+        catch (\Exception $e) {
+            return response()->json([
+                'error' => $e->getMessage()
+            ]);
+        }
+    }
     public function storesetmenu(Request $request)
     {
     try{
         $productInfo = SetMenu::findOrFail($request->set_menu_id);
         // dd($productInfo);
+        // dd($request->set_menu_id);
         if ($productInfo) {
             if ($productInfo->discount_type == 'percentage') {
                 $itemDiscount = (($productInfo->sale_price - ($productInfo->sale_price * $productInfo->discount) / 100));
@@ -113,7 +153,7 @@ class SaleController extends Controller
             $totalCosPrice = $productInfo->cost_price;
             $subTotalAmount = ($productInfo->sale_price * 1) - $itemDiscountAmount;
             $TotalDiscount = $itemDiscount;
-            $totalProfit = ($totalRate - ($productInfo->cost_price + $TotalDiscount));
+            $totalProfit = ($totalRate - ($productInfo->cost_price + $itemDiscountAmount));
         }
         $sale = Sale::updateOrCreate(
             [
@@ -141,8 +181,9 @@ class SaleController extends Controller
             ]
         );
         $saleId = $sale->id;
-        $saleItem = SaleItem::where('product_id', $request->product_id)
-            ->where('sale_id', $saleId)
+
+        $saleItem = SaleItem::where('sale_id', $saleId)
+            ->where('product_id', $request->set_menu_id)
             ->first();
 
         if ($saleItem) {
@@ -156,6 +197,7 @@ class SaleController extends Controller
                 'total_purchase_cost' => ($saleItem->total_purchase_cost + $productInfo->cost_price),
             ]);
         } else {
+            // dd($saleItem);
             // Create a new SaleItem if it does not exist
                 SaleItem::create([
                     'sale_id' => $saleId,
@@ -183,69 +225,7 @@ class SaleController extends Controller
             'error' => $e->getMessage()
         ]);
     }
-        //     // customer table CRUD
-        //     $customer = Customer::findOrFail($request->customer_id);
-        //     $customer->total_receivable = $customer->total_receivable + $request->change_amount;
-        //     $customer->total_payable = $customer->total_payable + $request->paid;
-        //     $customer->wallet_balance = $customer->wallet_balance + ($request->change_amount - $request->paid);
-        //     $customer->save();
 
-        //     // actual Payment
-        //     $actualPayment = new ActualPayment;
-        //     $actualPayment->branch_id =  Auth::user()->branch_id;
-        //     $actualPayment->payment_type =  'receive';
-        //     $actualPayment->payment_method =  $request->payment_method;
-        //     $actualPayment->customer_id = $request->customer_id;
-        //     $actualPayment->amount = $request->paid;
-        //     $actualPayment->date = $request->sale_date;
-        //     $actualPayment->save();
-
-        //     // accountTransaction table
-        //     $accountTransaction = new AccountTransaction;
-        //     $accountTransaction->branch_id =  Auth::user()->branch_id;
-        //     $accountTransaction->purpose =  'Withdraw';
-        //     $accountTransaction->account_id =  $request->payment_method;
-        //     $accountTransaction->credit = $request->paid;
-        //     // $accountTransaction->balance = $accountTransaction->balance + $request->paid;
-        //     $accountTransaction->save();
-
-        //     $transaction = Transaction::where('customer_id', $request->customer_id)->first();
-
-        //     if ($transaction) {
-        //         // Update existing transaction
-        //         $transaction->date =  $request->sale_date;
-        //         $transaction->payment_type = 'receive';
-        //         $transaction->particulars = 'Sale#' . $saleId;
-        //         $transaction->credit = $transaction->credit + $request->change_amount;
-        //         $transaction->debit = $transaction->debit + $request->paid;
-        //         $transaction->balance = $transaction->balance + ($request->change_amount - $request->paid);
-        //         $transaction->payment_method = $request->payment_method;
-        //         $transaction->save();
-        //     } else {
-        //         // Create new transaction
-        //         $transaction = new Transaction;
-        //         $transaction->date =  $request->sale_date;
-        //         $transaction->payment_type = 'receive';
-        //         $transaction->particulars = 'Sale#' . $saleId;
-        //         $transaction->customer_id = $request->customer_id;
-        //         $transaction->credit = $request->change_amount;
-        //         $transaction->debit = $request->paid;
-        //         $transaction->balance = $request->change_amount - $request->paid;
-        //         $transaction->payment_method = $request->payment_method;
-        //         $transaction->save();
-        //     }
-
-        //     return response()->json([
-        //         'status' => 200,
-        //         'saleId' => $saleId,
-        //         'message' => 'successfully save',
-        //     ]);
-        // } else {
-        //     return response()->json([
-        //         'status' => '500',
-        //         'error' => $validator->messages(),
-        //     ]);
-        // }
     }
     public function store(Request $request)
     {
@@ -279,7 +259,6 @@ class SaleController extends Controller
             $totalCosPrice = $saleItems->sum('cost_price') + $productInfo->cost_price;
             $subTotalAmount = ($saleItems->sum('sub_total') + $productInfo->sale_price * 1) - $itemDiscountAmount;
             $TotalDiscount = $saleItems->sum('discount') + $itemDiscount;
-            // dd($saleItems);
             $totalProfit = ($totalRate - ($totalCosPrice + $TotalDiscount));
         } else {
             $totalQuantity = 1;
@@ -287,7 +266,8 @@ class SaleController extends Controller
             $totalCosPrice = $productInfo->cost_price;
             $subTotalAmount = ($productInfo->sale_price * 1) - $itemDiscountAmount;
             $TotalDiscount = $itemDiscount;
-            $totalProfit = ($totalRate - ($productInfo->cost_price + $TotalDiscount));
+            $totalProfit = ($totalRate - ($productInfo->cost_price + $itemDiscountAmount));
+            // dd('Rate:'.$totalRate.'cost'.$productInfo->cost_price.'dis'.$TotalDiscount);
         }
         $sale = Sale::updateOrCreate(
             [

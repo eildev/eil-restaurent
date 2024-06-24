@@ -144,15 +144,15 @@
                                             @endphp
                                             @if ($setmenus->count() > 0)
 
-                                                    <div class="tab-pane fade active show" id="v-mytabmajid" role="tabpanel"
-                                                        aria-labelledby="v-mytabmajid-tab">
-                                                        <div class="row" style="max-height: 400px; overflow-y: scroll;">
-                                                            <style>
-                                                                .product_image {
-                                                                    position: relative;
-                                                                }
-                                                            </style>
-                                                            @foreach ($setmenus as $key => $setmenu)
+                                                <div class="tab-pane fade active show" id="v-mytabmajid" role="tabpanel"
+                                                    aria-labelledby="v-mytabmajid-tab">
+                                                    <div class="row" style="max-height: 400px; overflow-y: scroll;">
+                                                        <style>
+                                                            .product_image {
+                                                                position: relative;
+                                                            }
+                                                        </style>
+                                                        @foreach ($setmenus as $key => $setmenu)
                                                             <div class="col-lg-4 col-md-6 p-1 my-1 product_image"
                                                                 style="">
                                                                 <div class="setmenu__div w-100"
@@ -169,9 +169,9 @@
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                            @endforeach
-                                                        </div>
+                                                        @endforeach
                                                     </div>
+                                                </div>
 
                                             @endif
 
@@ -380,11 +380,13 @@
                     <form class="customerForm row">
                         <div class="mb-3 col-md-6">
                             <label for="name" class="form-label">Sub Total</label>
-                            <input id="defaultconfig" class="form-control modal_subtotal" readonly maxlength="39" type="number">
+                            <input id="defaultconfig" class="form-control modal_subtotal" readonly maxlength="39"
+                                type="number">
                         </div>
                         <div class="mb-3 col-md-6">
                             <label for="name" class="form-label">Tax</label>
-                            <select name="" id="" class="form-control modal_tax" onchange="finalCalculate()">
+                            <select name="" id="" class="form-control modal_tax"
+                                onchange="finalCalculate()">
                                 <option value="0">0%</option>
                                 <option value="5">5%</option>
                                 <option value="7">7%</option>
@@ -393,23 +395,25 @@
                         </div>
                         <div class="mb-3 col-md-6">
                             <label for="name" class="form-label">Grand Total</label>
-                            <input id="defaultconfig" class="form-control modal_grandtotal" maxlength="39"
-                                readonly type="number">
+                            <input id="defaultconfig" class="form-control modal_grandtotal" maxlength="39" readonly
+                                type="number">
                         </div>
                         <div class="mb-3 col-md-6">
                             <label for="name" class="form-label">Pay Amount</label>
-                            <input id="defaultconfig" class="form-control modal_payamount" onkeyup="finalCalculate()" maxlength="39"
-                                name="opening_payable" type="number">
+                            <input id="defaultconfig" class="form-control modal_payamount" onkeyup="finalCalculate()"
+                                maxlength="39" type="number">
                         </div>
                         <div class="mb-3 col-md-12">
                             <label for="name" class="form-label">Cash Back</label>
                             <input id="defaultconfig" class="form-control modal_cashback" readonly maxlength="39"
-                                name="opening_payable" type="number">
+                                type="number">
+                            <input type="hidden" class="modal_payment_method" value="1">
+                            <input type="hidden" class="modal_sale_id">
                         </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary save_new_customer"><i class="fa fa-print"></i>
+                    <button type="button" class="btn btn-primary paid_queue"><i class="fa fa-print"></i>
                         Print</button>
                 </div>
                 </form>
@@ -417,31 +421,72 @@
         </div>
     </div>
     <script>
+        const paid_queue = document.querySelector('.paid_queue');
+        paid_queue.addEventListener('click', function(e) {
+            e.preventDefault();
+            const modal_tax = document.querySelector('.modal_tax').value;
+            const modal_subtotal = document.querySelector('.modal_subtotal').value;
+            const modal_payamount = document.querySelector('.modal_payamount').value;
+            const modal_sale_id = document.querySelector('.modal_sale_id').value;
+            const modal_payment_method = document.querySelector('.modal_payment_method').value;
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+            $.ajax({
+                url: '/sale/pay',
+                type: 'POST',
+                data: {
+                    modal_tax,
+                    modal_subtotal,
+                    modal_payamount,
+                    modal_sale_id,
+                    modal_payment_method,
+                },
+                success: function(res) {
+                    // Assuming the response is in JSON format and contains the HTML
+                    if (res && res.html) {
+                        document.querySelector('.renderData').innerHTML = res.html;
+                        showTableQueue();
+                        posPrint(modal_sale_id);
+                        $('#saleModal').modal('hide');
 
-    function finalCalculate(){
-        // Select elements
-        const modal_subtotal = document.querySelector('.modal_subtotal');
-        const modal_tax = document.querySelector('.modal_tax');
-        const modal_grandtotal = document.querySelector('.modal_grandtotal');
-        const modal_payamount = document.querySelector('.modal_payamount');
-        const modal_cashback = document.querySelector('.modal_cashback');
+                    } else {
+                        console.error('Invalid response format:', res);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('AJAX error:', error);
+                }
+            });
 
-        // Check if elements are found and parse their values
-        const subtotalValue = modal_subtotal ? parseFloat(modal_subtotal.value) : 0;
-        const taxValue = modal_tax ? parseInt(modal_tax.value) : 0;
-        const payamountValue = modal_payamount ? parseFloat(modal_payamount.value) : 0;
+        });
 
-        // Calculate tax and grand total
-        const tax = (subtotalValue * taxValue) / 100;
-        const grandtotal = subtotalValue + tax;
+        function finalCalculate() {
+            // Select elements
+            const modal_subtotal = document.querySelector('.modal_subtotal');
+            const modal_tax = document.querySelector('.modal_tax');
+            const modal_grandtotal = document.querySelector('.modal_grandtotal');
+            const modal_payamount = document.querySelector('.modal_payamount');
+            const modal_cashback = document.querySelector('.modal_cashback');
 
-        // Calculate cash back
-        const cashBack = grandtotal - payamountValue;
+            // Check if elements are found and parse their values
+            const subtotalValue = modal_subtotal ? parseFloat(modal_subtotal.value) : 0;
+            const taxValue = modal_tax ? parseInt(modal_tax.value) : 0;
+            const payamountValue = modal_payamount ? parseFloat(modal_payamount.value) : 0;
 
-        // Set the calculated values to the respective elements
-        if (modal_grandtotal) modal_grandtotal.value = grandtotal.toFixed(2);
-        if (modal_cashback) modal_cashback.value = cashBack.toFixed(2);
-    }
+            // Calculate tax and grand total
+            const tax = (subtotalValue * taxValue) / 100;
+            const grandtotal = subtotalValue + tax;
+
+            // Calculate cash back
+            const cashBack = grandtotal - payamountValue;
+
+            // Set the calculated values to the respective elements
+            if (modal_grandtotal) modal_grandtotal.value = grandtotal.toFixed(2);
+            if (modal_cashback) modal_cashback.value = cashBack.toFixed(2);
+        }
 
         showTableQueue();
 
@@ -480,13 +525,13 @@
                             </div>
                             <div class="card-footer" style="padding: 5px!important">
                                 <div class="d-flex" style="flex-wrap:wrap;justify-content:center">
-                                    <button class="cashby_tablequeue {{ $mode->dark_mode == 1 ? 'mybtn_white' : 'mybtn_dark' }}"
+                                    <button onclick="paidby_queue(this)" sale_id_queue="${val.id}" payments_method_queue="1" class="paidby_queue cashby_tablequeue {{ $mode->dark_mode == 1 ? 'mybtn_white' : 'mybtn_dark' }}"
                                         style="; max-width:48px;border-radius:10px; margin-top:5px" value="${val.final_receivable}">Cash</button>
-                                    <button class="{{ $mode->dark_mode == 1 ? 'mybtn_white' : 'mybtn_dark' }}"
+                                    <button onclick="paidby_queue(this)" sale_id_queue="${val.id}"  value="${val.final_receivable}" payments_method_queue="2" class="paidby_queue {{ $mode->dark_mode == 1 ? 'mybtn_white' : 'mybtn_dark' }}"
                                         style="margin-left:5px; max-width:48px;border-radius:10px; margin-top:5px">bKash</button>
-                                    <button class="{{ $mode->dark_mode == 1 ? 'mybtn_white' : 'mybtn_dark' }}"
+                                    <button onclick="paidby_queue(this)" sale_id_queue="${val.id}"  value="${val.final_receivable}" payments_method_queue="3" class="paidby_queue {{ $mode->dark_mode == 1 ? 'mybtn_white' : 'mybtn_dark' }}"
                                         style="margin-left:5px; max-width:48px;border-radius:10px; margin-top:5px">Nagad</button>
-                                    <button class="{{ $mode->dark_mode == 1 ? 'mybtn_white' : 'mybtn_dark' }}"
+                                    <button onclick="paidby_queue(this)" sale_id_queue="${val.id}"  value="${val.final_receivable}" payments_method_queue="4" class="paidby_queue {{ $mode->dark_mode == 1 ? 'mybtn_white' : 'mybtn_dark' }}"
                                         style="margin-left:5px; max-width:48px;border-radius:10px; margin-top:5px">Card</button>
                                 </div>
                             </div>
@@ -508,17 +553,32 @@
         //         alert(vale)
         //     });
         // });
-        $(document).on('click', '.cashby_tablequeue', function(e) {
-            e.preventDefault();
-            let value = e.target.value;
+        function paidby_queue(element) {
+            let value = element.value;
+            let payment_method = element.getAttribute('payments_method_queue');
+            let sale_id_queue = element.getAttribute('sale_id_queue');
             $('#saleModal').modal('show');
             document.querySelector('.modal_subtotal').value = value;
+            document.querySelector('.modal_sale_id').value = sale_id_queue;
+            document.querySelector('.modal_payment_method').value = payment_method;
             finalCalculate();
-
-            $('#saleModal').on('shown.bs.modal', function () {
+            $('#saleModal').on('shown.bs.modal', function() {
                 document.querySelector('.modal_payamount').focus();
             });
-        });
+        }
+        // $(document).on('click', '.cashby_tablequeue', function(e) {
+        //     e.preventDefault();
+        //     let value = e.target.value;
+        //     $('#saleModal').modal('show');
+        //     document.querySelector('.modal_subtotal').value = value;
+        //     finalCalculate();
+
+        //     $('#saleModal').on('shown.bs.modal', function () {
+        //         document.querySelector('.modal_payamount').focus();
+        //     });
+        // });
+
+
         const setmenu__div = document.querySelectorAll('.setmenu__div');
         setmenu__div.forEach(element => {
             element.addEventListener('click', function(e) {
@@ -801,6 +861,19 @@
                     }
                 }
             });
-        })
+        });
+
+        function posPrint(saleId) {
+            $(document).ready(function() {
+                var printFrame = $('#printFrame')[0];
+                var printContentUrl =
+                    '{{ url("/sale/print/") }}' + "/"+saleId;
+                $('#printFrame').attr('src', printContentUrl);
+                printFrame.onload = function() {
+                    printFrame.contentWindow.focus();
+                    printFrame.contentWindow.print();
+                };
+            });
+        }
     </script>
 @endsection

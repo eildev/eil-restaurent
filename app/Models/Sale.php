@@ -17,4 +17,8 @@ class Sale extends Model
     {
         return $this->hasMany(SaleItem::class, 'sale_id', 'id');
     }
+    function setmenu()
+    {
+        return $this->hasMany(SetMenu::class, 'sale_id', 'id');
+    }
 }

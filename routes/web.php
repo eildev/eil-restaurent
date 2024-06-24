@@ -292,6 +292,8 @@ Route::middleware('auth')->group(function () {
     Route::controller(SaleController::class)->group(function () {
         Route::get('/sale', 'index')->name('sale');
         Route::post('/sale/store', 'store')->name('sale.store');
+        Route::post('/update/sale', 'SaleUpdate');
+        Route::post('/sale/pay', 'SalePay');
         Route::post('/sale/store/setmenu', 'storesetmenu');
         Route::get('/sale/view', 'view')->name('sale.view');
         Route::get('/sale/view-all', 'viewAll')->name('sale.view.all');
