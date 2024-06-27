@@ -91,97 +91,132 @@
             border: 1px solid #00a9f1 !important;
             color: #00a9f1 !important;
         }
+
+        .mytop__tab__controls {
+            cursor: pointer;
+        }
+
+        .mytop__tab-page {
+            display: none;
+        }
+
+        .active {
+            color: #00a9f1;
+            display: block;
+        }
+        .menu__tab__pag {
+            display: none;
+        }
+
+        .menu__tab__control {
+            cursor: pointer;
+            @if ($mode->dark_mode == 1)
+                color: black !important;
+            @else
+                color: white !important;
+            @endif
+
+        }
+
+        .menu__active {
+            display: block;
+            color: #6571ff !important;
+        }
     </style>
     <div class="row mt-0">
         <div class="col-lg-12 grid-margin stretch-card mb-0">
             <div class="card">
-                <div class="card-body px-4 pt-2 pb-0">
+                <div class="card-body px-4 pt-2 pb-0" style="min-height: 520px !important">
                     <div class="row">
-                        <ul class="nav nav-tabs" id="myTab" role="tablist">
-                            <li class="nav-item">
-                                <a class="nav-link active" id="neworder-tab" data-bs-toggle="tab" href="#neworder"
-                                    role="tab" aria-controls="neworder" aria-selected="true">New Order</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" id="profile-tab" data-bs-toggle="tab" href="#profile" role="tab"
-                                    aria-controls="profile" aria-selected="false">Order Queue</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link disabled" id="disabled-tab" data-bs-toggle="tab" href="#disabled"
-                                    role="tab" aria-controls="disabled" aria-selected="false">Details</a>
-                            </li>
-                        </ul>
-                        <div class="tab-content border border-top-0 p-3" id="myTabContent">
-                            {{-- New Order Start --}}
-                            <div class="tab-pane fade show active" id="neworder" role="tabpanel"
-                                aria-labelledby="neworder-tab">
-                                <div class="row">
-                                    <div class="col-md-2 pe-0">
-                                        <div class="nav nav-tabs nav-tabs-vertical" id="v-tab" role="tablist"
-                                            aria-orientation="vertical">
-                                            <a class="nav-link " id="v-mytabmajid-tab" data-bs-toggle="pill"
-                                                href="#v-mytabmajid" role="tab" aria-controls="v-mytabmajid"
-                                                aria-selected="true">Set Menu</a>
-                                            @php
-                                                $categories = App\Models\ItemCategory::all();
-                                            @endphp
-                                            @if ($categories->count() > 0)
-                                                @foreach ($categories as $key => $category)
-                                                    <a class="nav-link " id="v-mytab{{ $category->id }}-tab"
-                                                        data-bs-toggle="pill" href="#v-mytab{{ $category->id }}"
-                                                        role="tab" aria-controls="v-mytab{{ $category->id }}"
-                                                        aria-selected="true">{{ $category->category_name }}</a>
-                                                @endforeach
-                                            @else
-                                                Note Found
-                                            @endif
-                                        </div>
-                                    </div>
-                                    <div class="col-md-5 ps-0">
-                                        <div class="tab-content tab-content-vertical border px-3 py-0" id="v-tabContent">
-                                            @php
-                                                $setmenus = App\Models\SetMenu::all();
-                                            @endphp
-                                            @if ($setmenus->count() > 0)
+                        <div class="mytop__container border p-0">
+                            {{-- My top Tab Head Start  --}}
+                            <div class="mytop__head d-flex">
+                                <div class="mytop__tab__first mytop__tab__controls active p-2 border" tab__index="1">
+                                    <span>New Order</span>
+                                </div>
+                                <div class="mytop__tab__controls p-2 border" tab__index="2">
+                                    <span>Proccessing</span>
+                                </div>
+                                {{-- <div class="mytop__tab__controls p-2 border" tab__index="3">
+                                    <span>Complete</span>
+                                </div> --}}
+                                <div class="mytop__tab__controls p-2 border mytop__tab__last" tab__index="4">
+                                    <span>Details</span>
+                                </div>
+                            </div>
+                            {{-- My top Tab Head End  --}}
+                            {{-- My top Tab Body Start  --}}
+                            <div class="mytop__body">
+                                <div class="mytop__tab-page active p-2 border tap_page--1">
+                                    <div class="row">
+                                        <div class="col-md-2">
+                                            <div class="menu__tab">
 
-                                                <div class="tab-pane fade active show" id="v-mytabmajid" role="tabpanel"
-                                                    aria-labelledby="v-mytabmajid-tab">
-                                                    <div class="row" style="max-height: 400px; overflow-y: scroll;">
-                                                        <style>
-                                                            .product_image {
-                                                                position: relative;
-                                                            }
-                                                        </style>
-                                                        @foreach ($setmenus as $key => $setmenu)
-                                                            <div class="col-lg-4 col-md-6 p-1 my-1 product_image"
-                                                                style="">
-                                                                <div class="setmenu__div w-100"
-                                                                    set_menu_id="{{ $setmenu->id }}"
-                                                                    style="cursor: pointer; ">
-                                                                    <img class="w-100" height="90"
-                                                                        style="border-radius:5px 5px 0 0;border-left: 1px solid;border-top: 1px solid;border-right: 1px solid;border-color:#00a9f1"
-                                                                        src="{{ !empty($setmenu->image) ? asset('uploads/menu_items/' . $setmenu->image) : asset('assets/images/empty.png') }}">
-                                                                    <div class="info"
-                                                                        style="border-radius:0 0 5px 5px;color:black;background: rgba(255,255,255,.7);text-align:center;border-left: 1px solid;border-bottom: 1px solid;border-right: 1px solid;border-color:#00a9f1">
-                                                                        <p>{{ Str::limit($setmenu->menu_name, 16, '') }}
-                                                                        </p>
-                                                                        <p>৳{{ $setmenu->sale_price }}</p>
-                                                                    </div>
+                                                @php
+                                                    $index = 1;
+                                                    $categories = App\Models\ItemCategory::all();
+                                                @endphp
+                                                <div class="menu__active menu__tab__control border py-1 px-2"
+                                                    menu__tab__index="{{$index}}">
+                                                    <span>Set Menu</span>
+                                                </div>
+                                                @if ($categories->count() > 0)
+                                                @foreach ($categories as $key => $category)
+                                                    @php $index++; @endphp
+                                                    <div class="menu__tab__control border py-1 px-2" menu__tab__index="{{$index}}">
+                                                        <span>{{ $category->category_name }}</span>
+                                                    </div>
+                                                @endforeach
+                                                @else
+                                                    <span>Note Found</span>
+                                                @endif
+                                                {{-- <div class="menu__tab__control border py-1 px-2" menu__tab__index="3">
+                                                    <span>Menu - 2</span>
+                                                </div> --}}
+                                            </div>
+                                        </div>
+                                        <div class="col-md-5 border">
+                                            <div class="menu__active menu__tab__pag menu__tab__pag--1" style="min-height: 470px;">
+                                                @php
+                                                $setmenus = App\Models\SetMenu::all();
+                                                @endphp
+                                                @if ($setmenus->count() > 0)
+                                                <div class="row" style="max-height: 500px; overflow-y: scroll;">
+                                                    <style>
+                                                        .product_image {
+                                                            position: relative;
+                                                        }
+                                                    </style>
+                                                    @foreach ($setmenus as $key => $setmenu)
+                                                        <div class="col-lg-3 col-md-6 p-1 my-1 product_image"
+                                                            style="">
+                                                            <div class="setmenu__div w-100"
+                                                                set_menu_id="{{ $setmenu->id }}"
+                                                                style="cursor: pointer; ">
+                                                                <img class="w-100" height="90"
+                                                                    style="border-radius:5px 5px 0 0;border-left: 1px solid;border-top: 1px solid;border-bottom: 1px solid;border-right: 1px solid;border-color:#00a9f1"
+                                                                    src="{{ !empty($setmenu->image) ? asset('uploads/menu_items/' . $setmenu->image) : asset('assets/images/empty.png') }}">
+                                                                <div class="info"
+                                                                    style="border-radius:0 0 5px 5px;color:black;background: rgba(255,255,255,.7);text-align:center;border-left: 1px solid;border-bottom: 1px solid;border-right: 1px solid;border-color:#00a9f1">
+                                                                    <p style="font-size: 12px">{{ Str::limit($setmenu->menu_name, 16, '') }}
+                                                                    </p>
+                                                                    <hr style="margin: 0">
+                                                                    <p>৳{{ $setmenu->sale_price }}</p>
                                                                 </div>
                                                             </div>
-                                                        @endforeach
-                                                    </div>
+                                                        </div>
+                                                    @endforeach
                                                 </div>
-
-                                            @endif
-
+                                                @endif
+                                            </div>
                                             @php
                                                 $categories = App\Models\ItemCategory::all();
+                                                $index = 1;
                                             @endphp
                                             @if ($categories->count() > 0)
                                                 @foreach ($categories as $key => $category)
-                                                    <div class="tab-pane fade " id="v-mytab{{ $category->id }}"
-                                                        role="tabpanel" aria-labelledby="v-mytab{{ $category->id }}-tab">
+                                                    @php $index++; @endphp
+                                                    <div class="menu__tab__pag menu__tab__pag--{{$index}}">
                                                         @php
                                                             $items = App\Models\MakeItem::where(
                                                                 'make_category_id',
@@ -190,25 +225,26 @@
                                                         @endphp
                                                         @if ($items->count() > 0)
                                                             <div class="row"
-                                                                style="max-height: 400px; overflow-y: scroll;">
+                                                                style="max-height: 500px; overflow-y: scroll;">
                                                                 <style>
                                                                     .product_image {
                                                                         position: relative;
                                                                     }
                                                                 </style>
                                                                 @foreach ($items as $key => $item)
-                                                                    <div class="col-lg-4 col-md-6 p-1 my-1 product_image"
+                                                                    <div class="col-lg-3 col-md-6 p-1 my-1 product_image"
                                                                         style="">
                                                                         <div class="Item__div w-100"
                                                                             product_id="{{ $item->id }}"
                                                                             style="cursor: pointer; ">
                                                                             <img class="w-100" height="90"
-                                                                                style="border-radius:5px 5px 0 0;border-left: 1px solid;border-top: 1px solid;border-right: 1px solid;border-color:#00a9f1"
+                                                                                style="border-radius:5px 5px 0 0;border-left: 1px solid;border-bottom: 1px solid;border-top: 1px solid;border-right: 1px solid;border-color:#00a9f1"
                                                                                 src="{{ !empty($item->picture) ? asset($item->picture) : asset('assets/images/empty.png') }}">
                                                                             <div class="info"
                                                                                 style="border-radius:0 0 5px 5px;color:black;background: rgba(255,255,255,.7);text-align:center;border-left: 1px solid;border-bottom: 1px solid;border-right: 1px solid;border-color:#00a9f1">
-                                                                                <p>{{ Str::limit($item->item_name, 16, '') }}
+                                                                                <p style="font-size: 12px">{{ Str::limit($item->item_name, 16, '') }}
                                                                                 </p>
+                                                                                <hr style="margin: 0">
                                                                                 <p>৳{{ $item->sale_price }}</p>
                                                                             </div>
                                                                         </div>
@@ -218,7 +254,7 @@
                                                         @else
                                                             <div class="row text-center">
                                                                 <div class="col-lg-12">
-                                                                    <div class="card" style="width:18rem;">
+                                                                    <div class="card" style="width:22rem;margin-top:50px">
                                                                         <div class="card-body">
                                                                             <h5 class="card-title">Product Not Found
                                                                             </h5>
@@ -229,65 +265,78 @@
                                                         @endif
                                                     </div>
                                                 @endforeach
-                                            @else
-                                                Note Found
                                             @endif
+                                            {{-- <div class="menu__tab__pag menu__tab__pag--3">P-3</div> --}}
+                                        </div>
+                                        <div class="col-md-5 border">
+                                            {{-- Right Side Controls --}}
+                                            {{-- Customer Details Information  --}}
+                                            <table class="table">
+                                                <thead>
+                                                    <tr>
+                                                        @php $customers = App\Models\Customer::first(); @endphp
+
+                                                        <th style="font-size: 10px; padding: 0 20px 10px 13px">
+                                                            Customer Info:<br>
+                                                            <span class="customer_name">{{ $customers->name }}</span>
+                                                            <input type="hidden" class="customer_id"
+                                                                value="{{ $customers->id }}">
+                                                            <input type="hidden" value="0" class="sale_id">
+                                                            <input type="hidden" value="<?php echo rand(123456, 99999); ?>"
+                                                                class="invoice_number">
+                                                            <input type="hidden" value="0" class="payment_method"
+                                                                value="0">
+                                                        </th>
+                                                        <th style="font-size: 10px; padding: 0 20px 10px 13px">
+
+                                                            <span
+                                                                class="customer_address">{{ !empty($customers->phone) ? $customers->phone : $customers->address }}</span><br>
+                                                            <span> P. Total: <span
+                                                                    class="customer_total_receivable">{{ $customers->total_receivable }}</span></span>
+                                                        </th>
+                                                        <th>
+                                                            <button data-bs-target="#customerModal" data-bs-toggle="modal"
+                                                                class="{{ $mode->dark_mode == 1 ? 'mybtn_white' : 'mybtn_dark' }}"
+                                                                style="width: 35px; height: 25px; border-radius:5px;font-size:10px;padding-left: 0px;"><i
+                                                                    class="fa fa-pencil"></i></button>
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                            </table>
+                                            <style>
+                                                tr th,
+                                                tr td {
+                                                    padding: 5px !important;
+                                                }
+                                            </style>
+                                            {{-- Rander Data  --}}
+                                            <div class="renderData">
+                                                @include('pos.sale.sales_detailes_ramder_data')
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    @include('pos.sale.controls')
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-5 ps-0" style="position: relative">
-                                        <table class="table">
-                                            <thead>
-                                                <tr>
-                                                    @php $customers = App\Models\Customer::first(); @endphp
-
-                                                    <th style="font-size: 10px; padding: 0 20px 10px 13px">
-                                                        Customer Info:<br>
-                                                        <span class="customer_name">{{ $customers->name }}</span>
-                                                        <input type="hidden" class="customer_id"
-                                                            value="{{ $customers->id }}">
-                                                        <input type="hidden" value="0" class="sale_id">
-                                                        <input type="hidden" value="<?php echo rand(123456, 99999); ?>"
-                                                            class="invoice_number">
-                                                        <input type="hidden" value="0" class="payment_method"
-                                                            value="0">
-                                                    </th>
-                                                    <th style="font-size: 10px; padding: 0 20px 10px 13px">
-
-                                                        <span
-                                                            class="customer_address">{{ !empty($customers->phone) ? $customers->phone : $customers->address }}</span><br>
-                                                        <span> P. Total: <span
-                                                                class="customer_total_receivable">{{ $customers->total_receivable }}</span></span>
-                                                    </th>
-                                                    <th>
-                                                        <button data-bs-target="#customerModal" data-bs-toggle="modal"
-                                                            class="{{ $mode->dark_mode == 1 ? 'mybtn_white' : 'mybtn_dark' }}"
-                                                            style="width: 35px; height: 25px; border-radius:5px;font-size:10px;padding-left: 0px;"><i
-                                                                class="fa fa-pencil"></i></button>
-                                                    </th>
-                                                </tr>
-                                            </thead>
-                                        </table>
-                                        <style>
-                                            tr th,
-                                            tr td {
-                                                padding: 5px !important;
-                                            }
-                                        </style>
-                                        <div class="renderData">
-                                            @include('pos.sale.sales_detailes_ramder_data')
-                                        </div>
-
+                                </div>
+                                <div class="mytop__tab-page p-2 border tap_page--2">
+                                    {{-- Order Processing Queu Data  --}}
+                                    <div class="row tableQueueRender">
                                     </div>
                                 </div>
-                            </div>
-                            <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-                                <div class="row tableQueueRender">
+                                {{-- <div class="mytop__tab-page p-2 border tap_page--3">
+                                    <span>Order Complete Page</span>
+                                </div> --}}
+                                <div class="mytop__tab-page p-2 border tap_page--4">
+                                    <div class="SaleDetails">
+                                        @include('pos.sale.details')
+                                    </div>
 
                                 </div>
                             </div>
-                            <div class="tab-pane fade" id="disabled" role="tabpanel" aria-labelledby="disabled-tab">
-                                Details
-                            </div>
+                            {{-- My top Tab Body End  --}}
                         </div>
                     </div>
                 </div>
@@ -497,7 +546,7 @@
                 success: function(res) {
                     let allQueueData = '';
                     $.each(res.sales, function(key, val) {
-                        allQueueData += `<div class="col-md-3">
+                        allQueueData += `<div class="col-md-3 mb-2">
                         <div class="card">
                             <div class="card-header d-flex" style="padding-bottom: 0px !important;justify-content:space-between">
                                 <h6 class="card-title text-info text-center mt-1">Dine-1</h6>
@@ -507,7 +556,7 @@
                             <table class="table">
                                 <tr>
                                     <td style="text-align:right">Invoice No :</td>
-                                    <td><a href="#">#${val.invoice_number}</a></td>
+                                    <td><a href="#" class="sale_details_btn" value="${val.id}">#${val.invoice_number} </a> <a href="#" class="sale_customize" value="${val.id}"><i style="font-size: 12px;border: 1px solid; padding: 4px; border-radius: 3px;" class="fa fa-pencil"></i></a></td>
                                 </tr>
                                 <tr>
                                     <td style="text-align:right">Items x ${val.quantity} :</td>
@@ -536,23 +585,47 @@
                                 </div>
                             </div>
                         </div>
-
-                    </div>`;
+                        </div>`;
                     });
                     document.querySelector('.tableQueueRender').innerHTML = allQueueData;
                 }
 
             });
         }
-        // let cashby_tablequeue = document.querySelectorAll('.cashby_tablequeue');
-        // console.log(cashby_tablequeue)
-        // cashby_tablequeue.forEach(btn =>{
-        //     btn.addEventListener('click',function(e){
-        //         e.preventDefault();
-        //         let value = e.target.value;
-        //         alert(vale)
-        //     });
-        // });
+        $(document).on('click', '.sale_details_btn', function(){
+            const sale_id = $(this).attr('value');
+            $.ajax({
+                url: '/details/sale/'+sale_id,
+                type: 'GET',
+                success: function(res) {
+                    if (res && res.html) {
+                        document.querySelector('.SaleDetails').innerHTML = res.html;
+                        // Tab Active
+                        const mytop__tab__controls = document.querySelectorAll('.mytop__tab__controls')
+                        mytop__tab__controls.forEach((mytab) => {
+                            mytab.classList.remove('active');
+                        })
+                        document.querySelector('.mytop__tab__last').classList.add('active');
+                        const tap_page = document.querySelectorAll('.mytop__tab-page');
+                        tap_page.forEach((tap) => {
+                            tap.classList.remove('active');
+                        })
+
+                        document.querySelector(`.tap_page--4`).classList.add(
+                            'active');
+                        document.querySelector(`.tap_page--2`).classList.remove(
+                            'active');
+
+                    } else {
+                        console.error('Invalid response format:', res);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('AJAX error:', error);
+                }
+            });
+        });
+
         function paidby_queue(element) {
             let value = element.value;
             let payment_method = element.getAttribute('payments_method_queue');
@@ -566,18 +639,6 @@
                 document.querySelector('.modal_payamount').focus();
             });
         }
-        // $(document).on('click', '.cashby_tablequeue', function(e) {
-        //     e.preventDefault();
-        //     let value = e.target.value;
-        //     $('#saleModal').modal('show');
-        //     document.querySelector('.modal_subtotal').value = value;
-        //     finalCalculate();
-
-        //     $('#saleModal').on('shown.bs.modal', function () {
-        //         document.querySelector('.modal_payamount').focus();
-        //     });
-        // });
-
 
         const setmenu__div = document.querySelectorAll('.setmenu__div');
         setmenu__div.forEach(element => {
@@ -696,69 +757,89 @@
             const remove_items = document.querySelectorAll('.remove_item');
             remove_items.forEach(function(item) {
                 item.addEventListener('click', function(event) {
-                    alert("OK");
-                });
-            });
-            const btn_add_queu = document.querySelector('.btn_add_queu');
-            btn_add_queu.addEventListener('click', function(event) {
+                    event.preventDefault();
+                    const sale_id = document.querySelector('.sale_id').value;
+                    const item_id = this.getAttribute('value');
+                    $.ajax({
+                        url: '/sale/item/remove/' + sale_id + "/" + item_id,
+                        type: 'GET',
+                        success: function(data) {
+                            if (data.status === 200) {
+                                toastr.success(data.message);
+                                document.querySelector('.renderData').innerHTML = data.html;
+                                // showTableQueue();
+                                attachEventListeners();
+                                if (data.sale_items.length === 0) {
+                                    disableDiv('controls');
+                                }
+                            }
 
-                const select_dine = document.querySelector('.select_dine');
-                const customer_id = document.querySelector('.customer_id').value;
-                const sale_id = document.querySelector('.sale_id').value;
-                const payment_method = document.querySelector('.payment_method').value;
-                const sale_discount = document.querySelector('.sale_discount').value ?? 0;
-                const tax = 1;
-                const note = "Note dynamic korte hobe";
-                if (select_dine.value === '') {
-                    toastr.error('Please Select Dine');
-                    select_dine.focus();
-                    return false;
-                }
-
-                $.ajaxSetup({
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    }
-                });
-                $.ajax({
-                    url: '/update/sale',
-                    type: 'POST',
-                    data: {
-                        customer_id,
-                        sale_id,
-                        payment_method,
-                        sale_discount,
-                        note,
-                        tax
-                    },
-                    success: function(res) {
-
-                        if (res && res.html) {
-                            toastr.success('Qrder Queue Successfully Added');
-                            document.querySelector('.renderData').innerHTML = res.html;
-                            showTableQueue();
-                            attachEventListeners();
-                            disableDiv('controls');
-                            document.querySelector('.sale_id').value = "0";
-                            document.querySelector('.sale_items_count').textContent = "0";
-                            document.querySelector('.sale_item_quantity').textContent = "0";
-                            document.querySelector('.total_sale_receivable').textContent = "0";
-                            document.querySelector('.final_receivable').textContent = "0";
-                            document.querySelector('.final_receivable_main_value').value = "0";
-                        } else {
-                            console.error('Invalid response format:', res);
                         }
-                    },
-                    error: function(xhr, status, error) {
-                        console.error('AJAX error:', error);
-                    }
+                    });
                 });
-
             });
+
+
 
         }
         attachEventListeners();
         disableDiv('controls')
+        const btn_add_queu = document.querySelector('.btn_add_queu');
+        btn_add_queu.addEventListener('click', function(event) {
+            const select_dine = document.querySelector('.select_dine');
+            const customer_id = document.querySelector('.customer_id').value;
+            const sale_id = document.querySelector('.sale_id').value;
+            const payment_method = document.querySelector('.payment_method').value;
+            const sale_discount = document.querySelector('.sale_discount').value ?? 0;
+            const tax = 1;
+            const note = "Note dynamic korte hobe";
+            if (select_dine.value === '') {
+                toastr.error('Please Select Dine');
+                select_dine.focus();
+                return false;
+            }
+
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+            $.ajax({
+                url: '/update/sale',
+                type: 'POST',
+                data: {
+                    customer_id,
+                    sale_id,
+                    payment_method,
+                    sale_discount,
+                    note,
+                    tax,
+                    dine: select_dine.value
+                },
+                success: function(res) {
+
+                    if (res && res.html) {
+                        toastr.success('Order Queue Successfully Added');
+                        document.querySelector('.renderData').innerHTML = res.html;
+                        showTableQueue();
+                        attachEventListeners();
+                        disableDiv('controls');
+                        document.querySelector('.sale_id').value = "0";
+                        document.querySelector('.sale_items_count').textContent = "0";
+                        document.querySelector('.sale_item_quantity').textContent = "0";
+                        document.querySelector('.total_sale_receivable').textContent = "0";
+                        document.querySelector('.final_receivable').textContent = "0";
+                        document.querySelector('.final_receivable_main_value').value = "0";
+                    } else {
+                        console.error('Invalid response format:', res);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('AJAX error:', error);
+                }
+            });
+
+        });
 
         function disableDiv(divId) {
             // Get the div by its ID
@@ -796,11 +877,15 @@
         select_customer.addEventListener('change', function(e) {
             // toastr.success('Please select');
             const customer_id = document.querySelector('.select_customer').value;
+            selectCustomer(customer_id)
+        });
+
+        function selectCustomer(customer_id) {
             $.ajax({
                 url: 'select/customer/for-pos/' + customer_id,
                 type: 'get',
                 success: function(res) {
-                    toastr.success('Customer Successfully Added');
+                    // toastr.success('Customer Successfully Added');
                     $('#customerModal').modal('hide');
                     document.querySelector('.customer_name').textContent = res.data.name;
                     let phoneoraddress;
@@ -815,8 +900,7 @@
                     document.querySelector('.customer_id').value = res.data.id;
                 }
             });
-        });
-
+        }
         const saveCustomer = document.querySelector('.save_new_customer');
         saveCustomer.addEventListener('click', function(e) {
             e.preventDefault();
@@ -867,7 +951,7 @@
             $(document).ready(function() {
                 var printFrame = $('#printFrame')[0];
                 var printContentUrl =
-                    '{{ url("/sale/print/") }}' + "/"+saleId;
+                    '{{ url('/sale/print/') }}' + "/" + saleId;
                 $('#printFrame').attr('src', printContentUrl);
                 printFrame.onload = function() {
                     printFrame.contentWindow.focus();
@@ -875,5 +959,123 @@
                 };
             });
         }
+        $(document).on('click', '.sale_customize', function(event) {
+            event.preventDefault();
+            const sale_id = this.getAttribute('value');
+            // alert(item_id);
+            $.ajax({
+                url: '/sale/customize/' + sale_id,
+                type: 'GET',
+                success: function(data) {
+                    if (data.status === 200) {
+                        enableDiv('controls');
+                        document.querySelector('.renderData').innerHTML = data.html;
+                        document.querySelector('.sale_id').value = document.querySelector(
+                            '.render_sale_id').value;
+                        document.querySelector('.select_dine').value = data.sale.dine_id;
+                        document.querySelector('.sale_discount ').value = data.sale.discount;
+                        // Re-attach event listeners to the newly added elements
+                        attachEventListeners();
+                        document.querySelector('.btn_update_queu').style.display = 'block';
+                        document.querySelector('.btn_add_queu').style.display = 'none';
+                        selectCustomer(data.sale.customer_id);
+
+                        // Tab Active
+                        const mytop__tab__controls = document.querySelectorAll('.mytop__tab__controls')
+                        mytop__tab__controls.forEach((mytab) => {
+                            mytab.classList.remove('active');
+                        })
+                        document.querySelector('.mytop__tab__first').classList.add('active');
+                        const tap_page = document.querySelectorAll('.mytop__tab-page');
+                        tap_page.forEach((tap) => {
+                            tap.classList.remove('active');
+                        })
+
+                        document.querySelector(`.tap_page--1`).classList.add(
+                            'active');
+                        document.querySelector(`.tap_page--2`).classList.remove(
+                            'active');
+                    }
+
+                }
+            });
+        });
+        const btn_update_queu = document.querySelector('.btn_update_queu');
+        btn_update_queu.addEventListener('click', function(event) {
+            const sale_id = document.querySelector('.sale_id').value;
+            const customer_id = document.querySelector('.customer_id').value;
+            const sale_discount = document.querySelector('.sale_discount').value;
+            const select_dine = document.querySelector('.select_dine');
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+            $.ajax({
+                url: '/update/sale/custom',
+                type: 'POST',
+                data: {
+                    customer_id,
+                    sale_id,
+                    sale_discount,
+                    dine: select_dine.value
+                },
+                success: function(res) {
+
+                    if (res && res.html) {
+                        toastr.success('Order Queue Successfully Updated');
+                        document.querySelector('.renderData').innerHTML = res.html;
+                        showTableQueue();
+                        attachEventListeners();
+                        disableDiv('controls');
+                        document.querySelector('.sale_id').value = "0";
+                        document.querySelector('.sale_items_count').textContent = "0";
+                        document.querySelector('.sale_item_quantity').textContent = "0";
+                        document.querySelector('.total_sale_receivable').textContent = "0";
+                        document.querySelector('.final_receivable').textContent = "0";
+                        document.querySelector('.final_receivable_main_value').value = "0";
+                        document.querySelector('.btn_update_queu').style.display = 'none';
+                        document.querySelector('.btn_add_queu').style.display = 'block';
+                    } else {
+                        console.error('Invalid response format:', res);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('AJAX error:', error);
+                }
+            });
+        });
+        const mytop__tab__controls = document.querySelectorAll('.mytop__tab__controls');
+        mytop__tab__controls.forEach((mytab) => {
+            mytab.addEventListener('click', () => {
+                mytop__tab__controls.forEach((mytab) => {
+                    mytab.classList.remove('active');
+                })
+                mytab.classList.add('active');
+                const tap_page = document.querySelectorAll('.mytop__tab-page');
+                tap_page.forEach((tap) => {
+                    tap.classList.remove('active');
+                })
+                document.querySelector(`.tap_page--${mytab.getAttribute('tab__index')}`).classList.add(
+                    'active');
+            })
+        })
+        const menu__tab__control = document.querySelectorAll('.menu__tab__control');
+        menu__tab__control.forEach((menuTab) => {
+            menuTab.addEventListener('click', () => {
+                // alert("OK")
+                menu__tab__control.forEach((menuTab) => {
+                    menuTab.classList.remove('menu__active');
+                });
+                menuTab.classList.add('menu__active');
+                const menu__tab__pag = document.querySelectorAll('.menu__tab__pag');
+                menu__tab__pag.forEach((menuTabPag) => {
+                    menuTabPag.classList.remove('menu__active');
+                });
+                const menu__tab__pag__index = menuTab.getAttribute('menu__tab__index');
+                document.querySelector(`.menu__tab__pag--${menu__tab__pag__index}`).classList.add(
+                    'menu__active');
+            })
+        })
     </script>
 @endsection

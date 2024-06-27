@@ -21,4 +21,8 @@ class Sale extends Model
     {
         return $this->hasMany(SetMenu::class, 'sale_id', 'id');
     }
+    function user()
+    {
+        return $this->belongsTo(User::class, 'sale_by', 'id');
+    }
 }
