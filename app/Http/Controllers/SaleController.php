@@ -364,10 +364,6 @@ class SaleController extends Controller
 
         // Return the rendered HTML as a JSON response
         return response()->json(['html' => $renderedHtml]);
-        // return response()->json([
-        //     'sale_items' => $sale_items,
-        //     'sale' => $sale,
-        // ]);
         //     // customer table CRUD
         //     $customer = Customer::findOrFail($request->customer_id);
         //     $customer->total_receivable = $customer->total_receivable + $request->change_amount;
@@ -463,14 +459,10 @@ class SaleController extends Controller
         return response()->json(['html' => $renderedHtml]);
     }
     public function customizeSale(Request $request){
-        // dd($request->all());
         $sale = Sale::findOrFail($request->sale_id);
-        // dd($sale);
         $sale->customer_id = $request->customer_id;
         $sale->order_type = "general";
-
         $sale->change_amount = (($sale->change_amount + $sale->discount) - $request->sale_discount);
-        // dd($sale->receivable.'old-dis'.$sale->discount.'old-dis'.$request->sale_discount);
         $sale->receivable = (($sale->receivable + $sale->discount) - $request->sale_discount);
         $sale->final_receivable =  (($sale->final_receivable + $sale->discount) - $request->sale_discount);
         $sale->profit = (($sale->profit + $sale->discount) - $request->sale_discount);

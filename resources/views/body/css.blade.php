@@ -109,6 +109,9 @@
     .dt-search {
         float: right;
     }
+    .nav-item svg:hover{
+        background: transparent !important;
+    }
 </style>
 {{-- jquery plugin  --}}
 
