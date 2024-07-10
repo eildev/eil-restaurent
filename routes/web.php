@@ -292,14 +292,19 @@ Route::middleware('auth')->group(function () {
     Route::controller(SaleController::class)->group(function () {
         Route::get('/sale', 'index')->name('sale');
         Route::post('/sale/store', 'store')->name('sale.store');
+        Route::post('/update/sale', 'SaleUpdate');
+        Route::post('/update/sale/custom', 'customizeSale');
+        Route::post('/sale/pay', 'SalePay');
         Route::post('/sale/store/setmenu', 'storesetmenu');
         Route::get('/sale/view', 'view')->name('sale.view');
         Route::get('/sale/view-all', 'viewAll')->name('sale.view.all');
         Route::get('/sale/view/{id}', 'viewDetails')->name('sale.view.details');
         Route::get('/sale/edit/{id}', 'edit')->name('sale.edit');
         Route::post('/sale/update/{id}', 'update')->name('sale.update');
+        Route::get('/details/sale/{id}', 'SaleDetails');
         Route::get('/sale/destroy/{id}', 'destroy')->name('sale.destroy');
         Route::get('/get/customer', 'getCustomer')->name('get.customer');
+        Route::get('select/customer/for-pos/{id}', 'SelectCustomer');
         Route::post('/add/customer', 'addCustomer')->name('add.customer');
         Route::get('/sale/invoice/{id}', 'invoice')->name('sale.invoice');
         Route::get('/sale/print/{id}', 'print')->name('sale.print');
@@ -312,6 +317,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/product/barcode/find/{id}', 'findProductWithBarcode')->name('product.barcode.find');
         Route::get('/sale/product/find/{id}', 'saleProductFind')->name('sale.product.find');
         Route::get('/show/queue', 'showTableQueue');
+        Route::get('/sale/item/remove/{sale_id}/{item_id}', 'SaleItemRemove');
+        Route::get('/sale/customize/{sale_id}', 'SaleCustomize');
     });
     // Make Items related routes
     Route::controller(MakeItemsController::class)->group(function () {

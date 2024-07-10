@@ -47,7 +47,7 @@ return new class extends Migration
             $table->decimal('total_purchase_cost', 12, 2)->nullable(); //updated after return
             $table->decimal('profit', 10, 2)->default(0);
             $table->integer('payment_method')->nullable();
-            $table->integer('dine_id')->nullable();
+            $table->string('dine_id')->nullable();
             $table->text('note')->nullable();
             // $table->integer('courier_id');
             // $table->integer('delivery_method_id');
