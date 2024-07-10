@@ -333,7 +333,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/make/item/manage', 'MakeItemManage')->name('make.item.manage');
         Route::get('/make/item/edit/{id}', 'MakeItemEdit')->name('make.item.edit');
         Route::get('/make/item/find/{id}', 'MakeItemFind')->name('make.item.find');
-        Route::post('/update/make/item', 'UpdateMakeItem')->name('update.make.item');
+        Route::post('/update/make/item', 'UpdateMakeItemMeterials')->name('update.make.item');
+        Route::post('/update/make/item/only/{id}', 'UpdateMakeItem')->name('only.make.item.update');
         Route::get('/make/item/delete/{id}', 'MakeItemDelete')->name('make.item.delete');
     });
     // Set Categoy & Set Items related routes

@@ -8,15 +8,14 @@
             <div class="card">
 
                 <div class="card-body px-4 py-2">
-                    <form id="myValidForm" class="myForm" method="POST" enctype="multipart/form-data">
-                        @csrf
-                        <input type="hidden" name="id" class="makeItemId" value="{{$itemEditId->id ?? 0}}">
-                        <input type="hidden" name="total_cost_price" value="0">
+
                     <div class="row" >
                         <div class="mb-1 col-md-4">
                             @php
                                 $categories = App\Models\ItemCategory::all();
                             @endphp
+                             <form id="myValidForm" class="myForm1" action="{{route('only.make.item.update',$itemEditId->id)}}" method="POST" enctype="multipart/form-data">
+                                @csrf
                             <div  class="row">
                                 <div class="col-md-10 form-valid-groups">
                                     <label for="ageSelect" class="form-label">Category</label>
@@ -62,19 +61,24 @@
                             <input type="file" class="categoryImage" name="picture" id="myDropify" data-default-file="{{ $itemEditId->picture ? asset($itemEditId->picture) : '' }}" />
                         </div>
 
-
                         <div class="mb-2 col-md-6">
                             <label for="" class="form-label">Item Note</label>
                             <textarea class="form-control" value="{{ old('note') }}" name="note" id="" rows="9"></textarea>
                         </div>
                     </div>
-                    {{-- <button type="submit" class="btn btn-primary ms-2"
-                    >Add</button> --}}
+                   <div class="my-2" style="text-align: end;">
+                     <button type="submit" class="btn btn-primary ms-2"
+                    >Update</button>
                 </div>
+                </div>
+            </form>
             </div>
         </div>
-
     </div>
+    <form id="myValidForm" class="myForm" method="POST">
+        @csrf
+        <input type="hidden" name="id" class="makeItemId" value="{{$itemEditId->id ?? 0}}">
+        <input type="hidden" name="total_cost_price" value="0">
     <div class="row">
         <div class="col-md-12 mb-1 grid-margin stretch-card">
             <div class="card">
