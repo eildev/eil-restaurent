@@ -45,7 +45,6 @@ class SetController extends Controller
         ]);
 
     }
-
         public function SetMenuUpdate(Request $request, $itemId)
         {
             $request->validate([

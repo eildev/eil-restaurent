@@ -48,7 +48,7 @@
 
 					<div class="col-sm-6 form-valid-groups">
 						<div class="mb-3">
-							<label class="form-label">Salary Amount <span id="employeeSalary"></span></label>
+							<label class="form-label">Salary Amount<span id="employeeSalary"></span></label>
 							<input type="number" class="form-control" name="debit"  placeholder="0.00">
                             <span id="advancedSalary">Note: Avanced Amount:0</span>
 						</div>
