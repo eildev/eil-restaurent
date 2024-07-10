@@ -54,7 +54,6 @@ public function EmployeeSalaryStore(Request $request){
             'alert-type'=> 'error'
         ];
         return back()->with($notification);
-
     }
      else {
         $employeeSalary = new EmployeeSalary;

@@ -180,13 +180,36 @@ class MakeItemsController extends Controller
             ]);
         }
         ////////////
-
-        public function UpdateMakeItem(Request $request ){
-            // Validate the request
+        public function UpdateMakeItem(Request $request,$id){
             $validatedData = $request->validate([
                 'make_category_id' => 'required|exists:item_categories,id',
                 'item_name' => 'required',
                 'sale_price' => 'required',
+            ]);
+            if ($request->hasFile('picture')) {
+                $imageName = rand() . '.' . $request->picture->extension();
+                $request->picture->move(public_path('uploads/make_item/'), $imageName);
+                $requestData['picture'] = 'uploads/make_item/' . $imageName;
+            } else {
+                $requestData['picture'] = null;
+            }
+            $makeItem = MakeItem::findOrFail($id);
+             $makeItem->update([
+                'make_category_id' => $request->input('make_category_id'),
+                'item_name' => $request->input('item_name'),
+                'sale_price' => $request->input('sale_price'),
+                'note' => $request->input('note'),
+                'picture' => $requestData['picture'] ?? null,
+            ]);
+            $notification = array(
+                'message' =>'Make Item Update Successfully',
+                'alert-type'=> 'info'
+            );
+            return redirect()->back()->with($notification);
+        }
+        public function UpdateMakeItemMeterials(Request $request ){
+            // Validate the request
+            $validatedData = $request->validate([
                 'product_id' => 'required',
                 'quantity' => 'required',
                 'unit' => 'required',
@@ -199,29 +222,13 @@ class MakeItemsController extends Controller
             } else {
                 $cost_price = $request->apro_cost;
             }
-
-            if ($request->hasFile('picture')) {
-                $imageName = rand() . '.' . $request->picture->extension();
-                $request->picture->move(public_path('uploads/make_item/'), $imageName);
-                $requestData['picture'] = 'uploads/make_item/' . $imageName;
-            } else {
-                $requestData['picture'] = null;
-            }
-
             $makeItem = MakeItem::updateOrCreate([
                 'id' => $request->id ?? 0,
             ], [
-                'make_category_id' => $request->input('make_category_id'),
-                'item_name' => $request->input('item_name'),
-                'barcode' => rand(100000, 123456789),
-                'sale_price' => $request->input('sale_price'),
-                'note' => $request->input('note'),
                 'cost_price' => $cost_price,
-                'picture' => $requestData['picture'] ?? null,
             ]);
 
             $makeItemId = $makeItem->id;
-
             // Check if the material already exists
             $material = MaterialList::where([
                 ['make_item_id', '=', $makeItemId],
