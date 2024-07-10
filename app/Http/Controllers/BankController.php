@@ -2,10 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AccountTransaction;
 use App\Models\Bank;
+use App\Models\Transaction;
 use App\Repositories\RepositoryInterfaces\BankInterface;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+// use Validator;
 use Illuminate\Support\Facades\Validator;
+
+use function Laravel\Prompts\alert;
 
 class BankController extends Controller
 {
@@ -24,9 +30,6 @@ class BankController extends Controller
         // dd($request->all());
         $validator = Validator::make($request->all(), [
             'name' => 'required|max:99',
-            'branch_name' => 'required|max:149',
-            'phone_number' => 'required|max:19',
-            'account' => 'required',
             'opening_balance' => 'required',
         ]);
 
@@ -40,6 +43,15 @@ class BankController extends Controller
             $bank->email = $request->email;
             $bank->opening_balance = $request->opening_balance;
             $bank->save();
+
+            $accountTransaction = new AccountTransaction;
+            $accountTransaction->branch_id =  Auth::user()->branch_id;
+            $accountTransaction->purpose =  'Bank';
+            $accountTransaction->account_id =  $bank->id;
+            $accountTransaction->credit = $request->opening_balance;
+            $accountTransaction->balance = $accountTransaction->balance + $request->opening_balance;
+            $accountTransaction->save();
+
             return response()->json([
                 'status' => 200,
                 'message' => 'Bank Save Successfully',
@@ -55,6 +67,14 @@ class BankController extends Controller
     {
         // $banks = Bank::get();
         $banks = $this->bankrepo->getAllBank();
+        $banks->load('accountTransaction');
+
+        // Add latest transaction to each bank
+        foreach ($banks as $bank) {
+            $bank->latest_transaction = $bank->accountTransaction()->latest()->first();
+        }
+
+        // dd($banks);
         return response()->json([
             "status" => 200,
             "data" => $banks
@@ -83,7 +103,7 @@ class BankController extends Controller
             'branch_name' => 'required|max:149',
             'phone_number' => 'required|max:19',
             'account' => 'required',
-            'opening_balance' => 'required',
+            // 'opening_balance' => 'required',
         ]);
         if ($validator->passes()) {
             $bank = Bank::findOrFail($id);
@@ -93,8 +113,15 @@ class BankController extends Controller
             $bank->phone_number = $request->phone_number;
             $bank->account = $request->account;
             $bank->email = $request->email;
-            $bank->opening_balance = $request->opening_balance;
+            // $bank->opening_balance = $request->opening_balance;
             $bank->save();
+
+            // $accountTransaction = AccountTransaction::where('account_id', $id)->first();
+            // $oldBalance = AccountTransaction::latest()->first();
+            // $accountTransaction->balance = (($oldBalance->balance - $accountTransaction->credit) + $request->opening_balance);
+            // $accountTransaction->credit = $request->opening_balance;
+            // $accountTransaction->save();
+
             return response()->json([
                 'status' => 200,
                 'message' => 'Bank Update Successfully',
@@ -108,11 +135,59 @@ class BankController extends Controller
     }
     public function destroy($id)
     {
+        $cash = Bank::where('name', "=", "Cash")->first();
         $bank = Bank::findOrFail($id);
-        $bank->delete();
-        return response()->json([
-            'status' => 200,
-            'message' => 'Bank Deleted Successfully',
+        if ($bank->id == $cash->id) {
+            return response()->json([
+                'status' => 500,
+                'message' => 'You Do Not Delete This Bank Account',
+            ]);
+        } else {
+            $bank->delete();
+            return response()->json([
+                'status' => 200,
+                'message' => 'Bank Deleted Successfully',
+            ]);
+        }
+    }
+    //Bank balance Add
+    public function BankBalanceAdd(Request $request, $id)
+    {
+        $validator = Validator::make($request->all(), [
+            'update_balance' => 'required',
         ]);
+
+        if ($validator->passes()) {
+            $bank = Bank::findOrFail($id);
+            // dd($bank->update_balance);
+            $bank->opening_balance = $bank->opening_balance + $request->update_balance;
+            $bank->update_balance =  $request->update_balance;
+            $bank->purpose = $request->purpose;
+            $bank->update();
+
+            $accountTransaction = new AccountTransaction;
+            $accountTransaction->branch_id =  Auth::user()->branch_id;
+            $accountTransaction->purpose =  'Add Bank Balance';
+            $accountTransaction->account_id =  $bank->id;
+            $accountTransaction->note =  $request->note;
+            $accountTransaction->credit = $request->update_balance;
+            $oldBalance = AccountTransaction::where('account_id', $id)->latest('created_at')->first();
+            if ($oldBalance) {
+                $accountTransaction->balance = $oldBalance->balance + $request->update_balance;
+            } else {
+                $accountTransaction->balance = $request->update_balance;
+            }
+            $accountTransaction->save();
+
+            return response()->json([
+                'status' => 200,
+                'message' => 'Add Money Successfully',
+            ]);
+        } else {
+            return response()->json([
+                'status' => '500',
+                'error' => $validator->messages()
+            ]);
+        }
     }
 }
