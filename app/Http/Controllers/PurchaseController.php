@@ -13,7 +13,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\View;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Validator;
+use Illuminate\Support\Facades\Validator;
 
 class PurchaseController extends Controller
 {

@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Expense;
 use App\Models\ExpenseCategory;
 use App\Models\Bank;
-use Validator;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 
 class ExpenseController extends Controller

@@ -9,7 +9,7 @@ use App\Models\Damage;
 use App\Models\Product;
 
 use Illuminate\Support\Facades\Auth;
-use Validator;
+use Illuminate\Support\Facades\Validator;
 
 class DamageController extends Controller
 {

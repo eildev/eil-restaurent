@@ -11,7 +11,7 @@ use App\Models\Product;
 use App\Models\PromotionDetails;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
-use Validator;
+use Illuminate\Support\Facades\Validator;
 
 class PromotionController extends Controller
 {

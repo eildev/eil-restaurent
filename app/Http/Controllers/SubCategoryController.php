@@ -8,7 +8,7 @@ use App\Models\SubCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use App\Repositories\RepositoryInterfaces\SubCategoryInterface;
-use Validator;
+use Illuminate\Support\Facades\Validator;
 
 class SubCategoryController extends Controller
 {

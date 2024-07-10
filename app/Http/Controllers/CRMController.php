@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\SmsCategory;
-use Validator;
+use Illuminate\Support\Facades\Validator;
 
 use Illuminate\Http\Request;
 use App\Mail\BulkMail;

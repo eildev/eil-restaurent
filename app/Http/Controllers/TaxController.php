@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-use Validator;
+use Illuminate\Support\Facades\Validator;
 use App\Models\Tax;
 use Illuminate\Http\Request;
 

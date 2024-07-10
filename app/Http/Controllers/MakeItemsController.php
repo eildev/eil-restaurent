@@ -181,31 +181,37 @@ class MakeItemsController extends Controller
         }
         ////////////
         public function UpdateMakeItem(Request $request,$id){
-            $validatedData = $request->validate([
-                'make_category_id' => 'required|exists:item_categories,id',
+            $request->validate([
+                'make_category_id' => 'required|integer',
                 'item_name' => 'required',
-                'sale_price' => 'required',
+                'sale_price' => 'required'
             ]);
+            $makeItem = MakeItem::findOrFail($id);
+            // Handle picture upload if present
+            //  dd($request->picture);
             if ($request->hasFile('picture')) {
                 $imageName = rand() . '.' . $request->picture->extension();
                 $request->picture->move(public_path('uploads/make_item/'), $imageName);
-                $requestData['picture'] = 'uploads/make_item/' . $imageName;
-            } else {
-                $requestData['picture'] = null;
+                // Remove old picture if exists
+                if ($makeItem->picture) {
+                    $previousImagePath = public_path('uploads/make_item/') . $makeItem->picture;
+                    if (file_exists($previousImagePath)) {
+                        unlink($previousImagePath);
+                    }
+                }
+                $makeItem->picture = $imageName;
             }
-            $makeItem = MakeItem::findOrFail($id);
-             $makeItem->update([
+            $makeItem->update([
                 'make_category_id' => $request->input('make_category_id'),
                 'item_name' => $request->input('item_name'),
                 'sale_price' => $request->input('sale_price'),
                 'note' => $request->input('note'),
-                'picture' => $requestData['picture'] ?? null,
             ]);
             $notification = array(
                 'message' =>'Make Item Update Successfully',
                 'alert-type'=> 'info'
             );
-            return redirect()->back()->with($notification);
+            return redirect()->route('make.item.manage')->with($notification);
         }
         public function UpdateMakeItemMeterials(Request $request ){
             // Validate the request

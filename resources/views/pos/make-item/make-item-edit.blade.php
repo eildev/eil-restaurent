@@ -58,9 +58,10 @@
                         </div>
                         <div class="mb-2 col-md-6">
                             <h6 class="card-title">Product Image</h6>
-                            <input type="file" class="categoryImage" name="picture" id="myDropify" data-default-file="{{ $itemEditId->picture ? asset($itemEditId->picture) : '' }}" />
-                        </div>
+                            <input type="file" class="categoryImage dropify" id ="image" name="picture" />
 
+                            <img src="{{ $itemEditId->picture ? asset('uploads/make_item/' . $itemEditId->picture) : '-' }}" id ="showImage" alt="Image" height="150" width="150">
+                        </div>
                         <div class="mb-2 col-md-6">
                             <label for="" class="form-label">Item Note</label>
                             <textarea class="form-control" value="{{ old('note') }}" name="note" id="" rows="9"></textarea>
@@ -491,6 +492,15 @@ $(document).ready(function() {
         itemCostInput.value = totalCost.toFixed(2);
 
     }
+    $(document).ready(function(){
+        $('#image').change(function(e){
+        var reader = new FileReader();
+        reader.onload = function(e){
+            $('#showImage').attr('src',e.target.result);
+        }
+        reader.readAsDataURL(e.target.files['0']);
+        });
+        });
     </script>
 
 

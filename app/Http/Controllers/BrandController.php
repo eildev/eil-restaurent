@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Brand;
-use Validator;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use App\Repositories\RepositoryInterfaces\BrandInterface;

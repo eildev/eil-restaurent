@@ -18,8 +18,8 @@
                                     <th>Quantity</th>
                                     <th>Category</th>
                                     <th>Item Name</th>
-                                    <th>Barcode</th>
                                     <th>Total Cost</th>
+                                    <th>Sale Price</th>
                                     <th>Image</th>
                                     <th>Action</th>
                                 </tr>
@@ -48,9 +48,11 @@
 
                                             {{-- <td>{{ $item['makeItemlist']['myUnitName']['name'] ?? '' }}</td> --}}
                                             <td>{{ $item->item_name ?? '' }}</td>
-                                            <td>{{ $item->barcode ?? '' }}</td>
                                             <td>{{ $item->cost_price ?? '' }}</td>
-                                            <td> <img src="{{ asset($item->picture) }}" alt="Image"></td>
+                                            <td>{{ $item->sale_price ?? '' }}</td>
+                                            <td>
+                                                <img src="{{ $item->picture ? asset('uploads/make_item/' . $item->picture) : '-' }}" alt="Image">
+                                            </td>
                                             <td>
                                                 <a class="btn btn-sm border text-warning" href="{{route('make.item.edit',$item->id)}}"><i class="fas fa-edit"></i></a>
 
