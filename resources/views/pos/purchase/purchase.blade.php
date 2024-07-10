@@ -16,16 +16,16 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <h6 class="card-title">Create Purchase</h6>
-                            <button class="btn btn-primary" data-bs-toggle="modal"
+                            {{-- <button class="btn btn-primary" data-bs-toggle="modal"
                                 data-bs-target="#exampleModalLongScollable"><i class="fa-solid fa-plus"></i> Add
                                 Supplier
-                            </button>
+                            </button> --}}
                         </div>
                         <div class="row">
                             <div class="mb-3 col-md-6">
                                 <label for="ageSelect" class="form-label">Supplier</label>
                                 <select class="js-example-basic-single form-select select-supplier supplier_id"
-                                    data-width="100%" onchange="errorRemove(this);" name="supplier_id">
+                                    data-width="100%" onclick="errorRemove(this);" name="supplier_id">
                                     <option value="">Select Supplier</option>
                                 </select>
                                 <span class="text-danger supplier_id_error"></span>
@@ -50,25 +50,33 @@
                             </div>
                             <div class="mb-3 col-md-6">
                                 @php
-                                    $products = App\Models\Product::orderBy('stock', 'asc')->get();
+                                    $category = App\Models\Category::where('slug', 'via-sell')->first();
+                                    $products = collect();
+                                    if ($category) {
+                                        $products = App\Models\Product::where('category_id', '!=', $category->id)
+                                            ->orderBy('stock', 'asc')
+                                            ->get();
+                                    } else {
+                                        $products = App\Models\Product::orderBy('stock', 'asc')->get();
+                                    }
                                 @endphp
                                 <label for="ageSelect" class="form-label">Product</label>
                                 <select class="js-example-basic-single form-select product_select" data-width="100%"
-                                    onchange="errorRemove(this);">
+                                    onclick="errorRemove(this);">
                                     @if ($products->count() > 0)
                                         <option selected disabled>Select Product</option>
                                         @foreach ($products as $product)
-                                            <option value="{{ $product->id }}">{{ $product->name }}
-                                                ({{ $product->stock }}
-                                                {{ $product->unit->name }})
-                                            </option>
+                                            <option value="{{ $product->id }}">{{ $product->name }} ({{ $product->stock }}
+                                                {{ $product->unit->name }})</option>
                                         @endforeach
                                     @else
-                                        <option selected disabled>Please Add Product</option>
+                                        <option selected disabled>
+                                            Please Add Product</option>
                                     @endif
                                 </select>
                                 <span class="text-danger product_select_error"></span>
                             </div>
+
                             <div class="col-md-6 mb-3">
                                 <label class="form-label" for="formFile">Invoice File/Picture upload</label>
                                 <input class="form-control document_file" name="document" type="file" id="formFile"
@@ -133,25 +141,6 @@
                                                 <div class="col-md-8">
                                                     <input type="number" class="form-control discount_amount"
                                                         name="discount_amount" value="0.00" />
-                                                    {{-- @php
-                                                    $promotions = App\Models\Promotion::get();
-                                                @endphp
-                                                <select class="js-example-basic-single form-select promotion_id"
-                                                    data-width="100%" onclick="errorRemove(this);"
-                                                    onblur="errorRemove(this);">
-                                                    @if ($promotions->count() > 0)
-                                                        <option selected disabled>Select Discount</option>
-                                                        @foreach ($promotions as $promotion)
-                                                            <option value="{{ $promotion->id }}">
-                                                                {{ $promotion->promotion_name }}
-                                                                ({{ $promotion->discount_value }} /
-                                                                {{ $promotion->discount_type }})
-                                                            </option>
-                                                        @endforeach
-                                                    @else
-                                                        <option selected disabled>Please Add Product</option>
-                                                    @endif
-                                                </select> --}}
                                                 </div>
                                             </div>
                                             <div class="row align-items-center">
@@ -189,8 +178,6 @@
             </div>
 
         </div>
-
-
         <!-- Modal -->
         <div class="modal fade" id="exampleModalLongScollable" tabindex="-1"
             aria-labelledby="exampleModalScrollableTitle" aria-hidden="true">
@@ -270,20 +257,28 @@
                                         <th>
                                             <span class="paying_items">0</span>
                                         </th>
-                                        <th>Grand Total :</th>
+                                        <th>Sub Total :</th>
+                                        <th>
+                                            <input type="number" name="subTotal" class="subTotal form-control border-0 "
+                                                readonly value="00">
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        {{-- <th>Total Payable :</th> --}}
+                                        <th>Previous Due:</th>
+                                        <th>
+                                            (<span class="previous_due">00</span>TK)
+                                        </th>
+                                        <th>Grand Total:</th>
                                         <th>
                                             <input type="number" name="grand_total"
                                                 class="grandTotal form-control border-0 " readonly value="00">
                                         </th>
                                     </tr>
                                     <tr>
-                                        <th>Total Payable :</th>
+                                        <th class="due_text">Due:</th>
                                         <th>
-                                            (<span class="total_payable_amount">00</span>TK)
-                                        </th>
-                                        <th>Total Due :</th>
-                                        <th>
-                                            <span class="total_due">0</span>
+                                            (<span class="final_due">00</span>TK)
                                         </th>
                                     </tr>
                                 </thead>
@@ -291,11 +286,7 @@
                         </div>
                         {{-- <form id="signupForm" class="supplierForm row"> --}}
                         <div class="supplierForm row">
-                            <div class="mb-3 col-md-12">
-                                <label for="name" class="form-label">Note</label>
-                                <textarea name="note" class="form-control note" id="" placeholder="Enter Note (Optional)"
-                                    rows="3"></textarea>
-                            </div>
+
 
                             <div class="mb-3 col-md-6">
                                 <label for="name" class="form-label">Transaction Method <span
@@ -303,10 +294,9 @@
                                 @php
                                     $payments = App\Models\Bank::get();
                                 @endphp
-                                <select class="form-select payment_method" data-width="100%"
-                                    onchange="errorRemove(this);" name="payment_method">
+                                <select class="form-select payment_method" data-width="100%" onclick="errorRemove(this);"
+                                    onblur="errorRemove(this);" name="payment_method">
                                     @if ($payments->count() > 0)
-                                        <option selected disabled>Select Payment Method</option>
                                         @foreach ($payments as $payemnt)
                                             <option value="{{ $payemnt->id }}">
                                                 {{ $payemnt->name }}
@@ -324,8 +314,8 @@
                                 @php
                                     $taxs = App\Models\Tax::get();
                                 @endphp
-                                <select class="form-select tax" data-width="100%" onchange="errorRemove(this);"
-                                    value="" name="tax">
+                                <select class="form-select tax" data-width="100%" onclick="errorRemove(this);"
+                                    onblur="errorRemove(this);" value="" name="tax">
                                     @if ($taxs->count() > 0)
                                         <option selected disabled>Select Taxes</option>
                                         @foreach ($taxs as $taxs)
@@ -334,7 +324,7 @@
                                             </option>
                                         @endforeach
                                     @else
-                                        <option selected disabled>Please Add Transaction</option>
+                                        <option selected disabled>Please Add Tax</option>
                                     @endif
                                 </select>
                             </div>
@@ -348,8 +338,11 @@
                                 </div>
                                 <span class="text-danger total_payable_error"></span>
                             </div>
-
-
+                            <div class="mb-3 col-md-12">
+                                {{-- <label for="name" class="form-label">Note</label> --}}
+                                <input name="note" class="form-control note" id=""
+                                    placeholder="Enter Note (Optional)" rows="3"></input>
+                            </div>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -368,34 +361,12 @@
     <script>
         // error remove
         function errorRemove(element) {
-            tag = element.tagName.toLowerCase();
             if (element.value != '') {
-                // console.log('ok');
-                if (tag == 'select') {
-                    $(element).closest('.mb-3').find('.text-danger').hide();
-                } else {
-                    $(element).siblings('span').hide();
-                    $(element).css('border-color', 'green');
-                }
+                $(element).siblings('span').hide();
+                $(element).css('border-color', 'green');
             }
         }
-
         $(document).ready(function() {
-
-            // var currentDate = new Date().toISOString().split('T')[0];
-            // $('.purchase_date').val(currentDate);
-            //     // console.log('hello');
-            //     function getTodayDate() {
-            //         const today = new Date();
-            //         const year = today.getFullYear();
-            //         const month = today.getMonth(); // Month is 0-indexed, add 1 to get the correct month
-            //         const day = today.getDate();
-            //         // console.log(`${year} - ${month} - ${day}`);
-            //         document.querySelector('.purchase_date').value = `${year} - ${month} - ${day}`;
-            //         return `${year} - ${month} - ${day}`;
-            //     }
-            //     getTodayDate();
-
 
             // show error
             function showError(name, message) {
@@ -432,6 +403,33 @@
             }
             supplierView();
 
+            //Supplier Data find
+            function fetchSupplierDetails(supplierId) {
+                $.ajax({
+                    url: `/supplier/details/${supplierId}`,
+                    method: 'GET',
+                    success: function(res) {
+                        const supplier = res.data;
+                        // console.log(supplier)
+                        if (supplier.wallet_balance > 0) {
+                            $('.previous_due').text(supplier.wallet_balance);
+                        } else {
+                            $('.previous_due').text(0);
+                        }
+                    }
+                });
+            } //
+            $(document).ready(function() {
+                supplierView();
+                $('.select-supplier').on('change', function() {
+                    const selectedSupplierId = $(this).val();
+                    if (selectedSupplierId) {
+                        fetchSupplierDetails(selectedSupplierId);
+                    }
+                });
+            });
+
+            //Previous Due Show Data End
             // save supplier
             const saveSupplier = document.querySelector('.save_supplier');
             saveSupplier.addEventListener('click', function(e) {
@@ -450,14 +448,13 @@
                     processData: false,
                     contentType: false,
                     success: function(res) {
+
                         if (res.status == 200) {
-                            // console.log(res);
                             $('#exampleModalLongScollable').modal('hide');
                             $('.supplierForm')[0].reset();
                             supplierView();
                             toastr.success(res.message);
                         } else {
-                            // console.log(res);
                             if (res.error.name) {
                                 showError('.supplier_name', res.error.name);
                             }
@@ -468,8 +465,6 @@
                     }
                 });
             })
-
-
             let totalQuantity = 0;
 
             // Function to update total quantity
@@ -483,8 +478,6 @@
                 });
                 // console.log(totalQuantity);
             }
-
-
             // Function to update SL numbers
             function updateSLNumbers() {
                 $('.showData > tr').each(function(index) {
@@ -522,7 +515,9 @@
                                             <input type="number" class="form-control product_price${product.id} border-0 "  name="unit_price[]" readonly value="${product.cost ?? 0}" />
                                         </td>
                                         <td>
-                                            <input type="number" product-id="${product.id}" class="form-control quantity" name="quantity[]" value="" />
+                                            <input type="number" product-id="${product.id}" class="form-control quantity" name="quantity[]" min="1" value="" />
+
+                                            <div class="validation-message text-danger" style="display: none;">Please enter a quantity of at least 1.</div>
                                         </td>
                                         <td>
                                             <input type="number" class="form-control product_subtotal${product.id} border-0 "  name="total_price[]" readonly value="00.00" />
@@ -540,17 +535,10 @@
                         })
                     }
                 } else {
-                    Swal.fire({
-                        position: "top-end",
-                        icon: "warning",
-                        title: "Please select A Supplier",
-                        showConfirmButton: false,
-                        timer: 1500
-                    });
+                    toastr.warning('Please Select Supplier');
                 }
 
             })
-
 
             // Function to recalculate total
             function calculateTotal() {
@@ -580,7 +568,6 @@
                 updateTotalQuantity();
             }
 
-
             $(document).on('keyup', '.quantity', function() {
                 let id = $(this).attr("product-id")
                 let quantity = $(this).val();
@@ -592,8 +579,6 @@
                 subTotal.val(subTotalPrice);
                 updateGrandTotal();
             })
-
-
 
             // discount
             $('.discount_amount').change(function() {
@@ -613,16 +598,35 @@
                 updateGrandTotal();
                 updateSLNumbers();
                 updateTotalQuantity();
-            })
+            });
 
             // payment button click event
             $('.payment_btn').click(function(e) {
                 e.preventDefault();
-                // $('.total_payable_amount').text($('.grand_total').val());
-                $('.total_due').text($('.grand_total').val());
-                $('.grandTotal').val($('.grand_total').val());
+                let cumtomer_due = parseFloat($('.previous_due').text());
+                let subtotal = parseFloat($('.grand_total').val());
+                $('.subTotal').val(subtotal);
+                let grandTotal = cumtomer_due + subtotal;
+                $('.grandTotal').val(grandTotal);
                 $('.paying_items').text(totalQuantity);
+                var isValid = true;
+                //Quantity Message
+                $('.quantity').each(function() {
+                    var quantity = $(this).val();
+                    if (!quantity || quantity < 1) {
+                        isValid = false;
+                        return false;
+                    }
+                });
+                if (!isValid) {
+                    event.preventDefault();
+                    // alert('Please enter a quantity of at least 1 for all products.');
+                    toastr.error('Please enter a quantity of at least 1 .)');
+                    $('#paymentModal').modal('hide');
+                } else {
 
+                }
+                //End Quantity Message
             })
 
             // paid amount
@@ -631,44 +635,43 @@
                 // alert('ok');
                 let grandTotal = $('.grandTotal').val();
                 $('.total_payable').val(grandTotal);
-                $('.total_payable_amount').text(grandTotal);
                 totalDue();
             })
-
             // total_payable
             $('.total_payable').keyup(function(e) {
-                let grandTotal = parseFloat($('.grandTotal').val());
-                let value = parseFloat($(this).val());
-
+                // alert('ok');
                 totalDue();
-                $('.total_payable_amount').text(value);
             })
-
             // due
             function totalDue() {
-                let pay = $('.total_payable').val();
+                let pay = parseFloat($('.total_payable').val());
                 let grandTotal = parseFloat($('.grandTotal').val());
                 let due = (grandTotal - pay).toFixed(2);
-                $('.total_due').text(due);
+                if (due > 0) {
+                    $('.final_due').text(due);
+                    $('.due_text').text('Due');
+                } else {
+                    $('.final_due').text(-(due));
+                    $('.due_text').text('Return');
+                }
             }
             // console.log(totalQuantity);
 
             $('.tax').change(function() {
                 let grandTotal = parseFloat($('.grand_total').val());
                 let value = parseFloat($(this).val());
-                // alert(value);
+                let previousDue = parseFloat($('.previous_due').text());
 
                 let taxTotal = ((grandTotal * value) / 100);
-                taxTotal = (taxTotal + grandTotal).toFixed(2);
-                $('.grandTotal').val(taxTotal);
-                $('.total_due').text(taxTotal);
+                taxTotal = (taxTotal + grandTotal);
+                let totalAmount = taxTotal + previousDue;
+                $('.grandTotal').val(totalAmount);
             })
 
 
             $('#purchaseForm').submit(function(event) {
                 event.preventDefault();
                 let formData = new FormData($('#purchaseForm')[0]);
-
                 $.ajaxSetup({
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -688,17 +691,19 @@
                             let id = res.purchaseId;
                             window.location.href = '/purchase/invoice/' + id;
 
+                        } else if (res.status == 400) {
+                            toastr.warning(res.message);
+                            showError('.payment_method',
+                                'please Select Another Payment Method');
                         } else {
-
-                            console.log(res.error);
                             if (res.error.payment_method == null) {
                                 $('#paymentModal').modal('hide');
                                 if (res.error.supplier_id) {
                                     showError('.supplier_id', res.error.supplier_id);
                                 }
-                                if (res.error.products) {
-                                    showError('.product_select', res.error.products);
-                                }
+                                // if (res.error.products) {
+                                //     showError('.product_select', res.error.products);
+                                // }
                                 if (res.error.purchase_date) {
                                     showError('.purchase_date', res.error.purchase_date);
                                 }
@@ -714,123 +719,6 @@
                     }
                 });
             });
-
-            // $('.purchase_btn').click(function(e) {
-            //     e.preventDefault();
-
-            //     event.preventDefault();
-            //     // alert('ok');
-            //     let supplier_id = $('.select-supplier').val();
-            //     let purchse_date = $('.purchase_date').val();
-            //     let formattedPurchaseDate = moment(purchse_date, 'DD-MMM-YYYY').format(
-            //         'YYYY-MM-DD HH:mm:ss');
-            //     let total_quantity = totalQuantity;
-            //     let total_amount = parseFloat($('.total').val());
-            //     let discount = $('.promotion_id').val();
-            //     let sub_total = parseFloat($('.grand_total').val());
-            //     let tax = $('.tax').val();
-            //     let grand_total = parseFloat($('.grandTotal').text());
-            //     let discount_amount = sub_total - total_amount;
-            //     let paid = $('.total_payable').val();
-            //     let due = grand_total - paid;
-            //     let carrying_cost = $('.carrying_cost').val();
-            //     let note = $('.note').val();
-            //     let document = $('.document_file').val();
-            //     let payment_method = $('.payment_method').val();
-            //     // let product_id = $('.product_id').val();
-            //     // console.log(total_quantity);
-
-            //     let products = [];
-
-            //     $('tr[class^="data_row"]').each(function() {
-            //         let row = $(this);
-            //         // Get values from the current row's elements
-            //         let product_id = row.find('.product_id').val();
-            //         let quantity = row.find('input[name="quantity[]"]').val();
-            //         let unit_price = row.find('input[name="unit_price[]"]').val();
-
-            //         // Create an object with the gathered data
-            //         let product = {
-            //             product_id,
-            //             quantity,
-            //             unit_price,
-            //         };
-
-            //         // Push the object into the products array
-            //         products.push(product);
-            //     });
-
-            //     let formData = new FormData($('#purchaseForm')[0]);
-            //     console.log(formData);
-            //     // let allData = {
-            //     //     // for purchase table
-            //     //     supplier_id,
-            //     //     purchse_date: formattedPurchaseDate,
-            //     //     total_quantity,
-            //     //     total_amount,
-            //     //     discount,
-            //     //     discount_amount,
-            //     //     sub_total,
-            //     //     tax,
-            //     //     grand_total,
-            //     //     paid,
-            //     //     due,
-            //     //     carrying_cost,
-            //     //     note,
-            //     //     payment_method,
-            //     //     document,
-            //     //     products,
-            //     //     formData
-            //     // }
-
-            //     // console.log(allData);
-            //     $.ajaxSetup({
-            //         headers: {
-            //             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            //         }
-            //     });
-
-            //     $.ajax({
-            //         url: '/purchase/store',
-            //         type: 'POST',
-            //         data: formData,
-            //         processData: false,
-            //         contentType: false,
-            //         success: function(res) {
-            //             if (res.status == 200) {
-            //                 // console.log(res.data);
-            //                 $('#paymentModal').modal('hide');
-            //                 // $('.supplierForm')[0].reset();
-            //                 // supplierView();
-            //                 toastr.success(res.message);
-            //                 let id = res.purchaseId;
-            //                 // console.log(id)
-
-            //                 window.location.href = '/purchase/invoice/' + id;
-
-            //             } else {
-
-            //                 if (res.error.payment_method == null) {
-            //                     $('#paymentModal').modal('hide');
-            //                     if (res.error.supplier_id) {
-            //                         showError('.supplier_id', res.error.supplier_id);
-            //                     }
-            //                     if (res.error.products) {
-            //                         showError('.product_select', res.error.products);
-            //                     }
-            //                     if (res.error.purchase_date) {
-            //                         showError('.purchase_date', res.error.purchase_date);
-            //                     }
-            //                 } else {
-            //                     if (res.error.payment_method) {
-            //                         showError('.payment_method', res.error.payment_method);
-            //                     }
-            //                 }
-            //             }
-            //         }
-            //     });
-            // })
-
         });
     </script>
 @endsection
