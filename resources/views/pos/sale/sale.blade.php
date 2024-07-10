@@ -1,127 +1,222 @@
 @extends('master')
 @section('title', '| Sale')
 @section('admin')
-@php
-    $mode = App\models\PosSetting::all()->first();
-@endphp
-<style>
+    @php
+        $mode = App\models\PosSetting::all()->first();
+    @endphp
+    <style>
+        .disabled-div {
+            pointer-events: none;
+            /* Disable mouse interactions */
+            opacity: 0.5;
+            /* Make the div look disabled */
+        }
+
+        #myfooter {
+            display: none !important;
+        }
+
+        .page-content {
+            padding: 5px 5px 0 5px !important;
+        }
+
         .mybtn_white {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    outline: none;
-    cursor: pointer;
-    width: 100px;
-    height: 40px;
-    background-image: linear-gradient(to top, #D8D9DB 0%, #fff 80%, #FDFDFD 100%);
-    border-radius: 30px;
-    border: 1px solid #00a9f1;
-    transition: all 0.2s ease;
-    font-family: "Source Sans Pro", sans-serif;
-    font-size: 14px;
-    font-weight: 400;
-    color: #00a9f1;
-    text-shadow: 0 1px #00a9f1;
-    }
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            outline: none;
+            cursor: pointer;
+            width: 100px;
+            height: 40px;
+            background-image: linear-gradient(to top, #D8D9DB 0%, #fff 80%, #FDFDFD 100%);
+            border-radius: 30px;
+            border: 1px solid #00a9f1;
+            transition: all 0.2s ease;
+            font-family: "Source Sans Pro", sans-serif;
+            font-size: 14px;
+            font-weight: 400;
+            color: #00a9f1;
+            text-shadow: 0 1px #00a9f1;
+        }
 
-    .mybtn_white:hover {
-    box-shadow: 0 3px 3px 1px #FCFCFC, 0 4px 6px #D6D7D9, 0 -2px 2px #CECFD1, 0 -2px 2px #FEFEFE, inset 0 0 2px 2px #CECFD1;
-    }
-    .mybtn_dark {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    outline: none;
-    cursor: pointer;
-    width: 100px;
-    height: 40px;
-    background-image: linear-gradient(to top, #172340 0%, #172340 80%, #172340 100%);
-    border-radius: 30px;
-    border: 1px solid #00a9f1;
-    transition: all 0.2s ease;
-    font-family: "Source Sans Pro", sans-serif;
-    font-size: 14px;
-    font-weight: 400;
-    color: #fff;
-    text-shadow: 0 1px #000;
-    }
+        .mybtn_white:hover {
+            box-shadow: 0 3px 3px 1px #FCFCFC, 0 4px 6px #D6D7D9, 0 -2px 2px #CECFD1, 0 -2px 2px #FEFEFE, inset 0 0 2px 2px #CECFD1;
+        }
 
-    .mybtn_dark:hover {
-    box-shadow: 0 3px 3px 1px #172340, 0 4px 6px #172340, 0 -2px 2px #172340, 0 -2px 2px #666, inset 0 0 2px 2px #000;
-    }
-    .my_select{
-        border: 1px solid #00a9f1;
-        color: #00a9f1;
-        border-radius: 14px;
-        background: linear-gradient(182deg, #f0f0f0, #cacaca);
-        box-shadow: 0px 4px 7px #cecece, -2px -2px 5px #f2f2f2;
-    }
-    /* .mybtn_white:active {
-    box-shadow: 0 4px 3px 1px #00a9f1, 0 6px 8px #00a9f1, 0 -4px 4px #00a9f1, 0 -6px 4px #00a9f1, inset 0 0 5px 3px #00a9f1, inset 0 0 30px #00a9f1;
-    }
+        .mybtn_dark {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            outline: none;
+            cursor: pointer;
+            width: 100px;
+            height: 40px;
+            background-image: linear-gradient(to top, #172340 0%, #172340 80%, #172340 100%);
+            border-radius: 30px;
+            border: 1px solid #00a9f1;
+            transition: all 0.2s ease;
+            font-family: "Source Sans Pro", sans-serif;
+            font-size: 14px;
+            font-weight: 400;
+            color: #fff;
+            text-shadow: 0 1px #000;
+        }
 
-    .mybtn_white:focus {
-    box-shadow: 0 4px 3px 1px #FCFCFC, 0 6px 8px #D6D7D9, 0 -4px 4px #CECFD1, 0 -6px 4px #FEFEFE, inset 0 0 5px 3px rgba(0,169,241, .2), inset 0 0 30px rgba(0,169,241, .2);
-    } */
+        .mybtn_dark:hover {
+            box-shadow: 0 3px 3px 1px #172340, 0 4px 6px #172340, 0 -2px 2px #172340, 0 -2px 2px #666, inset 0 0 2px 2px #000;
+        }
 
-</style>
+        .my_select_white {
+            border: 1px solid #00a9f1 !important;
+            color: #00a9f1 !important;
+            border-radius: 14px !important;
+            background: linear-gradient(182deg, #f0f0f0, #cacaca) !important;
+            outline: #00a9f1 !important;
+        }
+
+        .my_select_white {
+            border: 1px solid #00a9f1 !important;
+            color: #00a9f1 !important !important;
+            border-radius: 14px !important;
+            background: linear-gradient(145deg, #15203a, #192544) !important;
+            outline: #00a9f1 !important;
+        }
+
+        .my_select:active {
+            border: 1px solid #00a9f1 !important;
+            color: #00a9f1 !important;
+        }
+
+        .my_select:focus {
+            border: 1px solid #00a9f1 !important;
+            color: #00a9f1 !important;
+        }
+
+        .mytop__tab__controls {
+            cursor: pointer;
+        }
+
+        .mytop__tab-page {
+            display: none;
+        }
+
+        .active {
+            color: #00a9f1;
+            display: block;
+        }
+        .menu__tab__pag {
+            display: none;
+        }
+
+        .menu__tab__control {
+            cursor: pointer;
+            @if ($mode->dark_mode == 1)
+                color: black !important;
+            @else
+                color: white !important;
+            @endif
+
+        }
+
+        .menu__active {
+            display: block;
+            color: #6571ff !important;
+        }
+    </style>
     <div class="row mt-0">
-        <div class="col-lg-12 grid-margin stretch-card mb-3">
+        <div class="col-lg-12 grid-margin stretch-card mb-0">
             <div class="card">
-                <div class="card-body px-4 py-2">
+                <div class="card-body px-4 pt-2 pb-0" style="min-height: 520px !important">
                     <div class="row">
-                        <ul class="nav nav-tabs" id="myTab" role="tablist">
-                            <li class="nav-item">
-                                <a class="nav-link active" id="neworder-tab" data-bs-toggle="tab" href="#neworder"
-                                    role="tab" aria-controls="neworder" aria-selected="true">New Order</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" id="profile-tab" data-bs-toggle="tab" href="#profile" role="tab"
-                                    aria-controls="profile" aria-selected="false">Order Queue</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link disabled" id="disabled-tab" data-bs-toggle="tab" href="#disabled"
-                                    role="tab" aria-controls="disabled" aria-selected="false">Details</a>
-                            </li>
-                        </ul>
-                        <div class="tab-content border border-top-0 p-3" id="myTabContent">
-                            {{-- New Order Start --}}
-                            <div class="tab-pane fade show active" id="neworder" role="tabpanel"
-                                aria-labelledby="neworder-tab">
-                                <div class="row">
-                                    <div class="col-md-2 pe-0">
-                                        <div class="nav nav-tabs nav-tabs-vertical" id="v-tab" role="tablist"
-                                            aria-orientation="vertical">
-                                            @php
-                                                $categories = App\Models\ItemCategory::all();
-                                            @endphp
-                                            @if ($categories->count() > 0)
+                        <div class="mytop__container border p-0">
+                            {{-- My top Tab Head Start  --}}
+                            <div class="mytop__head d-flex">
+                                <div class="mytop__tab__first mytop__tab__controls active p-2 border" tab__index="1">
+                                    <span>New Order</span>
+                                </div>
+                                <div class="mytop__tab__controls p-2 border" tab__index="2">
+                                    <span>Proccessing</span>
+                                </div>
+                                {{-- <div class="mytop__tab__controls p-2 border" tab__index="3">
+                                    <span>Complete</span>
+                                </div> --}}
+                                <div class="mytop__tab__controls p-2 border mytop__tab__last" tab__index="4">
+                                    <span>Details</span>
+                                </div>
+                            </div>
+                            {{-- My top Tab Head End  --}}
+                            {{-- My top Tab Body Start  --}}
+                            <div class="mytop__body">
+                                <div class="mytop__tab-page active p-2 border tap_page--1">
+                                    <div class="row">
+                                        <div class="col-md-2">
+                                            <div class="menu__tab">
+
+                                                @php
+                                                    $index = 1;
+                                                    $categories = App\Models\ItemCategory::all();
+                                                @endphp
+                                                <div class="menu__active menu__tab__control border py-1 px-2"
+                                                    menu__tab__index="{{$index}}">
+                                                    <span>Set Menu</span>
+                                                </div>
+                                                @if ($categories->count() > 0)
                                                 @foreach ($categories as $key => $category)
-                                                    <a class="nav-link {{ $key == 0 ? 'active' : '' }}"
-                                                        id="v-mytab{{ $category->id }}-tab" data-bs-toggle="pill"
-                                                        href="#v-mytab{{ $category->id }}" role="tab"
-                                                        aria-controls="v-mytab{{ $category->id }}"
-                                                        aria-selected="true">{{ $category->category_name }}</a>
+                                                    @php $index++; @endphp
+                                                    <div class="menu__tab__control border py-1 px-2" menu__tab__index="{{$index}}">
+                                                        <span>{{ $category->category_name }}</span>
+                                                    </div>
                                                 @endforeach
-                                            @else
-                                                Note Found
-                                            @endif
-                                            {{-- <a class="nav-link active" id="v-home-tab" data-bs-toggle="pill" href="#v-home" role="tab" aria-controls="v-home" aria-selected="true">Home</a>
-                                        <a class="nav-link" id="v-profile-tab" data-bs-toggle="pill" href="#v-profile" role="tab" aria-controls="v-profile" aria-selected="false">Profile</a>
-                                        <a class="nav-link" id="v-messages-tab" data-bs-toggle="pill" href="#v-messages" role="tab" aria-controls="v-messages" aria-selected="false">Messages</a>
-                                        <a class="nav-link" id="v-settings-tab" data-bs-toggle="pill" href="#v-settings" role="tab" aria-controls="v-settings" aria-selected="false">Settings</a> --}}
+                                                @else
+                                                    <span>Note Found</span>
+                                                @endif
+                                                {{-- <div class="menu__tab__control border py-1 px-2" menu__tab__index="3">
+                                                    <span>Menu - 2</span>
+                                                </div> --}}
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="col-md-5 ps-0">
-                                        <div class="tab-content tab-content-vertical border p-3" id="v-tabContent">
+                                        <div class="col-md-5 border">
+                                            <div class="menu__active menu__tab__pag menu__tab__pag--1" style="min-height: 470px;">
+                                                @php
+                                                $setmenus = App\Models\SetMenu::all();
+                                                @endphp
+                                                @if ($setmenus->count() > 0)
+                                                <div class="row" style="max-height: 500px; overflow-y: scroll;">
+                                                    <style>
+                                                        .product_image {
+                                                            position: relative;
+                                                        }
+                                                    </style>
+                                                    @foreach ($setmenus as $key => $setmenu)
+                                                        <div class="col-lg-3 col-md-6 p-1 my-1 product_image"
+                                                            style="">
+                                                            <div class="setmenu__div w-100"
+                                                                set_menu_id="{{ $setmenu->id }}"
+                                                                style="cursor: pointer; ">
+                                                                <img class="w-100" height="90"
+                                                                    style="border-radius:5px 5px 0 0;border-left: 1px solid;border-top: 1px solid;border-bottom: 1px solid;border-right: 1px solid;border-color:#00a9f1"
+                                                                    src="{{ !empty($setmenu->image) ? asset('uploads/menu_items/' . $setmenu->image) : asset('assets/images/empty.png') }}">
+                                                                <div class="info"
+                                                                    style="border-radius:0 0 5px 5px;color:black;background: rgba(255,255,255,.7);text-align:center;border-left: 1px solid;border-bottom: 1px solid;border-right: 1px solid;border-color:#00a9f1">
+                                                                    <p style="font-size: 12px">{{ Str::limit($setmenu->menu_name, 16, '') }}
+                                                                    </p>
+                                                                    <hr style="margin: 0">
+                                                                    <p>৳{{ $setmenu->sale_price }}</p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    @endforeach
+                                                </div>
+                                                @endif
+                                            </div>
                                             @php
                                                 $categories = App\Models\ItemCategory::all();
+                                                $index = 1;
                                             @endphp
                                             @if ($categories->count() > 0)
                                                 @foreach ($categories as $key => $category)
-                                                    <div class="tab-pane fade {{ $key == 0 ? 'show active' : '' }}"
-                                                        id="v-mytab{{ $category->id }}" role="tabpanel"
-                                                        aria-labelledby="v-mytab{{ $category->id }}-tab">
+                                                    @php $index++; @endphp
+                                                    <div class="menu__tab__pag menu__tab__pag--{{$index}}">
                                                         @php
                                                             $items = App\Models\MakeItem::where(
                                                                 'make_category_id',
@@ -129,35 +224,27 @@
                                                             )->get();
                                                         @endphp
                                                         @if ($items->count() > 0)
-                                                            <div class="row">
+                                                            <div class="row"
+                                                                style="max-height: 500px; overflow-y: scroll;">
                                                                 <style>
                                                                     .product_image {
                                                                         position: relative;
-                                                                        /* z-index: -1; */
                                                                     }
-
-                                                                    /* .product_image::after {
-                                                                        content: "";
-                                                                        position: absolute;
-                                                                        bottom: 4px;
-                                                                        left: 4px;
-                                                                        right: 4px;
-                                                                        top: 4px;
-                                                                        background: rgba(0, 0, 0, .3);
-                                                                        z-index: 1;
-                                                                    } */
                                                                 </style>
                                                                 @foreach ($items as $key => $item)
-                                                                    <div class="col-lg-4 col-md-6 p-1 my-1 product_image"
+                                                                    <div class="col-lg-3 col-md-6 p-1 my-1 product_image"
                                                                         style="">
-                                                                        <div class="Item__div w-100" product_id="{{ $item->id }}"
+                                                                        <div class="Item__div w-100"
+                                                                            product_id="{{ $item->id }}"
                                                                             style="cursor: pointer; ">
-                                                                            <img class="w-100" height="120" style="border-radius:5px 5px 0 0;border-left: 1px solid;border-top: 1px solid;border-right: 1px solid;border-color:#00a9f1"
-                                                                                src="{{ !empty($item->picture) ? asset('upload/make_item/.$item->picture') : asset('assets/images/empty.png') }}">
+                                                                            <img class="w-100" height="90"
+                                                                                style="border-radius:5px 5px 0 0;border-left: 1px solid;border-bottom: 1px solid;border-top: 1px solid;border-right: 1px solid;border-color:#00a9f1"
+                                                                                src="{{ !empty($item->picture) ? asset($item->picture) : asset('assets/images/empty.png') }}">
                                                                             <div class="info"
                                                                                 style="border-radius:0 0 5px 5px;color:black;background: rgba(255,255,255,.7);text-align:center;border-left: 1px solid;border-bottom: 1px solid;border-right: 1px solid;border-color:#00a9f1">
-                                                                                <p>{{ Str::limit($item->item_name, 16, '') }}
+                                                                                <p style="font-size: 12px">{{ Str::limit($item->item_name, 16, '') }}
                                                                                 </p>
+                                                                                <hr style="margin: 0">
                                                                                 <p>৳{{ $item->sale_price }}</p>
                                                                             </div>
                                                                         </div>
@@ -167,9 +254,10 @@
                                                         @else
                                                             <div class="row text-center">
                                                                 <div class="col-lg-12">
-                                                                    <div class="card" style="width:18rem;">
+                                                                    <div class="card" style="width:22rem;margin-top:50px">
                                                                         <div class="card-body">
-                                                                            <h5 class="card-title">Product Not Found</h5>
+                                                                            <h5 class="card-title">Product Not Found
+                                                                            </h5>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -177,154 +265,80 @@
                                                         @endif
                                                     </div>
                                                 @endforeach
-                                            @else
-                                                Note Found
                                             @endif
-
-
-                                            {{-- <div class="tab-pane fade" id="v-profile" role="tabpanel" aria-labelledby="v-profile-tab">
-                                          <h6 class="mb-1">Profile</h6>
-                                          <p>Nulla est ullamco ut irure incididunt nulla Lorem Lorem minim irure officia enim reprehenderit. Magna duis labore cillum sint adipisicing
-                                          exercitation ipsum. Nostrud ut anim non exercitation velit laboris fugiat cupidatat. Commodo esse dolore fugiat sint velit ullamco magna
-                                          consequat voluptate minim amet aliquip ipsum aute laboris nisi.</p>
+                                            {{-- <div class="menu__tab__pag menu__tab__pag--3">P-3</div> --}}
                                         </div>
-                                        <div class="tab-pane fade" id="v-messages" role="tabpanel" aria-labelledby="v-messages-tab">
-                                          <h6 class="mb-1">Messages</h6>
-                                          <p>Nulla est ullamco ut irure incididunt nulla Lorem Lorem minim irure officia enim reprehenderit. Magna duis labore cillum sint adipisicing
-                                          exercitation ipsum. Nostrud ut anim non exercitation velit laboris fugiat cupidatat. Commodo esse dolore fugiat sint velit ullamco magna
-                                          consequat voluptate minim amet aliquip ipsum aute laboris nisi.</p>
-                                        </div>
-                                        <div class="tab-pane fade" id="v-settings" role="tabpanel" aria-labelledby="v-settings-tab">
-                                          <h6 class="mb-1">Settings</h6>
-                                          <p>Nulla est ullamco ut irure incididunt nulla Lorem Lorem minim irure officia enim reprehenderit. Magna duis labore cillum sint adipisicing
-                                          exercitation ipsum. Nostrud ut anim non exercitation velit laboris fugiat cupidatat. Commodo esse dolore fugiat sint velit ullamco magna
-                                          consequat voluptate minim amet aliquip ipsum aute laboris nisi.</p>
-                                        </div> --}}
-                                        </div>
-                                    </div>
-                                    <div class="col-md-5 ps-0" style="position: relative">
-                                        <table class="table">
-                                            <thead>
-                                                <tr>
-                                                    <th style="font-size: 10px; padding: 0 20px 10px 13px">
-                                                        Customer Info:<br>
-                                                        <span> name: Md Majidul Islam</span>
-                                                    </th>
-                                                    <th style="font-size: 10px; padding: 0 20px 10px 13px">
-
-                                                       <span> address: Banasree, Dhaka</span><br>
-                                                       <span> P. Total: 50000</span>
-                                                    </th>
-                                                    <th>
-                                                        <button class="{{ ($mode->dark_mode == 1) ? 'mybtn_white' : 'mybtn_dark' }}" style="width: 35px; height: 25px; border-radius:5px;font-size:10px;padding-left: 0px;"><i class="fa fa-pencil"></i></button>
-                                                    </th>
-                                                </tr>
-                                            </thead>
-                                        </table>
-                                        <table class="table">
-                                            <thead>
-                                                <tr>
-                                                    <th>Product Information</th>
-                                                    <th>Qty</th>
-                                                    <th>Price</th>
-                                                    <th><i class="fas fa-sliders"></i></th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <td>Americano (S/D) | 545412 | Dis: 10%</td>
-                                                    <td>x 2</td>
-                                                    <td>৳50000</td>
-                                                    <td><i class="fa fa-trash"></i></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Americano (S/D) | 545412 | Dis: 10%</td>
-                                                    <td>x 2</td>
-                                                    <td>৳50000</td>
-                                                    <td><i class="fa fa-trash"></i></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Americano (S/D) | 545412 | Dis: 10%</td>
-                                                    <td>x 2</td>
-                                                    <td>৳50000</td>
-                                                    <td><i class="fa fa-trash"></i></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Americano (S/D) | 545412 | Dis: 10%</td>
-                                                    <td>x 2</td>
-                                                    <td>৳50000</td>
-                                                    <td><i class="fa fa-trash"></i></td>
-                                                </tr>
-
-
-                                            </tbody>
-                                        </table>
-                                                <br>
-                                                <br>
-                                                <br>
-                                                <br>
-                                                <br>
-                                                <br>
-                                                <br>
-                                        <div class="payment-footer" style="position: absolute;bottom:0;left:0;right:0">
+                                        <div class="col-md-5 border">
+                                            {{-- Right Side Controls --}}
+                                            {{-- Customer Details Information  --}}
                                             <table class="table">
                                                 <thead>
                                                     <tr>
-                                                        <td><h4>Total</h5> (Iteems: 2, Quantity: 10)</td>
-                                                        <td>৳50000</td>
+                                                        @php $customers = App\Models\Customer::first(); @endphp
+
+                                                        <th style="font-size: 10px; padding: 0 20px 10px 13px">
+                                                            Customer Info:<br>
+                                                            <span class="customer_name">{{ $customers->name }}</span>
+                                                            <input type="hidden" class="customer_id"
+                                                                value="{{ $customers->id }}">
+                                                            <input type="hidden" value="0" class="sale_id">
+                                                            <input type="hidden" value="<?php echo rand(123456, 99999); ?>"
+                                                                class="invoice_number">
+                                                            <input type="hidden" value="0" class="payment_method"
+                                                                value="0">
+                                                        </th>
+                                                        <th style="font-size: 10px; padding: 0 20px 10px 13px">
+
+                                                            <span
+                                                                class="customer_address">{{ !empty($customers->phone) ? $customers->phone : $customers->address }}</span><br>
+                                                            <span> P. Total: <span
+                                                                    class="customer_total_receivable">{{ $customers->total_receivable }}</span></span>
+                                                        </th>
+                                                        <th>
+                                                            <button data-bs-target="#customerModal" data-bs-toggle="modal"
+                                                                class="{{ $mode->dark_mode == 1 ? 'mybtn_white' : 'mybtn_dark' }}"
+                                                                style="width: 35px; height: 25px; border-radius:5px;font-size:10px;padding-left: 0px;"><i
+                                                                    class="fa fa-pencil"></i></button>
+                                                        </th>
                                                     </tr>
                                                 </thead>
-                                            </table><table class="table">
-                                                <tbody>
-
-                                                    <tr>
-                                                        <td>
-                                                        <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
-                                                            <button class="{{ ($mode->dark_mode == 1) ? 'mybtn_white' : 'mybtn_dark' }}" style="width:70px;margin-right:5px">Cash</button>
-                                                            <button class="{{ ($mode->dark_mode == 1) ? 'mybtn_white' : 'mybtn_dark' }}" style="width:70px;margin-right:5px">Card</button>
-                                                            <button class="{{ ($mode->dark_mode == 1) ? 'mybtn_white' : 'mybtn_dark' }}" style="width:70px;margin-right:5px">Nagad</button>
-                                                            <div class="btn-group" role="group">
-                                                              <button style="width: 130px" id="btnGroupDrop1" type="button" class="{{ ($mode->dark_mode == 1) ? 'mybtn_white' : 'mybtn_dark' }} dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                                Select Dine
-                                                              </button>
-                                                              <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-                                                                <a class="dropdown-item" href="#">Dine -1</a>
-                                                                <a class="dropdown-item" href="#">Dine -2</a>
-                                                                <a class="dropdown-item" href="#">Dine -3</a>
-                                                                <a class="dropdown-item" href="#">Dine -4</a>
-                                                                <a class="dropdown-item" href="#">Dine -5</a>
-                                                              </div>
-                                                            </div>
-                                                          </div>
-                                                          <select class="form-select my_select" name="age_select" id="ageSelect">
-                                                            <option selected="" disabled="">Select your age</option>
-                                                            <option>12-18</option>
-                                                            <option>18-22</option>
-                                                            <option>22-30</option>
-                                                            <option>30-60</option>
-                                                            <option>Above 60</option>
-                                                        </select>
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
                                             </table>
+                                            <style>
+                                                tr th,
+                                                tr td {
+                                                    padding: 5px !important;
+                                                }
+                                            </style>
+                                            {{-- Rander Data  --}}
+                                            <div class="renderData">
+                                                @include('pos.sale.sales_detailes_ramder_data')
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    @include('pos.sale.controls')
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
+                                <div class="mytop__tab-page p-2 border tap_page--2">
+                                    {{-- Order Processing Queu Data  --}}
+                                    <div class="row tableQueueRender">
+                                    </div>
+                                </div>
+                                {{-- <div class="mytop__tab-page p-2 border tap_page--3">
+                                    <span>Order Complete Page</span>
+                                </div> --}}
+                                <div class="mytop__tab-page p-2 border tap_page--4">
+                                    <div class="SaleDetails">
+                                        @include('pos.sale.details')
+                                    </div>
+
+                                </div>
                             </div>
-                            {{-- New Order End --}}
-                            {{-- Order Queue Start --}}
-                            <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">Order
-                                Queue</div>
-                            {{-- Order Queue End --}}
-                            {{-- Details Start --}}
-                            <div class="tab-pane fade" id="disabled" role="tabpanel" aria-labelledby="disabled-tab">Details
-                            </div>
-                            {{-- Details End --}}
+                            {{-- My top Tab Body End  --}}
                         </div>
                     </div>
-
-
                 </div>
             </div>
         </div>
@@ -336,19 +350,37 @@
         <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalScrollableTitle">Add Customer Info</h5>
+                    <h5 class="modal-title" id="exampleModalScrollableTitle">Add or Select Customer</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="btn-close"></button>
                 </div>
                 <div class="modal-body">
                     <form class="customerForm row">
-                        <div class="mb-3 col-md-6">
+                        <div class="col-md-12 form-valid-groups pe-0">
+                            <label for="ageSelect" class="form-label">Choose Customer</label>
+                            @php $customers = App\Models\Customer::all(); @endphp
+                            <select class=" form-select select_customer" data-width="100%" name="make_category_id">
+                                @if ($customers)
+                                    <option selected disabled>Please Select Customer</option>
+                                    @foreach ($customers as $customer)
+                                        <option value="{{ $customer->id }}">{{ $customer->name }} </option>
+                                    @endforeach
+                                @else
+                                    <option selected disabled>Please Select Customer</option>
+                                @endif
+                            </select>
+                            @error('make_category_id')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                            <span class="text-danger product_select_error"></span>
+                        </div>
+                        <div class="mb-3 col-md-6 mt-3">
                             <label for="name" class="form-label">Customer Name <span
                                     class="text-danger">*</span></label>
                             <input id="defaultconfig" class="form-control customer_name" maxlength="255" name="name"
                                 type="text" onkeyup="errorRemove(this);" onblur="errorRemove(this);">
                             <span class="text-danger customer_name_error"></span>
                         </div>
-                        <div class="mb-3 col-md-6">
+                        <div class="mb-3 col-md-6 mt-3">
                             <label for="name" class="form-label">Phone Nnumber <span
                                     class="text-danger">*</span></label>
                             <input id="defaultconfig" class="form-control phone" maxlength="39" name="phone"
@@ -385,872 +417,664 @@
             </div>
         </div>
     </div>
-
+    <div class="modal fade" id="saleModal" tabindex="-1" aria-labelledby="exampleModalScrollableTitle"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalScrollableTitle">Payment Section</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="btn-close"></button>
+                </div>
+                <div class="modal-body">
+                    <form class="customerForm row">
+                        <div class="mb-3 col-md-6">
+                            <label for="name" class="form-label">Sub Total</label>
+                            <input id="defaultconfig" class="form-control modal_subtotal" readonly maxlength="39"
+                                type="number">
+                        </div>
+                        <div class="mb-3 col-md-6">
+                            <label for="name" class="form-label">Tax</label>
+                            <select name="" id="" class="form-control modal_tax"
+                                onchange="finalCalculate()">
+                                <option value="0">0%</option>
+                                <option value="5">5%</option>
+                                <option value="7">7%</option>
+                                <option value="15">15%</option>
+                            </select>
+                        </div>
+                        <div class="mb-3 col-md-6">
+                            <label for="name" class="form-label">Grand Total</label>
+                            <input id="defaultconfig" class="form-control modal_grandtotal" maxlength="39" readonly
+                                type="number">
+                        </div>
+                        <div class="mb-3 col-md-6">
+                            <label for="name" class="form-label">Pay Amount</label>
+                            <input id="defaultconfig" class="form-control modal_payamount" onkeyup="finalCalculate()"
+                                maxlength="39" type="number">
+                        </div>
+                        <div class="mb-3 col-md-12">
+                            <label for="name" class="form-label">Cash Back</label>
+                            <input id="defaultconfig" class="form-control modal_cashback" readonly maxlength="39"
+                                type="number">
+                            <input type="hidden" class="modal_payment_method" value="1">
+                            <input type="hidden" class="modal_sale_id">
+                        </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary paid_queue"><i class="fa fa-print"></i>
+                        Print</button>
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
     <script>
-        $(document).ready(function() {
-            // Select Product Start
-            const Item__divs = document.querySelectorAll('.Item__div')
-            console.log(Item__divs)
-            Item__divs.forEach(function(item) {
-                item.addEventListener('click', function(e) {
-                const product_id = this.getAttribute('product_id');
-                alert(product_id);
+        const paid_queue = document.querySelector('.paid_queue');
+        paid_queue.addEventListener('click', function(e) {
+            e.preventDefault();
+            const modal_tax = document.querySelector('.modal_tax').value;
+            const modal_subtotal = document.querySelector('.modal_subtotal').value;
+            const modal_payamount = document.querySelector('.modal_payamount').value;
+            const modal_sale_id = document.querySelector('.modal_sale_id').value;
+            const modal_payment_method = document.querySelector('.modal_payment_method').value;
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
             });
+            $.ajax({
+                url: '/sale/pay',
+                type: 'POST',
+                data: {
+                    modal_tax,
+                    modal_subtotal,
+                    modal_payamount,
+                    modal_sale_id,
+                    modal_payment_method,
+                },
+                success: function(res) {
+                    // Assuming the response is in JSON format and contains the HTML
+                    if (res && res.html) {
+                        document.querySelector('.renderData').innerHTML = res.html;
+                        showTableQueue();
+                        posPrint(modal_sale_id);
+                        $('#saleModal').modal('hide');
+
+                    } else {
+                        console.error('Invalid response format:', res);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('AJAX error:', error);
+                }
             });
-            // Select Product End
-            $('#printButton').on('click', function() {
+
+        });
+
+        function finalCalculate() {
+            // Select elements
+            const modal_subtotal = document.querySelector('.modal_subtotal');
+            const modal_tax = document.querySelector('.modal_tax');
+            const modal_grandtotal = document.querySelector('.modal_grandtotal');
+            const modal_payamount = document.querySelector('.modal_payamount');
+            const modal_cashback = document.querySelector('.modal_cashback');
+
+            // Check if elements are found and parse their values
+            const subtotalValue = modal_subtotal ? parseFloat(modal_subtotal.value) : 0;
+            const taxValue = modal_tax ? parseInt(modal_tax.value) : 0;
+            const payamountValue = modal_payamount ? parseFloat(modal_payamount.value) : 0;
+
+            // Calculate tax and grand total
+            const tax = (subtotalValue * taxValue) / 100;
+            const grandtotal = subtotalValue + tax;
+
+            // Calculate cash back
+            const cashBack = grandtotal - payamountValue;
+
+            // Set the calculated values to the respective elements
+            if (modal_grandtotal) modal_grandtotal.value = grandtotal.toFixed(2);
+            if (modal_cashback) modal_cashback.value = cashBack.toFixed(2);
+        }
+
+        showTableQueue();
+
+        function showTableQueue() {
+            $.ajax({
+                url: '/show/queue',
+                type: 'GET',
+                success: function(res) {
+                    let allQueueData = '';
+                    $.each(res.sales, function(key, val) {
+                        allQueueData += `<div class="col-md-3 mb-2">
+                        <div class="card">
+                            <div class="card-header d-flex" style="padding-bottom: 0px !important;justify-content:space-between">
+                                <h6 class="card-title text-info text-center mt-1">Dine-1</h6>
+                                <p class="card-title text-info text-center">Date: 04-06-2024</p>
+                            </div>
+                            <div class="card-body p-3 pt-0">
+                            <table class="table">
+                                <tr>
+                                    <td style="text-align:right">Invoice No :</td>
+                                    <td><a href="#" class="sale_details_btn" value="${val.id}">#${val.invoice_number} </a> <a href="#" class="sale_customize" value="${val.id}"><i style="font-size: 12px;border: 1px solid; padding: 4px; border-radius: 3px;" class="fa fa-pencil"></i></a></td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align:right">Items x ${val.quantity} :</td>
+                                    <td>${val.receivable}</td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align:right">Discount :</td>
+                                    <td>${val.discount}</td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align:right">Total :</td>
+                                    <td>${val.final_receivable}</td>
+                                </tr>
+                            </table>
+                            </div>
+                            <div class="card-footer" style="padding: 5px!important">
+                                <div class="d-flex" style="flex-wrap:wrap;justify-content:center">
+                                    <button onclick="paidby_queue(this)" sale_id_queue="${val.id}" payments_method_queue="1" class="paidby_queue cashby_tablequeue {{ $mode->dark_mode == 1 ? 'mybtn_white' : 'mybtn_dark' }}"
+                                        style="; max-width:48px;border-radius:10px; margin-top:5px" value="${val.final_receivable}">Cash</button>
+                                    <button onclick="paidby_queue(this)" sale_id_queue="${val.id}"  value="${val.final_receivable}" payments_method_queue="2" class="paidby_queue {{ $mode->dark_mode == 1 ? 'mybtn_white' : 'mybtn_dark' }}"
+                                        style="margin-left:5px; max-width:48px;border-radius:10px; margin-top:5px">bKash</button>
+                                    <button onclick="paidby_queue(this)" sale_id_queue="${val.id}"  value="${val.final_receivable}" payments_method_queue="3" class="paidby_queue {{ $mode->dark_mode == 1 ? 'mybtn_white' : 'mybtn_dark' }}"
+                                        style="margin-left:5px; max-width:48px;border-radius:10px; margin-top:5px">Nagad</button>
+                                    <button onclick="paidby_queue(this)" sale_id_queue="${val.id}"  value="${val.final_receivable}" payments_method_queue="4" class="paidby_queue {{ $mode->dark_mode == 1 ? 'mybtn_white' : 'mybtn_dark' }}"
+                                        style="margin-left:5px; max-width:48px;border-radius:10px; margin-top:5px">Card</button>
+                                </div>
+                            </div>
+                        </div>
+                        </div>`;
+                    });
+                    document.querySelector('.tableQueueRender').innerHTML = allQueueData;
+                }
+
+            });
+        }
+        $(document).on('click', '.sale_details_btn', function(){
+            const sale_id = $(this).attr('value');
+            $.ajax({
+                url: '/details/sale/'+sale_id,
+                type: 'GET',
+                success: function(res) {
+                    if (res && res.html) {
+                        document.querySelector('.SaleDetails').innerHTML = res.html;
+                        // Tab Active
+                        const mytop__tab__controls = document.querySelectorAll('.mytop__tab__controls')
+                        mytop__tab__controls.forEach((mytab) => {
+                            mytab.classList.remove('active');
+                        })
+                        document.querySelector('.mytop__tab__last').classList.add('active');
+                        const tap_page = document.querySelectorAll('.mytop__tab-page');
+                        tap_page.forEach((tap) => {
+                            tap.classList.remove('active');
+                        })
+
+                        document.querySelector(`.tap_page--4`).classList.add(
+                            'active');
+                        document.querySelector(`.tap_page--2`).classList.remove(
+                            'active');
+
+                    } else {
+                        console.error('Invalid response format:', res);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('AJAX error:', error);
+                }
+            });
+        });
+
+        function paidby_queue(element) {
+            let value = element.value;
+            let payment_method = element.getAttribute('payments_method_queue');
+            let sale_id_queue = element.getAttribute('sale_id_queue');
+            $('#saleModal').modal('show');
+            document.querySelector('.modal_subtotal').value = value;
+            document.querySelector('.modal_sale_id').value = sale_id_queue;
+            document.querySelector('.modal_payment_method').value = payment_method;
+            finalCalculate();
+            $('#saleModal').on('shown.bs.modal', function() {
+                document.querySelector('.modal_payamount').focus();
+            });
+        }
+
+        const setmenu__div = document.querySelectorAll('.setmenu__div');
+        setmenu__div.forEach(element => {
+            element.addEventListener('click', function(e) {
+                const set_menu_id = element.getAttribute('set_menu_id');
+                const customer_id = document.querySelector('.customer_id').value;
+                const sale_id = document.querySelector('.sale_id').value;
+                const payment_method = document.querySelector('.payment_method').value;
+                const sale_discount = document.querySelector('.sale_discount').value ?? 0;
+                const dine = document.querySelector('.select_dine').value ?? 0;
+                const invoice_number = document.querySelector('.invoice_number').value;
+                const note = "Note dynamic korte hobe";
+                const tax = 1;
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+                $.ajax({
+                    url: '/sale/store/setmenu',
+                    type: 'POST',
+                    data: {
+                        set_menu_id,
+                        customer_id,
+                        sale_id,
+                        payment_method,
+                        sale_discount,
+                        dine,
+                        invoice_number,
+                        note,
+                        tax
+                    },
+                    success: function(res) {
+                        // Assuming the response is in JSON format and contains the HTML
+                        if (res && res.html) {
+                            enableDiv('controls');
+                            document.querySelector('.renderData').innerHTML = res.html;
+                            document.querySelector('.sale_id').value = document.querySelector(
+                                '.render_sale_id').value;
+                            // Re-attach event listeners to the newly added elements
+                            attachEventListeners();
+                        } else {
+                            console.error('Invalid response format:', res);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('AJAX error:', error);
+                    }
+                });
+            });
+        });
+        const Item__div = document.querySelectorAll('.Item__div');
+        Item__div.forEach(element => {
+            element.addEventListener('click', function(e) {
+                const product_id = element.getAttribute('product_id');
+                const customer_id = document.querySelector('.customer_id').value;
+                const sale_id = document.querySelector('.sale_id').value;
+                const payment_method = document.querySelector('.payment_method').value;
+                const sale_discount = document.querySelector('.sale_discount').value ?? 0;
+                const dine = document.querySelector('.select_dine').value ?? 0;
+                const invoice_number = document.querySelector('.invoice_number').value;
+                const note = "Note dynamic korte hobe";
+                const tax = 1;
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+                $.ajax({
+                    url: '/sale/store',
+                    type: 'POST',
+                    data: {
+                        product_id,
+                        customer_id,
+                        sale_id,
+                        payment_method,
+                        sale_discount,
+                        dine,
+                        invoice_number,
+                        note,
+                        tax
+                    },
+                    success: function(res) {
+                        // Assuming the response is in JSON format and contains the HTML
+                        if (res && res.html) {
+                            enableDiv('controls');
+                            document.querySelector('.renderData').innerHTML = res.html;
+                            document.querySelector('.sale_id').value = document.querySelector(
+                                '.render_sale_id').value;
+                            // Re-attach event listeners to the newly added elements
+                            attachEventListeners();
+                        } else {
+                            console.error('Invalid response format:', res);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('AJAX error:', error);
+                    }
+                });
+            });
+        });
+
+        function attachEventListeners() {
+            let sale_discount = document.querySelector('.sale_discount');
+            if (sale_discount) {
+                sale_discount.addEventListener('input', function(e) {
+
+                    let final_discount = this.value;
+
+                    let final_receivable_main_value = document.querySelector('.final_receivable_main_value').value;
+                    let discountCalculator = final_receivable_main_value - final_discount;
+                    document.querySelector('.final_receivable').textContent = discountCalculator;
+                });
+            }
+
+            const remove_items = document.querySelectorAll('.remove_item');
+            remove_items.forEach(function(item) {
+                item.addEventListener('click', function(event) {
+                    event.preventDefault();
+                    const sale_id = document.querySelector('.sale_id').value;
+                    const item_id = this.getAttribute('value');
+                    $.ajax({
+                        url: '/sale/item/remove/' + sale_id + "/" + item_id,
+                        type: 'GET',
+                        success: function(data) {
+                            if (data.status === 200) {
+                                toastr.success(data.message);
+                                document.querySelector('.renderData').innerHTML = data.html;
+                                // showTableQueue();
+                                attachEventListeners();
+                                if (data.sale_items.length === 0) {
+                                    disableDiv('controls');
+                                }
+                            }
+
+                        }
+                    });
+                });
+            });
+
+
+
+        }
+        attachEventListeners();
+        disableDiv('controls')
+        const btn_add_queu = document.querySelector('.btn_add_queu');
+        btn_add_queu.addEventListener('click', function(event) {
+            const select_dine = document.querySelector('.select_dine');
+            const customer_id = document.querySelector('.customer_id').value;
+            const sale_id = document.querySelector('.sale_id').value;
+            const payment_method = document.querySelector('.payment_method').value;
+            const sale_discount = document.querySelector('.sale_discount').value ?? 0;
+            const tax = 1;
+            const note = "Note dynamic korte hobe";
+            if (select_dine.value === '') {
+                toastr.error('Please Select Dine');
+                select_dine.focus();
+                return false;
+            }
+
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+            $.ajax({
+                url: '/update/sale',
+                type: 'POST',
+                data: {
+                    customer_id,
+                    sale_id,
+                    payment_method,
+                    sale_discount,
+                    note,
+                    tax,
+                    dine: select_dine.value
+                },
+                success: function(res) {
+
+                    if (res && res.html) {
+                        toastr.success('Order Queue Successfully Added');
+                        document.querySelector('.renderData').innerHTML = res.html;
+                        showTableQueue();
+                        attachEventListeners();
+                        disableDiv('controls');
+                        document.querySelector('.sale_id').value = "0";
+                        document.querySelector('.sale_items_count').textContent = "0";
+                        document.querySelector('.sale_item_quantity').textContent = "0";
+                        document.querySelector('.total_sale_receivable').textContent = "0";
+                        document.querySelector('.final_receivable').textContent = "0";
+                        document.querySelector('.final_receivable_main_value').value = "0";
+                    } else {
+                        console.error('Invalid response format:', res);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('AJAX error:', error);
+                }
+            });
+
+        });
+
+        function disableDiv(divId) {
+            // Get the div by its ID
+            const div = document.getElementById(divId);
+
+            // Get all input elements within the div
+            const inputs = div.querySelectorAll('input, textarea, select, button');
+
+            // Disable all input elements
+            inputs.forEach(function(input) {
+                input.disabled = true;
+            });
+
+            // Optionally, you can add a class to indicate the div is disabled
+            div.classList.add('disabled-div');
+        }
+
+        function enableDiv(divId) {
+            // Get the div by its ID
+            const div = document.getElementById(divId);
+
+            // Get all input elements within the div
+            const inputs = div.querySelectorAll('input, textarea, select, button');
+
+            // Enable all input elements
+            inputs.forEach(function(input) {
+                input.disabled = false;
+            });
+
+            // Remove the class that indicates the div is disabled
+            div.classList.remove('disabled-div');
+        }
+
+        const select_customer = document.querySelector('.select_customer');
+        select_customer.addEventListener('change', function(e) {
+            // toastr.success('Please select');
+            const customer_id = document.querySelector('.select_customer').value;
+            selectCustomer(customer_id)
+        });
+
+        function selectCustomer(customer_id) {
+            $.ajax({
+                url: 'select/customer/for-pos/' + customer_id,
+                type: 'get',
+                success: function(res) {
+                    // toastr.success('Customer Successfully Added');
+                    $('#customerModal').modal('hide');
+                    document.querySelector('.customer_name').textContent = res.data.name;
+                    let phoneoraddress;
+                    if (res.data.phone !== null) {
+                        phoneoraddress = res.data.phone
+                    } else {
+                        phoneoraddress = res.data.address
+                    }
+                    document.querySelector('.customer_address').textContent = phoneoraddress;
+                    document.querySelector('.customer_total_receivable').textContent = res.data
+                        .total_receivable;
+                    document.querySelector('.customer_id').value = res.data.id;
+                }
+            });
+        }
+        const saveCustomer = document.querySelector('.save_new_customer');
+        saveCustomer.addEventListener('click', function(e) {
+            e.preventDefault();
+            // alert('ok')
+            let formData = new FormData($('.customerForm')[0]);
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+            $.ajax({
+                url: '/add/customer',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(res) {
+                    if (res.status == 200) {
+                        // console.log(res);
+                        $('#customerModal').modal('hide');
+                        $('.customerForm')[0].reset();
+                        toastr.success(res.message);
+                        document.querySelector('.customer_name').textContent = res.data.name;
+                        let phoneoraddress;
+                        if (res.data.phone !== null) {
+                            phoneoraddress = res.data.phone
+                        } else {
+                            phoneoraddress = res.data.address
+                        }
+                        document.querySelector('.customer_address').textContent = phoneoraddress;
+                        document.querySelector('.customer_total_receivable').textContent = res.data
+                            .total_receivable;
+                        document.querySelector('.customer_id').value = res.data.id;
+                    } else {
+                        // console.log(res);
+                        if (res.error.name) {
+                            showError('.customer_name', res.error.name);
+                        }
+                        if (res.error.phone) {
+                            showError('.phone', res.error.phone);
+                        }
+                    }
+                }
+            });
+        });
+
+        function posPrint(saleId) {
+            $(document).ready(function() {
                 var printFrame = $('#printFrame')[0];
                 var printContentUrl =
-                    '{{ route('sale.invoice', 102049) }}'; // Specify the URL of the content to be printed
-                console.log('{{ route('sale.invoice', 102049) }}');
+                    '{{ url('/sale/print/') }}' + "/" + saleId;
                 $('#printFrame').attr('src', printContentUrl);
-
                 printFrame.onload = function() {
                     printFrame.contentWindow.focus();
                     printFrame.contentWindow.print();
                 };
             });
-        });
-    </script>
-
-
-
-    <script>
-        // error remove
-        function errorRemove(element) {
-            if (element.value != '') {
-                $(element).siblings('span').hide();
-                $(element).css('border-color', 'green');
-            }
         }
+        $(document).on('click', '.sale_customize', function(event) {
+            event.preventDefault();
+            const sale_id = this.getAttribute('value');
+            // alert(item_id);
+            $.ajax({
+                url: '/sale/customize/' + sale_id,
+                type: 'GET',
+                success: function(data) {
+                    if (data.status === 200) {
+                        enableDiv('controls');
+                        document.querySelector('.renderData').innerHTML = data.html;
+                        document.querySelector('.sale_id').value = document.querySelector(
+                            '.render_sale_id').value;
+                        document.querySelector('.select_dine').value = data.sale.dine_id;
+                        document.querySelector('.sale_discount ').value = data.sale.discount;
+                        // Re-attach event listeners to the newly added elements
+                        attachEventListeners();
+                        document.querySelector('.btn_update_queu').style.display = 'block';
+                        document.querySelector('.btn_add_queu').style.display = 'none';
+                        selectCustomer(data.sale.customer_id);
 
-        $(document).ready(function() {
-            $('.barcode_input').focus();
-            // var currentDate = new Date().toISOString().split('T')[0];
-            // $('.purchase_date').val(currentDate);
-            // show error
-            function showError(name, message) {
-                $(name).css('border-color', 'red');
-                $(name).focus();
-                $(`${name}_error`).show().text(message);
-            }
+                        // Tab Active
+                        const mytop__tab__controls = document.querySelectorAll('.mytop__tab__controls')
+                        mytop__tab__controls.forEach((mytab) => {
+                            mytab.classList.remove('active');
+                        })
+                        document.querySelector('.mytop__tab__first').classList.add('active');
+                        const tap_page = document.querySelectorAll('.mytop__tab-page');
+                        tap_page.forEach((tap) => {
+                            tap.classList.remove('active');
+                        })
 
-            // customer view function
-            function viewCustomer() {
-                $.ajax({
-                    url: '/get/customer',
-                    method: 'GET',
-                    success: function(res) {
-                        const customers = res.allData;
-                        // console.log(customers);
-                        $('.select-customer').empty();
-                        if (customers.length > 0) {
-                            $.each(customers, function(index, customer) {
-                                $('.select-customer').append(
-                                    `<option value="${customer.id}">${customer.name}(${customer.phone})</option>`
-                                );
-                            })
-                        } else {
-                            $('.select-customer').html(`
-                            <option selected disable>Please add Customer</option>`)
-                        }
+                        document.querySelector(`.tap_page--1`).classList.add(
+                            'active');
+                        document.querySelector(`.tap_page--2`).classList.remove(
+                            'active');
                     }
-                })
-            }
-            viewCustomer();
 
-            const saveCustomer = document.querySelector('.save_new_customer');
-            saveCustomer.addEventListener('click', function(e) {
-                e.preventDefault();
-                // alert('ok')
-                let formData = new FormData($('.customerForm')[0]);
-                $.ajaxSetup({
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    }
-                });
-                $.ajax({
-                    url: '/add/customer',
-                    type: 'POST',
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    success: function(res) {
-                        if (res.status == 200) {
-                            // console.log(res);
-                            $('#customerModal').modal('hide');
-                            $('.customerForm')[0].reset();
-                            viewCustomer();
-                            toastr.success(res.message);
-                        } else {
-                            // console.log(res);
-                            if (res.error.name) {
-                                showError('.customer_name', res.error.name);
-                            }
-                            if (res.error.phone) {
-                                showError('.phone', res.error.phone);
-                            }
-                        }
-                    }
-                });
-            })
-
-
-            // calculate quantity
-            let totalQuantity = 0;
-
-            // Function to update total quantity
-            // function updateTotalQuantity() {
-            //     totalQuantity = 0;
-            //     $('.quantity').each(function() {
-            //         let quantity = parseFloat($(this).val());
-            //         if (!isNaN(quantity)) {
-            //             totalQuantity += quantity;
-            //         }
-            //     });
-            //     // console.log(totalQuantity);
-            // }
-            // Function to update total quantity
-            function updateTotalQuantity() {
-                totalQuantity = 0;
-                $('.quantity').each(function() {
-                    let quantity = parseFloat($(this).val());
-                    if (!isNaN(quantity)) {
-                        totalQuantity += quantity;
-                    }
-                });
-            }
-
-
-
-            // show Product function
-            function showAddProduct(product, promotion) {
-                // Check if a row with the same product ID already exists
-                let existingRow = $(`.data_row${product.id}`);
-
-                if (existingRow.length > 0) {
-                    // If the row exists, update the quantity
-                    let quantityInput = existingRow.find('.quantity');
-                    let currentQuantity = parseInt(quantityInput.val());
-                    let newQuantity = currentQuantity + 1;
-                    quantityInput.val(newQuantity);
-                } else {
-                    // If the row doesn't exist, add a new row
-                    $('.showData').append(
-                        `<tr class="data_row${product.id}">
-
-                <td>
-                    <input type="text" class="form-control product_name${product.id} border-0 "  name="product_name[]" readonly value="${product.name ?? ""}" />
-                </td>
-                <td>
-                    <input type="hidden" class="product_id" name="product_id[]" readonly value="${product.id ?? 0}" />
-                    <input type="number" class="form-control product_price${product.id} border-0 "  name="unit_price[]" readonly value="${product.price ?? 0}" />
-                </td>
-                <td>
-                    <input type="number" product-id="${product.id}" class="form-control quantity" name="quantity[]" value="1" />
-                </td>
-                <td style="padding-top: 20px;">
-
-                    ${promotion && promotion.discount_type ?
-                        promotion.discount_type == 'percentage' ?
-                            `<span class="discount_percentage${product.id} mt-2">${promotion.discount_value}</span>%` :
-                            `<span class="discount_amount${product.id} mt-2">${promotion.discount_value}</span>Tk` :
-                        (promotion ? `<span class="mt-2">00</span>` : `<span class="mt-2">00</span>`)
-                    }
-                </td>
-                <td>
-                    ${
-                        promotion ?
-                            promotion.discount_type == 'percentage' ?
-                                `<input type="number" class="form-control product_subtotal${product.id} border-0 " name="total_price[]" id="productTotal" readonly value="${product.price - (product.price * promotion.discount_value / 100)}" />`
-                                :
-                                `<input type="number" class="form-control product_subtotal${product.id} border-0" name="total_price[]" id="productTotal" readonly value="${product.price - promotion.discount_value}" />`
-                            :
-                            `<input type="number" class="form-control product_subtotal${product.id} border-0" name="total_price[]" id="productTotal" readonly value="${product.price}" />`
-                    }
-                </td>
-                <td style="padding-top: 20px;">
-                    <a href="#" class="btn btn-sm btn-danger btn-icon purchase_delete" style="font-size: 8px; height: 25px; width: 25px;" data-id=${product.id}>
-                        <i class="fa-solid fa-trash-can" style="font-size: 0.8rem; margin-top: 2px;"></i>
-                    </a>
-                </td>
-            </tr>`
-                    );
-                }
-            }
-
-
-            // Function to calculate the subtotal for each product
-            function calculateTotal() {
-                $('.quantity').each(function() {
-                    let $quantityInput = $(this);
-                    let productId = $quantityInput.attr('product-id');
-                    let quantity = parseInt($quantityInput.val());
-                    let price = parseFloat($('.product_price' + productId).val());
-                    let productSubtotal = $('.product_subtotal' + productId);
-                    let subtotal = quantity * price;
-
-                    // Apply discount if available
-                    $.ajax({
-                        url: '/product/find/' + productId,
-                        type: 'GET',
-                        dataType: 'JSON',
-                        success: function(res) {
-                            const promotion = res.promotion;
-                            if (promotion) {
-                                if (promotion.discount_type == 'percentage') {
-                                    let discountPercentage = promotion.discount_value;
-                                    subtotal = subtotal - (subtotal * discountPercentage / 100);
-                                } else {
-                                    let discountAmount = promotion.discount_value;
-                                    subtotal = subtotal - discountAmount;
-                                }
-                            }
-                            productSubtotal.val(subtotal.toFixed(2));
-                            calculateProductTotal();
-                        }
-                    });
-                });
-            }
-
-
-            // Function to calculate the grand total from all products
-            function calculateProductTotal() {
-                let allProductTotal = document.querySelectorAll('#productTotal');
-                let allTotal = 0;
-                allProductTotal.forEach(product => {
-                    let productValue = parseFloat(product.value);
-                    if (!isNaN(productValue)) {
-                        allTotal += productValue;
-                    }
-                });
-                $('.grandTotal').val(allTotal.toFixed(2));
-                $('.total').val(allTotal.toFixed(2));
-                $('.grand_total').val(allTotal.toFixed(2));
-            }
-            calculateProductTotal();
-
-            // Function to update grand total when a product is added or deleted
-            function updateGrandTotal() {
-                calculateTotal();
-                calculateGrandTotal();
-                updateTotalQuantity();
-                calculateProductTotal();
-            }
-
-
-            // //  product add  with barcode
-            // $('.barcode_input').change(function() {
-            //     let barcode = $(this).val();
-            //     // alert(barcode);
-            //     $.ajax({
-            //         url: '/product/barcode/find/' + barcode,
-            //         type: 'GET',
-            //         dataType: 'JSON',
-            //         success: function(res) {
-            //             if (res.status == 200) {
-            //                 const product = res.data;
-            //                 const promotion = res.promotion;
-            //                 // console.log(res);
-            //                 // console.log(promotion);
-            //                 showAddProduct(product, promotion);
-            //                 // Update SL numbers
-            //                 calculateTotal();
-            //                 calculateProductTotal();
-            //                 updateGrandTotal();
-            //                 // allProductTotal();
-            //                 $('.barcode_input').val('');
-            //                 // calculateGrandTotal();
-            //             } else if (res.status == 300) {
-            //                 // console.log(300)
-            //                 toastr.warning(res.error);
-            //                 $('.barcode_input').val('');
-            //             } else {
-            //                 // console.log(500)
-            //                 toastr.warning(res.error);
-            //                 $('.barcode_input').val('');
-            //             }
-            //         }
-            //     })
-            // })
-
-            // // select product
-            // $('.product_select').change(function() {
-            //     let id = $(this).val();
-
-            //     // alert(id);
-            //     if ($(`.data_row${id}`).length === 0 && id) {
-            //         $.ajax({
-            //             url: '/product/find/' + id,
-            //             type: 'GET',
-            //             dataType: 'JSON',
-            //             success: function(res) {
-            //                 const product = res.data;
-            //                 const promotion = res.promotion;
-            //                 // console.log(promotion);
-            //                 showAddProduct(product, promotion);
-            //                 // Update SL numbers
-
-            //                 updateGrandTotal();
-            //                 calculateProductTotal();
-            //                 // allProductTotal();
-            //                 // calculateGrandTotal();
-            //             }
-            //         })
-            //     }
-            // })
-
-
-            // Product add with barcode
-            $('.barcode_input').change(function() {
-                let barcode = $(this).val();
-                $.ajax({
-                    url: '/product/barcode/find/' + barcode,
-                    type: 'GET',
-                    dataType: 'JSON',
-                    success: function(res) {
-                        if (res.status == 200) {
-                            const product = res.data;
-                            const promotion = res.promotion;
-                            showAddProduct(product, promotion);
-                            updateGrandTotal();
-                            $('.barcode_input').val('');
-                        } else {
-                            toastr.warning(res.error);
-                            $('.barcode_input').val('');
-                        }
-                    }
-                });
-            });
-
-            // Select product
-            $('.product_select').change(function() {
-                let id = $(this).val();
-                if ($(`.data_row${id}`).length === 0 && id) {
-                    $.ajax({
-                        url: '/product/find/' + id,
-                        type: 'GET',
-                        dataType: 'JSON',
-                        success: function(res) {
-                            const product = res.data;
-                            const promotion = res.promotion;
-                            showAddProduct(product, promotion);
-                            updateGrandTotal();
-                        }
-                    });
                 }
             });
-
-            // Purchase delete
-            $(document).on('click', '.purchase_delete', function(e) {
-                let id = $(this).attr('data-id');
-                let dataRow = $('.data_row' + id);
-                dataRow.remove();
-                updateGrandTotal();
-                updateTotalQuantity();
+        });
+        const btn_update_queu = document.querySelector('.btn_update_queu');
+        btn_update_queu.addEventListener('click', function(event) {
+            const sale_id = document.querySelector('.sale_id').value;
+            const customer_id = document.querySelector('.customer_id').value;
+            const sale_discount = document.querySelector('.sale_discount').value;
+            const select_dine = document.querySelector('.select_dine');
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
             });
-            // Function to recalculate total
-            // function calculateTotal() {
-            //     $('.quantity').each(function() {
-            //         let $quantityInput = $(this);
-            //         let productId = $quantityInput.attr('product-id');
-
-            //         $.ajax({
-            //             url: '/product/find/' + productId,
-            //             type: 'GET',
-            //             dataType: 'JSON',
-            //             success: function(res) {
-            //                 const promotion = res.promotion;
-            //                 let qty = parseInt($quantityInput
-            //                     .val());
-            //                 let price = parseFloat($('.product_price' + productId).val());
-            //                 let product_subtotal = $('.product_subtotal' + productId);
-
-            //                 if (promotion) {
-            //                     if (promotion.discount_type == 'percentage') {
-            //                         let discount_percentage = parseFloat($(
-            //                             '.discount_percentage' +
-            //                             productId).text());
-            //                         let disPrice = price - (price * discount_percentage) / 100;
-            //                         product_subtotal.val(disPrice * qty);
-            //                     } else {
-            //                         let discount_amount = parseFloat($('.discount_amount' +
-            //                             productId).text());
-            //                         let disPrice = price - discount_amount;
-            //                         product_subtotal.val(disPrice * qty);
-            //                     }
-            //                 } else {
-            //                     product_subtotal.val(qty * price);
-            //                 }
-            //             }
-            //         });
-            //     });
-            // }
-
-
-            // function calculateProductTotal() {
-            //     let allProductTotal = document.querySelectorAll('#productTotal');
-            //     let allTotal = 0;
-            //     allProductTotal.forEach(product => {
-            //         let productValue = parseFloat(product.value);
-            //         allTotal += productValue;
-            //         console.log(allTotal);
-            //     });
-            //     console.log(allTotal);
-            //     $('.grandTotal').val(allTotal.toFixed(2));
-            //     $('.total').val(allTotal.toFixed(2));
-            //     $('.grand_total').val(allTotal.toFixed(2));
-            // }
-
-
-
-
-            // grandTotalCalulate
-            function calculateGrandTotal() {
-                let id = $('.select-customer').val();
-                // let total = parseFloat($('.total').val());
-                // console.log(id);
-                if (id) {
-                    $.ajax({
-                        url: `/sale/customer/${id}`,
-                        type: 'GET',
-                        dataType: 'JSON',
-                        success: function(res) {
-                            // console.log(res)
-                            const promotions = res.promotions;
-                            // console.log(promotions);
-                            if (promotions) {
-                                $('.discount_field').html(
-                                    `<option selected disabled>Select a Discount</option>`);
-                                $.each(promotions, function(index, promotion) {
-                                    $('.discount_field').append(
-                                        `<option value="${promotion.id}">${promotion.promotion_name}(${promotion.discount_value} / ${promotion.discount_type})</option>`
-                                    );
-                                })
-                            } else {
-                                const total = $('.total').val();
-                                $('.grand_total').val(total);
-                                $('.grandTotal').val(total);
-                                // console.log($('.total').val());
-                                // $('.total_payable').val(total);
-                                $('.discount_field').html(
-                                    `<option>No Discount</option>`
-                                );
-                            }
-                        }
-                    })
-                } else {
-                    let total = $('.total').val();
-                    $('.grand_total').val(total);
-                    $('.discount_field').html(
-                        `<option>No Discount</option>`
-                    );
-                    $('.grandTotal').val(total);
-                    // $('.total_payable').val(total);
-                }
-            }
-            calculateGrandTotal();
-            // let id = $('.select-customer').val();
-            // console.log(id);
-            $(document).on('change', '.discount_field', function() {
-                let id = $(this).val();
-                $.ajax({
-                    url: `/sale/promotions/${id}`,
-                    type: 'GET',
-                    dataType: 'JSON',
-                    success: function(res) {
-                        // console.log(res)
-                        const promotion = res.promotions;
-                        if (promotion) {
-                            if (promotion.discount_type == 'percentage') {
-                                let total = $('.total').val();
-                                let grandTotalAmount = parseFloat(total - ((total * promotion
-                                    .discount_value) / 100)).toFixed(2);
-                                $('.grand_total').val(grandTotalAmount);
-                                $('.grandTotal').val(grandTotalAmount);
-                                // $('.total_payable').val(grandTotalAmount);
-                            } else {
-                                let total = $('.total').val();
-                                let grandTotalAmount = parseFloat(total - promotion
-                                        .discount_value)
-                                    .toFixed(2);
-                                $('.grand_total').val(grandTotalAmount);
-                                $('.grandTotal').val(grandTotalAmount);
-                                // $('.total_payable').val(grandTotalAmount);
-                            }
-                        } else {
-                            let total = $('.total').val();
-                            $('.grand_total').val(total);
-                            $('.grandTotal').val(total);
-                            // $('.total_payable').val(total);
-
-                        }
-
-                    }
-                })
-            })
-
-            // Function to update grand total when a product is added or deleted
-            // function updateGrandTotal() {
-            //     calculateTotal();
-            //     calculateGrandTotal();
-            //     updateTotalQuantity();
-            //     calculateProductTotal();
-            // }
-
-
-            $(document).on('click', '.quantity', function(e) {
-                e.preventDefault();
-                let id = $(this).attr("product-id")
-                let quantity = $(this).val();
-                quantity = parseInt(quantity);
-                let subTotal = $('.product_subtotal' + id);
-                if (quantity < 0) {
-                    toastr.warning('quantity must be positive value');
-                    $(this).val('');
-                } else {
-                    $.ajax({
-                        url: `/product/find-qty/${id}`,
-                        type: 'GET',
-                        dataType: 'JSON',
-                        success: function(res) {
-                            let stock = res.product.stock;
-                            let productPrice = res.product.price;
-                            if (quantity > stock) {
-                                $('.quantity').val(stock);
-                                // subTotal.val(parseFloat(stock * productPrice).toFixed(2));
-                                updateGrandTotal();
-                                toastr.warning('Not enough stock');
-                            } else {
-                                // subTotal.val(parseFloat(quantity * productPrice).toFixed(2));
-                                updateGrandTotal();
-                            }
-
-                        }
-                    })
-                }
-            })
-
-            $(document).on('keyup', '.quantity', function() {
-                let id = $(this).attr("product-id")
-                let quantity = $(this).val();
-                quantity = parseInt(quantity);
-                let subTotal = $('.product_subtotal' + id);
-                if (quantity < 0) {
-                    toastr.warning('quantity must be positive value');
-                    $(this).val('');
-                } else {
-                    $.ajax({
-                        url: `/product/find-qty/${id}`,
-                        type: 'GET',
-                        dataType: 'JSON',
-                        success: function(res) {
-                            let stock = res.product.stock;
-                            let productPrice = res.product.price;
-                            if (quantity > stock) {
-                                $('.quantity').val(stock);
-                                // subTotal.val(parseFloat(stock * productPrice).toFixed(2));
-                                updateGrandTotal();
-                                toastr.warning('Not enough stock');
-                            } else {
-                                // subTotal.val(parseFloat(quantity * productPrice).toFixed(2));
-                                updateGrandTotal();
-                            }
-
-                        }
-                    })
-                }
-
-            })
-
-            // discount
-            $(document).on('change', '.select-customer', function() {
-                // let id = $(this).val();
-                calculateGrandTotal();
-            })
-
-
-            // purchase Delete
-            // $(document).on('click', '.purchase_delete', function(e) {
-            //     // alert('ok');
-            //     let id = $(this).attr('data-id');
-            //     let dataRow = $('.data_row' + id);
-            //     dataRow.remove();
-            //     // Recalculate grand total
-            //     updateGrandTotal();
-            //     updateTotalQuantity();
-            // })
-
-
-            // total_payable
-            $('.total_payable').keyup(function(e) {
-                let grandTotal = parseFloat($('.grandTotal').val());
-                let value = parseFloat($(this).val());
-                totalDue();
-                // $('.total_payable_amount').text(value);
-            })
-
-            // due
-            function totalDue() {
-                let pay = $('.total_payable').val();
-                let grandTotal = parseFloat($('.grandTotal').val());
-                let due = (grandTotal - pay).toFixed(2);
-                $('.total_due').val(due);
-            }
-
-
-            $('.tax').change(function() {
-                let grandTotal = parseFloat($('.grand_total').val());
-                let value = parseInt($(this).val());
-                // alert(value);
-
-                let taxTotal = (grandTotal * value) / 100;
-                taxTotal = (taxTotal + grandTotal).toFixed(2);
-                // $('.grandTotal').text(taxTotal);
-                $('.grandTotal').val(taxTotal);
-                // $('.total_payable').val(taxTotal);
-            })
-
-            const total_payable = document.querySelector('.total_payable');
-            total_payable.addEventListener('keydown',
-                function(e) {
-                    if (event.key === 'Enter') {
-                        event.preventDefault();
-                        let customer_id = $('.select-customer').val();
-                        let sale_date = $('.purchase_date').val();
-                        let formattedSaleDate = moment(sale_date, 'DD-MMM-YYYY').format('YYYY-MM-DD HH:mm:ss');
-                        let quantity = totalQuantity;
-                        let total_amount = parseFloat($('.total').val());
-                        let discount = $('.discount_field').val();
-                        let total = parseFloat($('.grand_total').val());
-                        let tax = $('.tax').val();
-                        let change_amount = parseFloat($('.grandTotal').val());
-                        let actual_discount = change_amount - total;
-                        let paid = $('.total_payable').val();
-                        let due = $('.total_due').val();
-                        let note = $('.note').val();
-                        let payment_method = $('.payment_method').val();
-                        // let product_id = $('.product_id').val();
-                        // console.log(total_quantity);
-
-                        let products = [];
-
-                        $('tr[class^="data_row"]').each(function() {
-                            let row = $(this);
-                            // Get values from the current row's elements
-                            let product_id = row.find('.product_id').val();
-                            let quantity = row.find('input[name="quantity[]"]').val();
-                            let unit_price = row.find('input[name="unit_price[]"]').val();
-                            let discount_amount = row.find(`span[class='discount_amount${product_id}']`)
-                                .text() || 0;
-                            let discount_percentage = (row.find(
-                                `span[class='discount_percentage${product_id}']`).text()) || 0;
-                            let total_price = row.find('input[name="total_price[]"]').val();
-
-                            // Create an object with the gathered data
-                            let product = {
-                                product_id,
-                                quantity,
-                                unit_price,
-                                discount: discount_amount == 0 ? discount_percentage : 0,
-                                total_price
-                            };
-
-                            // Push the object into the products array
-                            products.push(product);
-                        });
-
-                        let allData = {
-                            // for purchase table
-                            customer_id,
-                            sale_date: formattedSaleDate,
-                            quantity,
-                            total_amount,
-                            discount,
-                            actual_discount,
-                            total,
-                            change_amount,
-                            tax,
-                            paid,
-                            due,
-                            note,
-                            payment_method,
-                            products
-                        }
-
-                        // console.log(allData);
-                        $.ajaxSetup({
-                            headers: {
-                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                            }
-                        });
-
-                        $.ajax({
-                            url: '/sale/store',
-                            type: 'POST',
-                            data: allData,
-                            success: function(res) {
-                                if (res.status == 200) {
-                                    // console.log(res.data);
-                                    // $('#paymentModal').modal('hide');
-                                    // $('.supplierForm')[0].reset();
-                                    // supplierView();
-                                    toastr.success(res.message);
-                                    let id = res.saleId;
-                                    // console.log(id)
-
-                                    // window.location.href = '/sale/invoice/' + id;
-                                    var printFrame = $('#printFrame')[0];
-                                    var printContentUrl = '/sale/print/' +
-                                        id; // Specify the URL of the content to be printed
-                                    // console.log('{{ route('sale.invoice', 102049) }}');
-                                    $('#printFrame').attr('src', printContentUrl);
-
-                                    printFrame.onload = function() {
-                                        printFrame.contentWindow.focus();
-                                        printFrame.contentWindow.print();
-                                        // Redirect after printing
-                                        printFrame.contentWindow.onafterprint = function() {
-                                            window.location.href = "/sale";
-                                        };
-                                    };
-
-                                } else {
-                                    if (res.error.customer_id) {
-                                        showError('.select-customer', res.error.customer_id);
-                                    }
-                                    if (res.error.sale_date) {
-                                        showError('.purchase_date', res.error.sale_date);
-                                    }
-                                    if (res.error.payment_method) {
-                                        showError('.payment_method', res.error.payment_method);
-                                    }
-                                }
-                            }
-                        });
-                    }
-                })
-            // order btn
-            $('.payment_btn').click(function(e) {
-                e.preventDefault();
-                // alert('ok');
-                let customer_id = $('.select-customer').val();
-                let sale_date = $('.purchase_date').val();
-                let formattedSaleDate = moment(sale_date, 'DD-MMM-YYYY').format('YYYY-MM-DD HH:mm:ss');
-                let quantity = totalQuantity;
-                let total_amount = parseFloat($('.total').val());
-                let discount = $('.discount_field').val();
-                let total = parseFloat($('.grand_total').val());
-                let tax = $('.tax').val();
-                let change_amount = parseFloat($('.grandTotal').val());
-                let actual_discount = change_amount - total;
-                let paid = $('.total_payable').val();
-                let due = $('.total_due').val();
-                let note = $('.note').val();
-                let payment_method = $('.payment_method').val();
-                // let product_id = $('.product_id').val();
-                // console.log(total_quantity);
-
-                let products = [];
-
-                $('tr[class^="data_row"]').each(function() {
-                    let row = $(this);
-                    // Get values from the current row's elements
-                    let product_id = row.find('.product_id').val();
-                    let quantity = row.find('input[name="quantity[]"]').val();
-                    let unit_price = row.find('input[name="unit_price[]"]').val();
-                    let discount_amount = row.find(`span[class='discount_amount${product_id}']`)
-                        .text() || 0;
-                    let discount_percentage = (row.find(
-                        `span[class='discount_percentage${product_id}']`).text()) || 0;
-                    let total_price = row.find('input[name="total_price[]"]').val();
-
-                    // Create an object with the gathered data
-                    let product = {
-                        product_id,
-                        quantity,
-                        unit_price,
-                        discount: discount_amount == 0 ? discount_percentage : 0,
-                        total_price
-                    };
-
-                    // Push the object into the products array
-                    products.push(product);
-                });
-
-                let allData = {
-                    // for purchase table
+            $.ajax({
+                url: '/update/sale/custom',
+                type: 'POST',
+                data: {
                     customer_id,
-                    sale_date: formattedSaleDate,
-                    quantity,
-                    total_amount,
-                    discount,
-                    actual_discount,
-                    total,
-                    change_amount,
-                    tax,
-                    paid,
-                    due,
-                    note,
-                    payment_method,
-                    products
+                    sale_id,
+                    sale_discount,
+                    dine: select_dine.value
+                },
+                success: function(res) {
+
+                    if (res && res.html) {
+                        toastr.success('Order Queue Successfully Updated');
+                        document.querySelector('.renderData').innerHTML = res.html;
+                        showTableQueue();
+                        attachEventListeners();
+                        disableDiv('controls');
+                        document.querySelector('.sale_id').value = "0";
+                        document.querySelector('.sale_items_count').textContent = "0";
+                        document.querySelector('.sale_item_quantity').textContent = "0";
+                        document.querySelector('.total_sale_receivable').textContent = "0";
+                        document.querySelector('.final_receivable').textContent = "0";
+                        document.querySelector('.final_receivable_main_value').value = "0";
+                        document.querySelector('.btn_update_queu').style.display = 'none';
+                        document.querySelector('.btn_add_queu').style.display = 'block';
+                    } else {
+                        console.error('Invalid response format:', res);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('AJAX error:', error);
                 }
-
-                // console.log(allData);
-                $.ajaxSetup({
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    }
+            });
+        });
+        const mytop__tab__controls = document.querySelectorAll('.mytop__tab__controls');
+        mytop__tab__controls.forEach((mytab) => {
+            mytab.addEventListener('click', () => {
+                mytop__tab__controls.forEach((mytab) => {
+                    mytab.classList.remove('active');
+                })
+                mytab.classList.add('active');
+                const tap_page = document.querySelectorAll('.mytop__tab-page');
+                tap_page.forEach((tap) => {
+                    tap.classList.remove('active');
+                })
+                document.querySelector(`.tap_page--${mytab.getAttribute('tab__index')}`).classList.add(
+                    'active');
+            })
+        })
+        const menu__tab__control = document.querySelectorAll('.menu__tab__control');
+        menu__tab__control.forEach((menuTab) => {
+            menuTab.addEventListener('click', () => {
+                // alert("OK")
+                menu__tab__control.forEach((menuTab) => {
+                    menuTab.classList.remove('menu__active');
                 });
-
-                $.ajax({
-                    url: '/sale/store',
-                    type: 'POST',
-                    data: allData,
-                    success: function(res) {
-                        if (res.status == 200) {
-                            // console.log(res.data);
-                            // $('#paymentModal').modal('hide');
-                            // $('.supplierForm')[0].reset();
-                            // supplierView();
-                            toastr.success(res.message);
-                            let id = res.saleId;
-                            // console.log(id)
-
-                            // window.location.href = '/sale/invoice/' + id;
-                            var printFrame = $('#printFrame')[0];
-                            var printContentUrl = '/sale/print/' +
-                                id; // Specify the URL of the content to be printed
-                            // console.log('{{ route('sale.invoice', 102049) }}');
-                            $('#printFrame').attr('src', printContentUrl);
-
-                            printFrame.onload = function() {
-                                printFrame.contentWindow.focus();
-                                printFrame.contentWindow.print();
-                                // Redirect after printing
-                                printFrame.contentWindow.onafterprint = function() {
-                                    window.location.href = "/sale";
-                                };
-                            };
-
-                        } else {
-                            console.log(res.error)
-                            if (res.error.paid) {
-                                showError('.total_payable', res.error.paid);
-                            }
-                            if (res.error.customer_id) {
-                                showError('.select-customer', res.error.customer_id);
-                            }
-                            if (res.error.sale_date) {
-                                showError('.purchase_date', res.error.sale_date);
-                            }
-                            if (res.error.payment_method) {
-                                showError('.payment_method', res.error.payment_method);
-                            }
-                        }
-                    }
+                menuTab.classList.add('menu__active');
+                const menu__tab__pag = document.querySelectorAll('.menu__tab__pag');
+                menu__tab__pag.forEach((menuTabPag) => {
+                    menuTabPag.classList.remove('menu__active');
                 });
-
+                const menu__tab__pag__index = menuTab.getAttribute('menu__tab__index');
+                document.querySelector(`.menu__tab__pag--${menu__tab__pag__index}`).classList.add(
+                    'menu__active');
             })
         })
     </script>

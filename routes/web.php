@@ -27,6 +27,7 @@ use App\Http\Controllers\DamageController;
 use App\Http\Controllers\CustomeMailControler;
 use App\Http\Controllers\RolePermissionController;
 use App\Http\Controllers\MakeItemsController;
+use App\Http\Controllers\SetController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -291,13 +292,19 @@ Route::middleware('auth')->group(function () {
     Route::controller(SaleController::class)->group(function () {
         Route::get('/sale', 'index')->name('sale');
         Route::post('/sale/store', 'store')->name('sale.store');
+        Route::post('/update/sale', 'SaleUpdate');
+        Route::post('/update/sale/custom', 'customizeSale');
+        Route::post('/sale/pay', 'SalePay');
+        Route::post('/sale/store/setmenu', 'storesetmenu');
         Route::get('/sale/view', 'view')->name('sale.view');
         Route::get('/sale/view-all', 'viewAll')->name('sale.view.all');
         Route::get('/sale/view/{id}', 'viewDetails')->name('sale.view.details');
         Route::get('/sale/edit/{id}', 'edit')->name('sale.edit');
         Route::post('/sale/update/{id}', 'update')->name('sale.update');
+        Route::get('/details/sale/{id}', 'SaleDetails');
         Route::get('/sale/destroy/{id}', 'destroy')->name('sale.destroy');
         Route::get('/get/customer', 'getCustomer')->name('get.customer');
+        Route::get('select/customer/for-pos/{id}', 'SelectCustomer');
         Route::post('/add/customer', 'addCustomer')->name('add.customer');
         Route::get('/sale/invoice/{id}', 'invoice')->name('sale.invoice');
         Route::get('/sale/print/{id}', 'print')->name('sale.print');
@@ -309,13 +316,45 @@ Route::middleware('auth')->group(function () {
         Route::get('/sale/promotions/{id}', 'salePromotions')->name('sale.promotions');
         Route::get('/product/barcode/find/{id}', 'findProductWithBarcode')->name('product.barcode.find');
         Route::get('/sale/product/find/{id}', 'saleProductFind')->name('sale.product.find');
+        Route::get('/show/queue', 'showTableQueue');
+        Route::get('/sale/item/remove/{sale_id}/{item_id}', 'SaleItemRemove');
+        Route::get('/sale/customize/{sale_id}', 'SaleCustomize');
     });
     // Make Items related routes
     Route::controller(MakeItemsController::class)->group(function () {
         Route::get('/make/item', 'index')->name('make.item');
         Route::post('/add/make/item/catgoey', 'MakeItemCategory')->name('make.item.category');
+        Route::get('/make/item/catgoey/view', 'MakeItemCategoryView')->name('make.item.category.view');
+        Route::get('/make/item/catgoey/edit/{id}', 'MakeItemCategoryEdit')->name('make.item.category.edit');
+        Route::get('/make/item/catgoey/delete/{id}', 'MakeItemCategoryDelete')->name('make.item.category.delete');
+        Route::post('/make/item/catgoey/update/{id}', 'MakeItemCategoryUpdate')->name('update.item.category');
         Route::post('/store/make/item/', 'MakeItemStore')->name('make.item.store');
         Route::get('/delete/material/{id}', 'DestroyMaterials');
+        Route::get('/make/item/manage', 'MakeItemManage')->name('make.item.manage');
+        Route::get('/make/item/edit/{id}', 'MakeItemEdit')->name('make.item.edit');
+        Route::get('/make/item/find/{id}', 'MakeItemFind')->name('make.item.find');
+        Route::post('/update/make/item', 'UpdateMakeItem')->name('update.make.item');
+        Route::get('/make/item/delete/{id}', 'MakeItemDelete')->name('make.item.delete');
+    });
+    // Set Categoy & Set Items related routes
+    Route::controller(SetController::class)->group(function () {
+        Route::get('/set/item', 'Setitem')->name('set.item');
+        Route::post('/set/menu/store', 'SetMenuStore')->name('set.menu.store');
+        Route::get('/get-item-price', 'getItemPrice')->name('get.item.price');
+        Route::post('/store/set/item', 'StoreSetItem')->name('store.set.item');
+        Route::post('/update/set/item', 'UpdateSetItem')->name('update.set.item');
+        Route::get('/delete/menu-item/{id}', 'DeleteMenuItem')->name('delete.menu.item');
+        Route::post('/update/menu/store/{itemId}', 'SetMenuUpdate')->name('update.menu.store');
+        Route::get('/set/menu/delete/{id}', 'SetMenuDelete')->name('set.menu.delete');
+        // Route::post('/update/quantity', 'updateQuantity')->name('update.quantity');
+                             //Set item Manage//
+        Route::get('/manage/set/menu', 'ManageSetMenu')->name('manage.set.menu');
+        Route::get('/manage/set/item', 'ManageSetItem')->name('manage.set.item');
+        Route::get('/menu/item/edit/{id}', 'ManageItemEdit')->name('menu.item.edit');
+        Route::get('/menu/item/find/{id}', 'MenuItemFind')->name('menu.item.find');
+        Route::get('/menu/item/delete/{id}', 'MenuItemDelete')->name('menu.item.delete');
+
+
     });
     // Transaction related route(n)
     Route::controller(EmployeeSalaryController::class)->group(function () {
@@ -366,12 +405,9 @@ Route::middleware('auth')->group(function () {
             //
             Route::get('/report/purchase', 'purchaseReport')->name('report.purchase');
 
-
             Route::get('/report/damage', 'damageReport')->name('report.damage');
             Route::post('/damage/print', 'damageReportPrint')->name('damage.report.print');
             Route::get('/damage/product/filter', 'DamageProductFilter')->name('damage.product.filter.view');
-
-
 
             Route::get('/purchese/product/filter', 'PurchaseProductFilter')->name('purches.product.filter.view');
             Route::get('/purchese/details/invoice/{id}', 'PurchaseDetailsInvoice')->name('purchse.details.invoice');

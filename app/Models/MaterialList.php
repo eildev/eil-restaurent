@@ -17,4 +17,8 @@ class MaterialList extends Model
     {
         return $this->belongsTo(unit::class ,'unit', 'id');
     }
+    public function myUnitName()
+    {
+        return $this->belongsTo(unit::class ,'unit', 'id');
+    }
 }

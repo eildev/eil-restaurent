@@ -1,7 +1,8 @@
 @php
-    $branch = App\Models\Branch::findOrFail($sale->branch_id);
-    $customer = App\Models\Customer::findOrFail($sale->customer_id);
-    $products = App\Models\SaleItem::where('sale_id', $sale->id)->get();
+    // dd($sale);
+    // $branch = App\Models\Branch::findOrFail($sale->branch_id);
+    // $customer = App\Models\Customer::findOrFail($sale->customer_id);
+    // $products = App\Models\SaleItem::where('sale_id', $sale->id)->get();
 @endphp
 <!DOCTYPE html>
 <html lang="en">
@@ -19,7 +20,6 @@
             margin: 0;
             padding: 0;
         }
-
         body {
             font-family: "Space Mono", monospace;
             font-weight: 500;
@@ -84,9 +84,7 @@
         }
     </style>
 </head>
-
 <body>
-
     <div class="receipt ">
         <div>
             @if (!empty($invoice_logo_type))
@@ -111,10 +109,10 @@
             <p>{{ $email ?? 'Banasree' }}</p>
             <p>{{ $phone ?? '' }}</p>
             <div class="text-end" style="margin: 0 10px 10px 0">
-                <p><b>{{ $customer->name ?? '' }}</b></p>
-                <p>{{ $customer->address ?? '' }}</p>
-                <p>{{ $customer->email ?? '' }}</p>
-                <p>{{ $customer->phone ?? '' }}</p>
+                <p><b>{{ $sale->customer->name ?? '' }}</b></p>
+                <p>{{ $sale->customer->address ?? '' }}</p>
+                <p>{{ $sale->customer->email ?? '' }}</p>
+                <p>{{ $sale->customer->phone ?? '' }}</p>
             </div>
             <div class="flex font-sm">
                 @php
@@ -149,14 +147,15 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @if ($products->count() > 0)
-                        @foreach ($products as $index => $product)
+                    @if ($sale->saleItem->count() > 0)
+
+                        @foreach ($sale->saleItem as $index => $saleItem)
+                        {{-- @dd(($saleItem->set_menu == 1) ? $saleItem->setmenu->menu_name : $saleItem->product->name) --}}
                             <tr>
-                                <td class="text-start">{{ $product->product->name ?? '' }}</td>
-                                {{-- <td class="text-start"></td> --}}
-                                <td class="text-center">{{ $product->qty ?? 0 }}</td>
-                                <td class="text-center">{{ $product->discount ?? 0 }}</td>
-                                <td class="text-end">{{ $product->sub_total ?? 0 }}</td>
+                                <td class="text-start">{{ ($saleItem->set_menu == 1) ? $saleItem->setmenu->menu_name : $saleItem->product->name}}</td>
+                                <td class="text-center">{{ $saleItem->qty ?? 0 }}</td>
+                                <td class="text-center">{{ $saleItem->discount ?? 0 }}</td>
+                                <td class="text-end">{{ $saleItem->sub_total ?? 0 }}</td>
                             </tr>
                         @endforeach
                     @endif
@@ -173,24 +172,14 @@
 
             {{-- <p>-------------------</p> --}}
             <hr>
-            @if ($sale->discount != 'No Discount')
+
                 <div class="flex">
-                    @php
-                        $discount = App\Models\Promotion::findOrFail($sale->discount);
-                    @endphp
-                    @if ($discount->discount_type == 'percentage')
                         <p>Discount: </p>
-                        <p>{{ $discount->discount_value }} %</p>
+                        <p>৳ {{ $sale->discount }}</p>
                         <p>৳ {{ $sale->change_amount }}</p>
-                    @else
-                        <p>Discount: </p>
-                        <p>৳ {{ $discount->discount_value }}</p>
-                        <p>৳ {{ $sale->change_amount }}</p>
-                    @endif
-                    {{-- <p>-------------------</p> --}}
                 </div>
                 <hr>
-            @endif
+
 
 
 
@@ -198,15 +187,15 @@
                 <div class="flex">
                     {{-- <p>TAX: ({{ $sale->tax }}%) ৳ {{ $sale->receivable }}</p> --}}
                     <p>TAX: </p>
-                    <p>{{ $sale->tax }}%</p>
-                    <p>৳ {{ $sale->receivable }}</p>
+                    <p>{{ $sale->tax }}</p>
+                    <p>৳ {{ $sale->final_receivable }}</p>
                 </div>
                 <hr>
             @endif
 
             <div class="flex">
                 <p>Grand Total: </p>
-                <p>৳ {{ $sale->receivable }}</p>
+                <p>৳ {{ $sale->final_receivable }}</p>
             </div>
             <hr>
             <div class="flex">
@@ -215,12 +204,12 @@
             </div>
             <hr>
             <div class="flex">
-                @if ($sale->due >= 0)
+                @if ($sale->due > 0)
                     <p>Balance Due</p>
                     <p>৳ {{ $sale->due }} </p>
                 @else
                     <p>Return</p>
-                    <p>৳ {{ $sale->due }} </p>
+                    <p>৳ {{ $sale->returned }} </p>
                 @endif
             </div>
             <hr>

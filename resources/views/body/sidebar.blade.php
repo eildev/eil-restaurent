@@ -71,6 +71,51 @@
                     <span class="link-title">Make Items</span>
                 </a>
             </li>
+            <li class="nav-item">
+                <a href="{{ route('set.item') }}" class="nav-link {{ request()->routeIs('set.item') ? 'nav_active' : '' }}">
+                    <i class="ms-2 ms-2 link-icon" data-feather="shopping-cart"></i>
+                    <span class="link-title">Set Items</span>
+                </a>
+            </li>
+            {{-- //Set Item Item Manage // --}}
+            <li class="nav-item">
+                <a class="nav-link {{ request()->routeIs('manage.set.item*') ? '' : 'collapsed' }}"  data-bs-toggle="collapse" href="#uiComponentsitem" role="button"
+                    aria-expanded="false" aria-controls="uiComponents">
+                    <i class="ms-2 ms-2 link-icon" data-feather="shopping-bag"></i>
+                    <span class="link-title">Set Item Manage</span>
+                    <i class="link-arrow" data-feather="chevron-down"></i>
+                </a>
+                <div class="collapse {{ request()->routeIs('manage.set.item*') ? 'show' : '' }}" id="uiComponentsitem">
+                    <ul class="nav sub-menu">
+                            <li class="nav-item">
+                                <a href="{{ route('manage.set.item') }}" class="nav-link {{ request()->routeIs('manage.set.item') ? 'nav_active' : '' }}">All Set Items </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('manage.set.menu') }}" class="nav-link {{ request()->routeIs('manage.set.menu') ? 'nav_active' : '' }}">All Set Menu </a>
+                            </li>
+
+                    </ul>
+                </div>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {{ request()->routeIs('make.item.manage*') ? '' : 'collapsed' }}"  data-bs-toggle="collapse" href="#uiComponents111" role="button"
+                    aria-expanded="false" aria-controls="uiComponents">
+                    <i class="ms-2 ms-2 link-icon" data-feather="shopping-bag"></i>
+                    <span class="link-title">Manage Item & Category</span>
+                    <i class="link-arrow" data-feather="chevron-down"></i>
+                </a>
+                <div class="collapse {{ request()->routeIs('make.item.manage*') ? 'show' : '' }}" id="uiComponents111">
+                    <ul class="nav sub-menu">
+                            <li class="nav-item">
+                                <a href="{{ route('make.item.manage') }}" class="nav-link {{ request()->routeIs('make.item.manage') ? 'nav_active' : '' }}">All Make Items </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('make.item.category.view') }}" class="nav-link {{ request()->routeIs('make.item.category.view') ? 'nav_active' : '' }}">All Item Category</a>
+                            </li>
+                    </ul>
+                </div>
+            </li>
+            {{-- //make Item Manage End// --}}
             @if (Auth::user()->can('pos-manage.menu'))
                 <li class="nav-item">
                     <a href="{{ route('sale.view') }}"

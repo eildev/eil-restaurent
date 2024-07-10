@@ -1,5 +1,5 @@
 @extends('master')
-@section('title', '| Sale')
+@section('title', '| Make Items')
 @section('admin')
 
     <div class="row mt-0">
@@ -10,7 +10,7 @@
                 <div class="card-body px-4 py-2">
                     <form id="myValidForm" class="myForm" method="POST" enctype="multipart/form-data">
                         @csrf
-                        <input type="hidden" name="id" class="makeItemId" value="">
+                        <input type="hidden" name="id" class="makeItemId" value="0">
                         <input type="hidden" name="total_cost_price" value="0">
                     <div class="row" >
                         <div class="mb-1 col-md-4">
@@ -83,7 +83,7 @@
                                 $products = App\Models\Product::where('stock', '>', 0)->get();
                             @endphp
                             <label for="ageSelect" class="form-label">Materials Name</label>
-                            <select class="js-example-basic-single  form-select product_select @error('product_id') is-invalid @enderror" name="product_id" data-width="100%"
+                            <select class="js-example-basic-single  form-select product_select" name="product_id" id ="productValid" data-width="100%"
                                 onclick="errorRemove(this);" onblur="errorRemove(this);"  onchange="updateCost();">
                                 @if ($products->count() > 0)
                                     <option selected disabled>Select Product</option>
@@ -96,28 +96,25 @@
                                     <option selected disabled>Please Add Product</option>
                                 @endif
                             </select>
-                            @error('product_id')
-                            <div class="text-danger">{{ $message }}</div>
-                          @enderror
-                            {{-- <span class="text-danger product_select_error"></span> --}}
+
+                            <div id="productError" class="text-danger"></div>
                         </div>
                         <div class="mb-2 col-md-3 form-valid-groups">
                             <label for="ageSelect" class="form-label">Quantity</label>
                             <div class="">
-                                <input type="number" id="quantity" class="form-control @error('quantity') is-invalid @enderror" name="quantity" placeholder="Quantity"
+                                <input type="number" id="quantity" class="form-control" name="quantity" placeholder="Quantity"
                                      aria-describedby="btnGroupAddon" oninput="updateCost();">
+                                     {{--  min="1" if i use then call it --}}
                             </div>
-                            @error('quantity')
-                            <div class="text-danger">{{ $message }}</div>
-                          @enderror
+                            <div id="quantityError" class="text-danger"></div>
                         </div>
                         <div class="mb-1 col-md-3 form-valid-groups">
                             <label for="password" class="form-label">Unit</label>
                             @php
-                            $units = App\Models\Unit::all();
+                            $units = App\Models\unit::all();
                             @endphp
                         <label for="ageSelect" class="form-label">Materials Name</label>
-                        <select class="js-example-basic-single form-select @error('unit') is-invalid @enderror" name="unit" data-width="100%"
+                        <select class="js-example-basic-single form-select" id="unit" name="unit" data-width="100%"
                             onclick="errorRemove(this);" onblur="errorRemove(this);">
                             @if ($units->count() > 0)
                                 <option selected disabled>Select Unit</option>
@@ -128,9 +125,7 @@
                                 <option selected disabled>Please Add Unit</option>
                             @endif
                         </select>
-                        @error('unit')
-                            <div class="text-danger">{{ $message }}</div>
-                        @enderror
+                        <div id="unitError" class="text-danger"></div>
                         <span class="text-danger product_select_error"></span>
                         </div>
                         <div class="mb-1 col-md-3">
@@ -243,15 +238,7 @@ $('#myValidForm').validate({
         make_category_id: {
             required: true,
         },
-        product_id: {
-            required: true,
-        },
-        quantity: {
-            required: true,
-        },
-        unit: {
-            required: true,
-        },
+
     },
     messages: {
 
@@ -264,15 +251,7 @@ $('#myValidForm').validate({
         make_category_id: {
             required: 'Select Category Field Required',
         },
-        product_id: {
-            required: 'Select Materials Name Required',
-        },
-        quantity: {
-            required: 'Select Materials Name Required',
-        },
-        unit: {
-            required: 'Please Select a Unit',
-        },
+
     },
     errorElement: 'span',
     errorPlacement: function(error, element) {
@@ -291,69 +270,101 @@ $('#myValidForm').validate({
 //form insert
 $(document).ready(function() {
     $('.myForm').submit(function(event) {
-        event.preventDefault(); // Prevent the default form submission
+        event.preventDefault();
 
-        var formData = new FormData(this); // Create a FormData object to send form data including files
-
-        // Send an Ajax request
+        var formData = new FormData(this);
+        $('#quantityError').text('');
+        $('#productError').text('');
+        var quantity = $('#quantity').val();
+        var product = $('#productValid').val();
+        $('#unitError').text('');
+        var unit = $('#unit').val();
+        if (!product) {
+            $('#productError').text('Product is required.');
+            return;
+        }
+        if (!quantity) {
+            $('#quantityError').text('Quantity is required.');
+            return;
+        }
+        if (!unit) {
+            $('#unitError').text('Unit is required.');
+            return;
+        }
         $.ajax({
             type: 'POST',
             url: '/store/make/item',
             data: formData,
-            processData: false, // Prevent jQuery from automatically processing the form data
-            contentType: false, // Prevent jQuery from automatically setting the Content-Type header
+            processData: false,
+            contentType: false,
             success: function(response) {
                 var productName = response.material.product.name;
                 var productPrice = response.material.product.price;
                 var unitName = response.material.unit.name;
-                var newRow = '<tr data-id="' + response.material.id + '">' +
-                             '<td>' + productName + '</td>' +
-                             '<td>' + productPrice + '</td>' +
-                             '<td>' + response.material.quantity + '</td>' +
-                             '<td>' + unitName + '</td>' +
-                             '<td class="apro-cost">' + response.material.apro_cost + '</td>' +
-                             '<td><a type="button" class="btn btn-sm text-danger deleteRow"><i class="fas fa-trash-alt"></i></a></td>' +
-                             '</tr>';
-                $('.showData').append(newRow); // Append the new row to the table body
-                 calculateTotalCost();
+                var productId = response.material.id;
+                var aproCost = response.material.apro_cost;
+                var newQuantity = response.material.quantity;
+                var newAproCost = parseFloat(aproCost);
+
+                var existingRow = $('.showData tr[data-id="' + productId + '"]');
+
+                if (existingRow.length) {
+                    // Update existing row
+                    // var existingQuantity = parseFloat(existingRow.find('#quantity').text());
+                    var existingAproCost = parseFloat(existingRow.find('.apro-cost').text());
+                    var updatedQuantity =newQuantity;
+                    var updatedAproCost = newAproCost;
+
+                    existingRow.find('.quantity').text(updatedQuantity);
+                    existingRow.find('.apro-cost').text(updatedAproCost.toFixed(2));
+                } else {
+                    // Add new row if product does not exist
+                    var newRow = '<tr data-id="' + productId + '">' +
+                                 '<td>' + productName + '</td>' +
+                                 '<td>' + productPrice + '</td>' +
+                               '<td class="quantity">' + newQuantity + '</td>' +
+                                // '<td class="quantity"><input type="number" class="form-control" value="' + newQuantity + '" min="1"></td>' +
+                                 '<td>' + unitName + '</td>' +
+                                 '<td class="apro-cost">' + aproCost + '</td>' +
+                                 '<td><a type="button" class="btn btn-sm text-danger deleteRow"><i class="fas fa-trash-alt"></i></a></td>' +
+                                 '</tr>';
+                    $('.showData').append(newRow);
+                }
+                calculateTotalCost();
                 if (response.status === 200) {
-                   document.querySelector('.makeItemId').value = response.makeItemId;
+                    document.querySelector('.makeItemId').value = response.makeItemId;
                     toastr.success(response.message);
                 } else {
                     toastr.error('Failed to Create.');
                 }
-
             },
-
             error: function(xhr, status, error) {
-                // Handle errors
                 console.error(xhr.responseText);
             }
         });
     });
-// last calculate Grand Total Function
-    function calculateTotalCost() {
-        var totalCost = 0;
-        $('.apro-cost').each(function() {
-            totalCost += parseFloat($(this).text());
-        });
-        $('#totalCost').text(totalCost.toFixed(2)); // Update the total cost display
-        // $('input[name="total_cost_price"]').val(totalCost);
-    }
-
-///Delete
-$(document).on('click', '.deleteRow', function() {
+      //validation
+      $('#quantity').on('input', function() {
+        $('#quantityError').text('');
+    });
+    $('#unit').change(function() {
+        $('#unitError').text('');
+    });
+    $('#productValid').change(function() {
+        $('#productError').text('');
+    });
+    $(document).on('click', '.deleteRow', function() {
         var row = $(this).closest('tr');
         var id = row.data('id');
         $.ajax({
-            type: 'GET',
+            type: 'get',
             url: '/delete/material/' + id,
             data: {
-                _token: '{{ csrf_token() }}'
+                _token: '{{ csrf_token() }}',
             },
             success: function(response) {
                 if (response.status === 200) {
-                    row.remove(); // Remove the row from the table
+                    row.remove();
                     calculateTotalCost();
                     toastr.success(response.message);
                 } else {
@@ -366,9 +377,16 @@ $(document).on('click', '.deleteRow', function() {
             }
         });
     });
-});
 
-//
+    function calculateTotalCost() {
+        var totalCost = 0;
+        $('.apro-cost').each(function() {
+            totalCost += parseFloat($(this).text());
+        });
+        $('#totalCost').text(totalCost.toFixed(2));
+        $('input[name="total_cost_price"]').val(totalCost.toFixed(2));
+    }
+   });
         //Category add
         const saveCategory = document.querySelector('.save_category');
         saveCategory.addEventListener('click', function(e) {

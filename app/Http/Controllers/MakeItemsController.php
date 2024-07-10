@@ -6,7 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\ItemCategory;
 use App\Models\MakeItem;
 use App\Models\MaterialList;
-use Validator;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Validator;
 class MakeItemsController extends Controller
 {
     public function index(){
@@ -38,82 +39,109 @@ class MakeItemsController extends Controller
         ]);
 
     }
-    //Store Data
+    public function MakeItemCategoryView(){
+        $allCat = ItemCategory::all();
+        return view('pos.make-item.make-item-category-view', compact('allCat'));
+    }//
+    public function MakeItemCategoryEdit($id){
+
+        $categoryEdit = ItemCategory::findOrFail($id);
+        return view('pos.make-item.make-item-category-edit', compact('categoryEdit'));
+    }
+    public function MakeItemCategoryUpdate(Request $request,$id){
+        $categoryItem = ItemCategory::findOrFail($id);
+        $categoryItem->update([
+            'category_name' => $request->category_name,
+        ]);
+        $notification = [
+            'message' => 'Item Category Updated Successfully',
+            'alert-type' => 'info'
+        ];
+        return redirect()->route('make.item.category.view')->with($notification);
+    }
+    public function MakeItemCategoryDelete($id){
+        ItemCategory::findOrFail($id)->delete();
+        $notification = [
+            'message' => 'Item Category Delete Successfully',
+            'alert-type' => 'info'
+        ];
+        return redirect()->back()->with($notification);
+    }
     public function MakeItemStore(Request $request){
-        // dd($request->total_cost_price);
+        // Validate the request
         $validatedData = $request->validate([
             'make_category_id' => 'required|exists:item_categories,id',
-            'item_name' => 'required|string|max:255',
-            'sale_price' => 'required|numeric',
-            'product_id' => 'required|exists:products,id',
+            'item_name' => 'required',
+            'sale_price' => 'required',
+            'product_id' => 'required',
             'quantity' => 'required',
-            'unit' => 'required|exists:units,id',
+            'unit' => 'required',
             'apro_cost' => 'required',
         ]);
+
         if($request->id != 0){
-            $cost_price = MaterialList::where('make_item_id',$request->id)->sum('apro_cost');
-            $cost_price = $cost_price + (float) $request->apro_cost;
-        }
-        else{
+            $cost_price = MaterialList::where('make_item_id', $request->id)->sum('apro_cost');
+            $cost_price += (float) $request->apro_cost;
+        } else {
             $cost_price = $request->apro_cost;
         }
+
         if ($request->hasFile('picture')) {
             $imageName = rand() . '.' . $request->picture->extension();
             $request->picture->move(public_path('uploads/make_item/'), $imageName);
-             $requestData['picture'] = 'uploads/make_item/' . $imageName;
-             $makeItem =  MakeItem::updateOrCreate([
-                    'id' => $request->id ?? 0,
-             ],
-                [
-               'make_category_id' => $request->input('make_category_id'),
-               'item_name' => $request->input('item_name'),
-               'barcode' => rand(100000,123456789),
-               'sale_price' => $request->input('sale_price'),
-               'note' => $request->input('note'),
-               'cost_price' => $cost_price,
-               'picture' => $requestData['picture'] ?? null,
-                  // Add more fields as needed
-               ]
-            );
-        }else{
-               $makeItem =  MakeItem::updateOrCreate([
-                            'id' => $request->id ?? 0,
-                    ],
-                        [
-                    'make_category_id' => $request->input('make_category_id'),
-                    'item_name' => $request->input('item_name'),
-                    'barcode' => rand(100000,123456789),
-                    'sale_price' => $request->input('sale_price'),
-                    'note' => $request->input('note'),
-                    'cost_price' => $cost_price,
-                    'picture' => $requestData['picture'] ?? null,
-                        // Add more fields as needed
-                    ]);
+            $requestData['picture'] = 'uploads/make_item/' . $imageName;
+        } else {
+            $requestData['picture'] = null;
         }
 
-        $makeItemId = $makeItem->id;
-       $material =   MaterialList::create([
-            'make_item_id' => $makeItemId,
-            'product_id' => $validatedData['product_id'],
-            'quantity' => $validatedData['quantity'],
-            'unit' => $validatedData['unit'],
-            'apro_cost' => $validatedData['apro_cost'],
-            // Add any other fields as needed
+        $makeItem = MakeItem::updateOrCreate([
+            'id' => $request->id ?? 0,
+        ], [
+            'make_category_id' => $request->input('make_category_id'),
+            'item_name' => $request->input('item_name'),
+            'barcode' => rand(100000, 123456789),
+            'sale_price' => $request->input('sale_price'),
+            'note' => $request->input('note'),
+            'cost_price' => $cost_price,
+            'picture' => $requestData['picture'] ?? null,
         ]);
-        $material->load('product');
-        $material->load('unit');
+
+        $makeItemId = $makeItem->id;
+        // Check if the material already exists
+        $material = MaterialList::where([
+            ['make_item_id', '=', $makeItemId],
+            ['product_id', '=', $validatedData['product_id']]
+        ])->first();
+
+        if ($material) {
+            // Update existing material
+            $material->quantity += $validatedData['quantity'];
+            $material->apro_cost += $validatedData['apro_cost'];
+            $material->save();
+        } else {
+            // Create new material
+            $material = MaterialList::create([
+                'make_item_id' => $makeItemId,
+                'product_id' => $validatedData['product_id'],
+                'quantity' => $validatedData['quantity'],
+                'unit' => $validatedData['unit'],
+                'apro_cost' => $validatedData['apro_cost'],
+            ]);
+        }
+
+        $material->load('product','unit');
+
         return response()->json([
             'status' => 200,
             'message' => 'Item created successfully!',
             'makeItem' => $makeItem,
-            'material' =>$material,
+            'material' => $material,
             'makeItemId' => $makeItemId
         ]);
-
     }
+
     public function DestroyMaterials($id)
     {
-
         $material = MaterialList::findOrFail($id);
 
         if ($material) {
@@ -133,5 +161,111 @@ class MakeItemsController extends Controller
             ]);
         }
     }
+        /////////////////////////////////////Make Item Manage //////////////////////////
+        public function MakeItemManage(){
+            $items = MakeItem::where('cost_price', '>', 0)
+            ->get();
+            return view('pos.make-item.make-item-manage',compact('items'));
+        }//
+        public function MakeItemEdit($id){
+            $itemEditId = MakeItem::findOrFail($id);
+            return view('pos.make-item.make-item-edit',compact('itemEditId'));
+        }
+        public function MakeItemFind($id){
+            $status = 'active';
+            $materialsItems = MaterialList::where('make_item_id', $id)->with('product','unit')->get();
+            return response()->json([
+                'status' => '200',
+                'materialsItems' => $materialsItems,
+            ]);
+        }
+        ////////////
 
+        public function UpdateMakeItem(Request $request ){
+            // Validate the request
+            $validatedData = $request->validate([
+                'make_category_id' => 'required|exists:item_categories,id',
+                'item_name' => 'required',
+                'sale_price' => 'required',
+                'product_id' => 'required',
+                'quantity' => 'required',
+                'unit' => 'required',
+                'apro_cost' => 'required',
+            ]);
+
+            if($request->id != 0){
+                $cost_price = MaterialList::where('make_item_id', $request->id)->sum('apro_cost');
+                $cost_price += (float) $request->apro_cost;
+            } else {
+                $cost_price = $request->apro_cost;
+            }
+
+            if ($request->hasFile('picture')) {
+                $imageName = rand() . '.' . $request->picture->extension();
+                $request->picture->move(public_path('uploads/make_item/'), $imageName);
+                $requestData['picture'] = 'uploads/make_item/' . $imageName;
+            } else {
+                $requestData['picture'] = null;
+            }
+
+            $makeItem = MakeItem::updateOrCreate([
+                'id' => $request->id ?? 0,
+            ], [
+                'make_category_id' => $request->input('make_category_id'),
+                'item_name' => $request->input('item_name'),
+                'barcode' => rand(100000, 123456789),
+                'sale_price' => $request->input('sale_price'),
+                'note' => $request->input('note'),
+                'cost_price' => $cost_price,
+                'picture' => $requestData['picture'] ?? null,
+            ]);
+
+            $makeItemId = $makeItem->id;
+
+            // Check if the material already exists
+            $material = MaterialList::where([
+                ['make_item_id', '=', $makeItemId],
+                ['product_id', '=', $validatedData['product_id']]
+            ])->first();
+
+            if ($material) {
+                // Update existing material
+                $material->quantity += $validatedData['quantity'];
+                $material->apro_cost += $validatedData['apro_cost'];
+                $material->save();
+            } else {
+                // Create new material
+                $material = MaterialList::create([
+                    'make_item_id' => $makeItemId,
+                    'product_id' => $validatedData['product_id'],
+                    'quantity' => $validatedData['quantity'],
+                    'unit' => $validatedData['unit'],
+                    'apro_cost' => $validatedData['apro_cost'],
+                ]);
+            }
+
+            $material->load('product','unit');
+            return response()->json([
+                'status' => 200,
+                'message' => 'Item created successfully!',
+                // 'makeItem' => $makeItem,
+                'material' => $material,
+                'makeItemId' => $makeItemId
+            ]);
+        }
+        public function MakeItemDelete(Request $request,$id){
+                $item = MakeItem::findOrFail($id);
+                $imagePath = public_path(asset($item->picture));
+                if (File::exists($imagePath)) {
+                    File::delete($imagePath);
+                }
+                $item->delete();
+                $notification = array(
+                    'message' =>'Make Item Successfully Deleted',
+                    'alert-type'=> 'info'
+                );
+        return redirect()->back()->with($notification);
+
+        }
+        /////////////////////////////////////EndMake Item Manage //////////////////////////
 }

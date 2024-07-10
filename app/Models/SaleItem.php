@@ -13,4 +13,12 @@ class SaleItem extends Model
     {
         return $this->belongsTo(Product::class, 'product_id', 'id');
     }
+    function makeitem()
+    {
+        return $this->belongsTo(MakeItem::class, 'product_id', 'id');
+    }
+    function setmenu()
+    {
+        return $this->belongsTo(SetMenu::class, 'product_id', 'id');
+    }
 }
