@@ -486,26 +486,16 @@ class SaleController extends Controller
         $sale = Sale::findOrFail($id);
         return view('pos.sale.pos-print', compact('sale'));
     }
-
     public function view()
     {
         $sales = Sale::where('branch_id', Auth::user()->branch_id)->latest()->get();
         return view('pos.sale.view', compact('sales'));
     }
-    // public function viewAll()
-    // {
-    //     $sales = Sale::where('branch_id', Auth::user()->branch_id)->get();
-    //     return response()->json([
-    //         'status' => 200,
-    //         'allData' => $sales,
-    //     ]);
-    // }
     public function viewDetails($id)
     {
         $sale = Sale::findOrFail($id);
         return view('pos.sale.show', compact('sale'));
     }
-
     public function edit($id)
     {
         $sale = Sale::findOrFail($id);
@@ -743,7 +733,6 @@ class SaleController extends Controller
             ]);
         }
     }
-
     public function findQty($id)
     {
         $product = Product::findOrFail($id);
@@ -753,8 +742,6 @@ class SaleController extends Controller
             'product' => $product
         ]);
     }
-
-
     public function saleCustomer($id){
         $status = 'active';
         $customer = Customer::findOrFail($id);
