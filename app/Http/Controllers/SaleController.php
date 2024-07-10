@@ -27,14 +27,15 @@ class SaleController extends Controller
         $sale_details = '';
         $sale_items = '';
         $sales = '';
-        return view('pos.sale.sale', compact('sale_items','sales','sale_details'));
+        return view('pos.sale.sale', compact('sale_items', 'sales', 'sale_details'));
     }
-    public function SaleItemRemove($sale_id,$item_id){
+    public function SaleItemRemove($sale_id, $item_id)
+    {
         $sale_item = SaleItem::findOrFail($item_id);
         $sale = Sale::findOrFail($sale_id);
-        $sale->change_amount=$sale->change_amount - $sale_item->sub_total;
-        $sale->total=$sale->total - $sale_item->sub_total;
-        $sale->receivable=$sale->receivable - $sale_item->sub_total;
+        $sale->change_amount = $sale->change_amount - $sale_item->sub_total;
+        $sale->total = $sale->total - $sale_item->sub_total;
+        $sale->receivable = $sale->receivable - $sale_item->sub_total;
         $sale->final_receivable = $sale->final_receivable - $sale_item->sub_total;
         $sale->quantity = $sale->quantity - $sale_item->qty;
         $sale->profit = ($sale->profit - ($sale_item->cost_price + $sale_item->discount));
@@ -43,32 +44,35 @@ class SaleController extends Controller
         $sale_items = SaleItem::where('sale_id', $sale_id)->get();
         $renderedHtml = view('pos.sale.sales_detailes_ramder_data', compact('sale_items', 'sale'))->render();
         return response()->json([
-           'status' => 200,
-           'message' =>'Item successfully Removed',
+            'status' => 200,
+            'message' => 'Item successfully Removed',
             'html' => $renderedHtml,
             'sale_items' => $sale_items
         ]);
     }
-    public function SaleDetails($sale_id){
+    public function SaleDetails($sale_id)
+    {
         $sale_details = Sale::findOrFail($sale_id);
         $sale_items = SaleItem::where('sale_id', $sale_id)->get();
         $renderedHtml = view('pos.sale.details', compact('sale_items', 'sale_details'))->render();
         return response()->json([
-           'status' => 200,
-           'html' => $renderedHtml,
+            'status' => 200,
+            'html' => $renderedHtml,
         ]);
     }
-    public function SaleCustomize($sale_id){
+    public function SaleCustomize($sale_id)
+    {
         $sale = Sale::findOrFail($sale_id);
         $sale_items = SaleItem::where('sale_id', $sale_id)->get();
         $renderedHtml = view('pos.sale.sales_detailes_ramder_data', compact('sale_items', 'sale'))->render();
         return response()->json([
-           'status' => 200,
-           'html' => $renderedHtml,
-           'sale' => $sale
+            'status' => 200,
+            'html' => $renderedHtml,
+            'sale' => $sale
         ]);
     }
-    public function getCustomer(){
+    public function getCustomer()
+    {
         $data = Customer::where('branch_id', Auth::user()->branch_id)->latest()->get();
         return response()->json([
             'status' => 200,
@@ -76,7 +80,8 @@ class SaleController extends Controller
             'allData' => $data
         ]);
     }
-    public function addCustomer(Request $request){
+    public function addCustomer(Request $request)
+    {
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'phone' => 'required',
@@ -107,135 +112,203 @@ class SaleController extends Controller
             ]);
         }
     }
-    public function SelectCustomer($id){
+    public function SelectCustomer($id)
+    {
         $customer = Customer::findOrFail($id);
         return response()->json([
             "status" => 200,
             "data" => $customer
         ]);
     }
-    public function SalePay(Request $request){
+    public function SalePay(Request $request)
+    {
         // dd($request->all());
-        $tax = (($request->modal_subtotal * $request->modal_tax)/100);
-        $due = (($tax+$request->modal_subtotal) - $request->modal_payamount);
+        $tax = (($request->modal_subtotal * $request->modal_tax) / 100);
+        $due = (($tax + $request->modal_subtotal) - $request->modal_payamount);
         // dd("Tax".$tax."due".$due."return".$returned);
-        if($due < 0){
+        if ($due < 0) {
             $returned = $due;
             $due = 0;
             // dd("Tax".$tax."due".$due);
-        }
-        else{
+        } else {
             $due = $due;
             $returned = 0;
         }
         // dd("Tax".$tax."due".$due."return".$returned);
-        try{
+        try {
             $sale = Sale::findOrFail($request->modal_sale_id);
-            $sale->change_amount=$request->modal_subtotal;
-            $sale->tax=((($request->modal_subtotal * $request->modal_tax))/100);
-            $sale->receivable=$request->modal_subtotal;
-            $sale->final_receivable = ((($request->modal_subtotal * $request->modal_tax))/100)+$request->modal_subtotal;
-            $sale->payment_method=$request->modal_payment_method;
-            $sale->profit = ($sale->profit + ((($request->modal_subtotal * $request->modal_tax))/100));
-            $sale->due=$due;
-            $sale->paid=$request->modal_payamount;
-            $sale->returned=$returned;
+            $sale->change_amount = $request->modal_subtotal;
+            $sale->tax = ((($request->modal_subtotal * $request->modal_tax)) / 100);
+            $sale->receivable = $request->modal_subtotal;
+            $sale->final_receivable = ((($request->modal_subtotal * $request->modal_tax)) / 100) + $request->modal_subtotal;
+            $sale->payment_method = $request->modal_payment_method;
+            $sale->profit = ($sale->profit + ((($request->modal_subtotal * $request->modal_tax)) / 100));
+            $sale->due = $due;
+            $sale->paid = $request->modal_payamount;
+            $sale->returned = $returned;
             $sale->status = 'delivered';
             $sale->update();
+
+            // customer Table Transaction 
+            $customer = Customer::findOrFail($sale->customer_id);
+            if ($request->modal_payamount > $request->modal_subtotal) {
+                $customer->total_payable = $request->modal_subtotal;
+                $customer->total_receivable = $request->modal_subtotal;
+                $customer->wallet_balance = 0;
+            } else {
+                $customer->total_payable = $request->modal_payamount;
+                $customer->total_receivable = $request->modal_subtotal;
+                $customer->wallet_balance = $request->modal_subtotal - $request->modal_payamount;
+            }
+            $customer->save();
+
+
+            // account transaction CRUD
+            $lastAccountTransaction = AccountTransaction::where('account_id', $request->modal_payment_method)->latest('created_at')->first();
+            $accountTransaction = new AccountTransaction;
+            $accountTransaction->branch_id =  Auth::user()->branch_id;
+            $accountTransaction->reference_id = $request->modal_sale_id;
+            $accountTransaction->purpose =  'Sale';
+            $accountTransaction->account_id =  $request->modal_payment_method;
+            if ($request->modal_payamount > $request->modal_subtotal) {
+                $accountTransaction->debit = $request->modal_subtotal;
+                if ($lastAccountTransaction) {
+                    $accountTransaction->balance = $lastAccountTransaction->balance + $request->modal_subtotal;
+                } else {
+                    $accountTransaction->balance = $request->modal_subtotal;
+                }
+            } else {
+                $accountTransaction->debit = $request->modal_payamount;
+                if ($lastAccountTransaction) {
+                    $accountTransaction->balance = $lastAccountTransaction->balance + $request->modal_payamount;
+                } else {
+                    $accountTransaction->balance = $request->modal_payamount;
+                }
+            }
+            $accountTransaction->created_at = Carbon::now();
+            $accountTransaction->save();
+
+            // transaction Table CRUD 
+            $lastTransaction = Transaction::where('customer_id', $sale->customer_id)->latest()->first();
+            $transaction = new Transaction;
+            $transaction->date =  Carbon::now();
+            $transaction->payment_type = 'receive';
+            $transaction->particulars = 'Sale#' . $sale->id;
+            $transaction->customer_id = $sale->customer_id;
+            $transaction->payment_method = $request->modal_payment_method;
+            if ($request->modal_payamount > $request->modal_subtotal) {
+                $transaction->credit = $request->modal_subtotal;
+                $transaction->debit = $request->modal_subtotal;
+                if ($lastTransaction) {
+                    $transaction->balance = $lastTransaction->balance + $request->modal_subtotal;
+                } else {
+                    $transaction->balance = $request->modal_subtotal;
+                }
+            } else {
+                $transaction->credit = $request->modal_payamount;
+                $transaction->debit = $request->modal_payamount;
+                if ($lastTransaction) {
+                    $transaction->balance = $lastTransaction->balance + $request->modal_payamount;
+                } else {
+                    $transaction->balance = $request->modal_payamount;
+                }
+            }
+            $transaction->save();
+
 
             $sale_items = SaleItem::where('sale_id', $request->modal_sale_id)->get();
             $renderedHtml = view('pos.sale.sales_detailes_ramder_data', compact('sale_items', 'sale'))->render();
             return response()->json(['html' => $renderedHtml]);
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 'error' => $e->getMessage()
             ]);
         }
     }
-    public function storesetmenu(Request $request){
-        try{
-        $productInfo = SetMenu::findOrFail($request->set_menu_id);
-        // dd($productInfo);
-        // dd($request->set_menu_id);
-        if ($productInfo) {
-            if ($productInfo->discount_type == 'percentage') {
-                $itemDiscount = (($productInfo->sale_price - ($productInfo->sale_price * $productInfo->discount) / 100));
-                $itemDiscountAmount = (($productInfo->sale_price * $productInfo->discount) / 100);
-                // dd($itemDiscount);
-            } elseif ($productInfo->discount_type == 'solid') {
-                $itemDiscount = $productInfo->sale_price - $productInfo->discount;
-                $itemDiscountAmount = $productInfo->discount;
+    public function storesetmenu(Request $request)
+    {
+        try {
+            $productInfo = SetMenu::findOrFail($request->set_menu_id);
+            // dd($productInfo);
+            // dd($request->set_menu_id);
+            if ($productInfo) {
+                if ($productInfo->discount_type == 'percentage') {
+                    $itemDiscount = (($productInfo->sale_price - ($productInfo->sale_price * $productInfo->discount) / 100));
+                    $itemDiscountAmount = (($productInfo->sale_price * $productInfo->discount) / 100);
+                    // dd($itemDiscount);
+                } elseif ($productInfo->discount_type == 'solid') {
+                    $itemDiscount = $productInfo->sale_price - $productInfo->discount;
+                    $itemDiscountAmount = $productInfo->discount;
+                }
+            } else {
+                $itemDiscount = 0;
+                $itemDiscountAmount = 0;
             }
-        } else {
-            $itemDiscount = 0;
-            $itemDiscountAmount = 0;
-        }
-        // $totalQuantity = 1;
-        $saleItems = '';
-        if ($request->sale_id != '0') {
-            $saleItems = Saleitem::where('sale_id', $request->sale_id)->get();
-        }
-        if ($saleItems) {
-            $totalQuantity = $saleItems->sum('qty') + 1;
-            $totalRate = $saleItems->sum('rate') * $totalQuantity;
-            $totalCosPrice = $saleItems->sum('cost_price')  * $totalQuantity;
-            $subTotalAmount = ($saleItems->sum('sub_total') + $productInfo->sale_price * 1) - $itemDiscountAmount;
-            $TotalDiscount = $saleItems->sum('discount') + $itemDiscountAmount;
-            // dd($saleItems);
-            $totalProfit = ($totalRate - ($totalCosPrice + $TotalDiscount));
-        } else {
-            $totalQuantity = 1;
-            $totalRate = $productInfo->sale_price;
-            $totalCosPrice = $productInfo->cost_price;
-            $subTotalAmount = ($productInfo->sale_price * 1) - $itemDiscountAmount;
-            $TotalDiscount = $itemDiscount;
-            $totalProfit = ($totalRate - ($productInfo->cost_price + $itemDiscountAmount));
-        }
-        $sale = Sale::updateOrCreate(
-            [
-                'id' => $request->sale_id ?? 0,
-            ],
-            [
-                'branch_id' => Auth::user()->branch_id,
-                'customer_id' => $request->customer_id,
-                'sale_date' => Carbon::now(),
-                'sale_by' => Auth::user()->id,
-                'invoice_number' => $request->invoice_number,
-                'order_type' => "general",
-                'quantity' => $totalQuantity,
-                'total' => $subTotalAmount,
-                'discount' => $request->sale_discount,
-                'change_amount' => $subTotalAmount - $request->sale_discount,
-                'tax' => $request->tax,
-                'receivable' => $subTotalAmount,
-                'final_receivable' => $subTotalAmount - $request->sale_discount,
-                'payment_method' => $request->payment_method,
-                'profit' => ($totalProfit - $request->sale_discount),
-                'dine_id' => $request->dine,
-                'note' => $request->note,
-                'created_at' => Carbon::now(),
-            ]
-        );
-        $saleId = $sale->id;
+            // $totalQuantity = 1;
+            $saleItems = '';
+            if ($request->sale_id != '0') {
+                $saleItems = Saleitem::where('sale_id', $request->sale_id)->get();
+            }
+            if ($saleItems) {
+                $totalQuantity = $saleItems->sum('qty') + 1;
+                $totalRate = $saleItems->sum('rate') * $totalQuantity;
+                $totalCosPrice = $saleItems->sum('cost_price')  * $totalQuantity;
+                $subTotalAmount = ($saleItems->sum('sub_total') + $productInfo->sale_price * 1) - $itemDiscountAmount;
+                $TotalDiscount = $saleItems->sum('discount') + $itemDiscountAmount;
+                // dd($saleItems);
+                $totalProfit = ($totalRate - ($totalCosPrice + $TotalDiscount));
+            } else {
+                $totalQuantity = 1;
+                $totalRate = $productInfo->sale_price;
+                $totalCosPrice = $productInfo->cost_price;
+                $subTotalAmount = ($productInfo->sale_price * 1) - $itemDiscountAmount;
+                $TotalDiscount = $itemDiscount;
+                $totalProfit = ($totalRate - ($productInfo->cost_price + $itemDiscountAmount));
+            }
+            $sale = Sale::updateOrCreate(
+                [
+                    'id' => $request->sale_id ?? 0,
+                ],
+                [
+                    'branch_id' => Auth::user()->branch_id,
+                    'customer_id' => $request->customer_id,
+                    'sale_date' => Carbon::now(),
+                    'sale_by' => Auth::user()->id,
+                    'invoice_number' => $request->invoice_number,
+                    'order_type' => "general",
+                    'quantity' => $totalQuantity,
+                    'total' => $subTotalAmount,
+                    'discount' => $request->sale_discount,
+                    'change_amount' => $subTotalAmount - $request->sale_discount,
+                    'tax' => $request->tax,
+                    'receivable' => $subTotalAmount,
+                    'final_receivable' => $subTotalAmount - $request->sale_discount,
+                    'payment_method' => $request->payment_method,
+                    'profit' => ($totalProfit - $request->sale_discount),
+                    'dine_id' => $request->dine,
+                    'note' => $request->note,
+                    'created_at' => Carbon::now(),
+                ]
+            );
+            $saleId = $sale->id;
 
-        $saleItem = SaleItem::where('sale_id', $saleId)
-            ->where('product_id', $request->set_menu_id)
-            ->first();
+            $saleItem = SaleItem::where('sale_id', $saleId)
+                ->where('product_id', $request->set_menu_id)
+                ->first();
 
-        if ($saleItem) {
-            // Update the existing SaleItem and increment qty
-            $saleItem->update([
-                'qty' => $saleItem->qty + 1,
-                'rate' => $productInfo->sale_price,
-                'cost_price' => $productInfo->cost_price,
-                'discount' => $saleItem->discount + $itemDiscountAmount,
-                'sub_total' => ($saleItem->sub_total + ($productInfo->sale_price - $itemDiscountAmount)),
-                'total_purchase_cost' => ($saleItem->total_purchase_cost + $productInfo->cost_price),
-            ]);
-        } else {
-            // dd($saleItem);
-            // Create a new SaleItem if it does not exist
+            if ($saleItem) {
+                // Update the existing SaleItem and increment qty
+                $saleItem->update([
+                    'qty' => $saleItem->qty + 1,
+                    'rate' => $productInfo->sale_price,
+                    'cost_price' => $productInfo->cost_price,
+                    'discount' => $saleItem->discount + $itemDiscountAmount,
+                    'sub_total' => ($saleItem->sub_total + ($productInfo->sale_price - $itemDiscountAmount)),
+                    'total_purchase_cost' => ($saleItem->total_purchase_cost + $productInfo->cost_price),
+                ]);
+            } else {
+                // dd($saleItem);
+                // Create a new SaleItem if it does not exist
                 SaleItem::create([
                     'sale_id' => $saleId,
                     'product_id' => $request->set_menu_id,
@@ -247,24 +320,23 @@ class SaleController extends Controller
                     'total_purchase_cost' => $productInfo->cost_price * 1,
                     'set_menu' => 1,
                 ]);
-        }
+            }
 
-        $sale_items = SaleItem::where('sale_id', $sale->id)->get();
-        $renderedHtml = view('pos.sale.sales_detailes_ramder_data', compact('sale_items', 'sale'))->render();
-        return response()->json(['html' => $renderedHtml]);
-        // return response()->json([
-        //     'sale_items' => $sale_items,
-        //     'sale' => $sale,
-        // ]);
-        }
-        catch (\Exception $e) {
+            $sale_items = SaleItem::where('sale_id', $sale->id)->get();
+            $renderedHtml = view('pos.sale.sales_detailes_ramder_data', compact('sale_items', 'sale'))->render();
+            return response()->json(['html' => $renderedHtml]);
+            // return response()->json([
+            //     'sale_items' => $sale_items,
+            //     'sale' => $sale,
+            // ]);
+        } catch (\Exception $e) {
             return response()->json([
                 'error' => $e->getMessage()
             ]);
         }
-
     }
-    public function store(Request $request){
+    public function store(Request $request)
+    {
         // dd($request->all());
         $productInfo = MakeItem::findOrFail($request->product_id);
         $status = 'active';
@@ -428,9 +500,10 @@ class SaleController extends Controller
         //     ]);
         // }
     }
-    public function showTableQueue(){
+    public function showTableQueue()
+    {
         try {
-            $sales = Sale::whereDate('sale_date',Carbon::now())->where('status', 'kitchen')->get();
+            $sales = Sale::whereDate('sale_date', Carbon::now())->where('status', 'kitchen')->get();
             return response()->json([
                 'sales' => $sales,
                 'status' => 200
@@ -439,7 +512,8 @@ class SaleController extends Controller
             return response()->json(['error' => 'Failed to retrieve sales data.'], 500);
         }
     }
-    public function SaleUpdate(Request $request){
+    public function SaleUpdate(Request $request)
+    {
         // dd($request->all());
         $sale = Sale::findOrFail($request->sale_id);
         $sale->customer_id = $request->customer_id;
@@ -458,7 +532,8 @@ class SaleController extends Controller
         $renderedHtml = view('pos.sale.sales_detailes_ramder_data', compact('sale_items', 'sale'))->render();
         return response()->json(['html' => $renderedHtml]);
     }
-    public function customizeSale(Request $request){
+    public function customizeSale(Request $request)
+    {
         $sale = Sale::findOrFail($request->sale_id);
         $sale->customer_id = $request->customer_id;
         $sale->order_type = "general";
@@ -501,7 +576,8 @@ class SaleController extends Controller
         $sale = Sale::findOrFail($id);
         return view('pos.sale.edit', compact('sale'));
     }
-    public function update(Request $request, $id){
+    public function update(Request $request, $id)
+    {
         // dd($request->all());
         $validator = Validator::make($request->all(), [
             'customer_id' => 'required',
@@ -643,7 +719,8 @@ class SaleController extends Controller
         $sale->delete();
         return back()->with('message', "Sale successfully Deleted");
     }
-    public function filter(Request $request){
+    public function filter(Request $request)
+    {
         // dd($request->all());
         $saleQuery = Sale::query();
 
@@ -669,14 +746,16 @@ class SaleController extends Controller
 
         return view('pos.sale.table', compact('sales'))->render();
     }
-    public function find($id){
+    public function find($id)
+    {
         $sale = Sale::findOrFail($id);
         return response()->json([
             'status' => 200,
             'data' => $sale
         ]);
     }
-    public function saleTransaction(Request $request, $id){
+    public function saleTransaction(Request $request, $id)
+    {
         $validator = Validator::make($request->all(), [
             "transaction_account" => 'required',
             "amount" => 'required|',
@@ -742,7 +821,8 @@ class SaleController extends Controller
             'product' => $product
         ]);
     }
-    public function saleCustomer($id){
+    public function saleCustomer($id)
+    {
         $status = 'active';
         $customer = Customer::findOrFail($id);
         $promotionDetails = PromotionDetails::whereHas('promotion', function ($query) use ($status) {

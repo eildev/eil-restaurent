@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreign('account_id')->references('id')->on('banks')->onDelete('cascade');
             $table->unsignedBigInteger('branch_id')->unsigned();
             $table->foreign('branch_id')->references('id')->on('branches')->onDelete('cascade');
+            $table->bigInteger('reference_id')->nullable();
             $table->string('purpose')->nullable();
             $table->decimal('debit', 12, 2)->nullable();
             $table->decimal('credit', 12, 2)->nullable();
