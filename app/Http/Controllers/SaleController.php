@@ -18,6 +18,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+// use Validator;
 use Illuminate\Support\Facades\Validator;
 
 class SaleController extends Controller
@@ -161,7 +162,6 @@ class SaleController extends Controller
                 $customer->wallet_balance = $request->modal_subtotal - $request->modal_payamount;
             }
             $customer->save();
-
 
             // account transaction CRUD
             $lastAccountTransaction = AccountTransaction::where('account_id', $request->modal_payment_method)->latest('created_at')->first();
