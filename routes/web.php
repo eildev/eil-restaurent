@@ -164,6 +164,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/bank/edit/{id}', 'edit')->name('bank.edit');
         Route::post('/bank/update/{id}', 'update')->name('bank.update');
         Route::get('/bank/destroy/{id}', 'destroy')->name('bank.destroy');
+        Route::post('/add/bank/balance/{id}', 'BankBalanceAdd');
     });
 
     // Supplier related route
