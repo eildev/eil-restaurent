@@ -65,7 +65,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/change-password', 'ChangePassword')->name('user.change.password');
         Route::post('/update-password', 'updatePassword')->name('user.update.password');
     });
-    // category related route
+    // Category related route
     Route::controller(CategoryController::class)->group(function () {
         Route::get('/category', 'index')->name('product.category');
         Route::post('/category/store', 'store')->name('category.store');

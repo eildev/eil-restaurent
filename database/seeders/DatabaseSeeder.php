@@ -29,6 +29,7 @@ class DatabaseSeeder extends Seeder
             ModelHasRolesSeeder::class,
             BankSeeder::class,
             CategorySeeder::class,
+            UnitSeeder::class,
         ]);
     }
 }
