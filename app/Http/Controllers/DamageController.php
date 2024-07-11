@@ -7,7 +7,6 @@ use App\Repositories\RepositoryInterfaces\DamageInterface;
 use Illuminate\Support\Str;
 use App\Models\Damage;
 use App\Models\Product;
-
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 

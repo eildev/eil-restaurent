@@ -10,7 +10,6 @@ use Carbon\Carbon;
 use App\Repositories\RepositoryInterfaces\CustomerInterfaces;
 class CustomerController extends Controller
 {
-
     private $customer_repo;
     public function __construct(CustomerInterfaces $customer_interface){
         $this->customer_repo = $customer_interface;

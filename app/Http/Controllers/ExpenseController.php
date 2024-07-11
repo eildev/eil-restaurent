@@ -131,7 +131,6 @@ class ExpenseController extends Controller
     } //
     public function ExpenseDelete($id)
     {
-
         $expense = Expense::findOrFail($id);
         if ($expense->image) {
             $previousImagePath = public_path('uploads/expense/') . $expense->image;
