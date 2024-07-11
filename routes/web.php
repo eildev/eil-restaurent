@@ -346,6 +346,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/update/make/item', 'UpdateMakeItemMeterials')->name('update.make.item');
         Route::post('/update/make/item/only/{id}', 'UpdateMakeItem')->name('only.make.item.update');
         Route::get('/make/item/delete/{id}', 'MakeItemDelete')->name('make.item.delete');
+        Route::post('/update/make/itemprice/','MakeItemPriceUpdate');
     });
     // Set Categoy & Set Items related routes
     Route::controller(SetController::class)->group(function () {
