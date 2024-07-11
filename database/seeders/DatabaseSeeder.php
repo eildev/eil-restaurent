@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
         //     'email' => 'test@example.com',
         // ]);
         $this->call([
+
             branchSeed::class,
             userSeed::class,
             settingSeed::class,
@@ -26,6 +27,8 @@ class DatabaseSeeder extends Seeder
             RoleSeeder::class,
             RoleHasPermission::class,
             ModelHasRolesSeeder::class,
+            BankSeeder::class,
+            CategorySeeder::class,
         ]);
     }
 }

@@ -29,7 +29,6 @@ class EmployeeController extends Controller
     } //
     public function EmployeeStore(Request $request)
     {
-
         if ($request->image) {
             $employee = new Employee();
             $imageName = rand() . '.' . $request->image->extension();

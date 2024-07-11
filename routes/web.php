@@ -58,8 +58,13 @@ Route::middleware('auth')->group(function () {
         Route::get('/profile', 'edit')->name('profile.edit');
         Route::patch('/profile', 'update')->name('profile.update');
         Route::delete('/profile', 'destroy')->name('profile.destroy');
+        Route::get('/user/profile', 'UserProfileEdit')->name('user.profile.edit');
+        Route::get('profile', 'UserProfile')->name('user.profile');
+        Route::post('user/profile/update', 'UserProfileUpdate')->name('user.profile.update');
+        /////////////////////////Change Password//////////////////////
+        Route::get('/change-password', 'ChangePassword')->name('user.change.password');
+        Route::post('/update-password', 'updatePassword')->name('user.update.password');
     });
-
     // category related route
     Route::controller(CategoryController::class)->group(function () {
         Route::get('/category', 'index')->name('product.category');

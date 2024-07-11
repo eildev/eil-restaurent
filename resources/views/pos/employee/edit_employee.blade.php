@@ -104,6 +104,9 @@
                 address:{
                     required : true,
                 },
+                salary:{
+                    required : true,
+                },
             },
             messages :{
                 full_name: {
@@ -117,6 +120,9 @@
                 },
                 address: {
                     required : 'Please Enter  Address',
+                },
+                salary: {
+                    required : 'Enter Salay Amount',
                 },
             },
             errorElement : 'span',
