@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
+
 class ProductsController extends Controller
 {
     public function index()
@@ -20,9 +21,7 @@ class ProductsController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|max:255',
             'category_id' => 'required',
-            'subcategory_id' => 'required',
-            'brand_id' => 'required',
-            'price' => 'required:max:7',
+            'cost' => 'required:max:7',
             'unit_id' => 'required:max:11',
             'barcode' => [
                 'required',
@@ -38,7 +37,9 @@ class ProductsController extends Controller
             $product->branch_id =  Auth::user()->branch_id;
             $product->barcode =  $request->barcode;
             $product->category_id =  $request->category_id;
-            $product->subcategory_id =  $request->subcategory_id;
+            if ($request->subcategory_id !== "Please add Subcategory") {
+                $product->subcategory_id =  $request->subcategory_id;
+            }
             $product->brand_id  =  $request->brand_id;
             $product->cost  =  $request->cost;
             $product->price  =  $request->price;
@@ -87,9 +88,7 @@ class ProductsController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|max:255',
             'category_id' => 'required',
-            'subcategory_id' => 'required',
-            'brand_id' => 'required',
-            'price' => 'required:max:7',
+            'cost' => 'required:max:7',
             'unit_id' => 'required:max:11',
         ]);
         if ($validator->passes()) {
@@ -98,7 +97,9 @@ class ProductsController extends Controller
             $product->branch_id =  Auth::user()->branch_id;
             $product->barcode =  $request->barcode;
             $product->category_id =  $request->category_id;
-            $product->subcategory_id =  $request->subcategory_id;
+            if ($request->subcategory_id !== "Please add Subcategory") {
+                $product->subcategory_id =  $request->subcategory_id;
+            }
             $product->brand_id  =  $request->brand_id;
             $product->cost  =  $request->cost;
             $product->price  =  $request->price;
@@ -115,6 +116,12 @@ class ProductsController extends Controller
             if ($request->image) {
                 $imageName = rand() . '.' . $request->image->extension();
                 $request->image->move(public_path('uploads/product/'), $imageName);
+                if ($product->image) {
+                    $previousImagePath = public_path('uploads/product/') . $product->image;
+                    if (file_exists($previousImagePath)) {
+                        unlink($previousImagePath);
+                    }
+                }
                 $product->image = $imageName;
             }
             $product->save();
@@ -163,7 +170,8 @@ class ProductsController extends Controller
         }
     }
     //
-    public function ProductBarcode($id){
+    public function ProductBarcode($id)
+    {
         $product = Product::findOrFail($id);
         return view('pos.products.product.product-barcode', compact('product'));
     }

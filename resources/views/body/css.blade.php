@@ -59,41 +59,50 @@
 
 <link rel="shortcut icon" href="{{ asset('assets') }}/images/favicon.png" />
 <style>
-    body{
+    body {
         overflow-x: hidden !important;
     }
+
     .btn-rounded-primary {
         padding: 0.3rem;
         font-size: 8px;
         border-radius: 50%;
-        color: #fff;
-        background: #6571ff;
+
+        @if (empty($mode->dark_mode))
+            color: #fff;
+            background: #6571ff;
+        @else
+            color: #000;
+            background: #fff;
+        @endif
     }
+
     /* Scroll bar Style  */
     /* width */
-::-webkit-scrollbar {
-  width: 7px;
-}
+    ::-webkit-scrollbar {
+        width: 7px;
+    }
 
-/* Track */
-::-webkit-scrollbar-track {
-  /* box-shadow: inset 0 0 5px grey;
+    /* Track */
+    ::-webkit-scrollbar-track {
+        /* box-shadow: inset 0 0 5px grey;
    */
 
-  box-shadow: inset 0 0 5px transparent;
-  border-radius: 10px;
-}
+        box-shadow: inset 0 0 5px transparent;
+        border-radius: 10px;
+    }
 
-/* Handle */
-::-webkit-scrollbar-thumb {
-  background: #00a9f1;
-  border-radius: 10px;
-}
+    /* Handle */
+    ::-webkit-scrollbar-thumb {
+        background: #00a9f1;
+        border-radius: 10px;
+    }
 
-/* Handle on hover */
-::-webkit-scrollbar-thumb:hover {
-  background: #6da4fc;
-}
+    /* Handle on hover */
+    ::-webkit-scrollbar-thumb:hover {
+        background: #6da4fc;
+    }
+
     .btn-rounded-primary:hover {
         background: #5660d9;
         color: #fff;
@@ -109,7 +118,8 @@
     .dt-search {
         float: right;
     }
-    .nav-item svg:hover{
+
+    .nav-item svg:hover {
         background: transparent !important;
     }
 </style>

@@ -66,8 +66,10 @@
                                     @if ($products->count() > 0)
                                         <option selected disabled>Select Product</option>
                                         @foreach ($products as $product)
-                                            <option value="{{ $product->id }}">{{ $product->name }} ({{ $product->stock }}
-                                                {{ $product->unit->name }})</option>
+                                            <option value="{{ $product->id }}">{{ $product->name ?? '' }}
+                                                ({{ $product->stock ?? 0 }}
+                                                {{ $product->unit->name ?? '' }})
+                                            </option>
                                         @endforeach
                                     @else
                                         <option selected disabled>
@@ -314,8 +316,7 @@
                                 @php
                                     $taxs = App\Models\Tax::get();
                                 @endphp
-                                <select class="form-select tax" data-width="100%" onclick="errorRemove(this);"
-                                    onblur="errorRemove(this);" value="" name="tax">
+                                <select class="form-select tax" data-width="100%" value="" name="tax">
                                     @if ($taxs->count() > 0)
                                         <option selected disabled>Select Taxes</option>
                                         @foreach ($taxs as $taxs)
@@ -333,10 +334,11 @@
                                         class="text-danger">*</span></label>
                                 <div class="d-flex align-items-center">
                                     <input class="form-control total_payable border-end-0 rounded-0" name="total_payable"
-                                        type="number">
+                                        type="number" onclick="errorRemove(this);" onblur="errorRemove(this);">
+                                    <span class="text-danger total_payable_error"></span>
                                     <button class="btn btn-info border-start-0 rounded-0 paid_btn">Paid</button>
                                 </div>
-                                <span class="text-danger total_payable_error"></span>
+
                             </div>
                             <div class="mb-3 col-md-12">
                                 {{-- <label for="name" class="form-label">Note</label> --}}
@@ -696,23 +698,24 @@
                             showError('.payment_method',
                                 'please Select Another Payment Method');
                         } else {
-                            if (res.error.payment_method == null) {
+                            // console.log(res);
+                            if (res.error.payment_method || res.error.total_payable) {
+                                if (res.error.total_payable) {
+                                    showError('.total_payable', res.error.total_payable);
+                                }
+                                if (res.error.payment_method) {
+                                    showError('.payment_method', res.error.payment_method);
+                                }
+                            } else {
                                 $('#paymentModal').modal('hide');
                                 if (res.error.supplier_id) {
                                     showError('.supplier_id', res.error.supplier_id);
                                 }
-                                // if (res.error.products) {
-                                //     showError('.product_select', res.error.products);
-                                // }
                                 if (res.error.purchase_date) {
                                     showError('.purchase_date', res.error.purchase_date);
                                 }
                                 if (res.error.document) {
                                     showError('.document_file', res.error.document);
-                                }
-                            } else {
-                                if (res.error.payment_method) {
-                                    showError('.payment_method', res.error.payment_method);
                                 }
                             }
                         }

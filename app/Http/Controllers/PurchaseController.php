@@ -26,7 +26,7 @@ class PurchaseController extends Controller
         $validator = Validator::make($request->all(), [
             'supplier_id' => 'required',
             'date' => 'required',
-            // 'products' => 'required',
+            'total_payable' => 'required',
             'payment_method' => 'required',
             'document' => 'file|mimes:jpg,pdf,png,svg,webp,jpeg,gif|max:5120'
         ]);
