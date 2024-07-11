@@ -43,20 +43,20 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="mb-2 col-md-4 form-valid-groups">
+                        <div class="mb-2 col-md-8 form-valid-groups">
                             <label for="ageSelect" class="form-label">Item Name</label>
                             <div class="">
                                 <input type="text" name="item_name" value="{{ old('item_name') }}" class="form-control barcode_input" placeholder="Item Name"
                                      aria-describedby="btnGroupAddon">
                             </div>
                         </div>
-                        <div class="mb-2 col-md-4 form-valid-groups">
+                        {{-- <div class="mb-2 col-md-4 form-valid-groups">
                             <label for="ageSelect" class="form-label">Item Price</label>
                             <div class="">
                                 <input type="number" name="sale_price" value="{{ old('sale_price') }}" class="form-control barcode_input" placeholder="Item Price"
                                      aria-describedby="btnGroupAddon">
                             </div>
-                        </div>
+                        </div> --}}
                         <div class="mb-2 col-md-6">
                             <h6 class="card-title">Product Image</h6>
                             <input type="file" class="categoryImage" name="picture" id="myDropify" />
@@ -211,8 +211,19 @@
                             <tfoot>
                                 <tr>
                                     <th colspan="3"></th>
-                                    <th >Grand Total</th>
+                                    <th >Grand Total Cost</th>
                                     <th id="totalCost">0.00</th>
+                                </tr>
+                                <tr>
+                                    <tr id="sale_tr_hide" style="display: none;">
+                                        <th colspan="3"></th>
+                                        <th >Sale Price</th>
+                                        <th><input placeholder="00" name="sale_price" id="salePrice-value" class="form-control" type="number"></th>
+                                    </tr>
+                                    <tr id="sale_tr_button" style="display: none;">
+                                        <th colspan="4"></th>
+                                        <th><button  id="update-sale-price" class="btn btn-primary ms-2">Update</button></th>
+                                    </tr>
                                 </tr>
                             </tfoot>
                         </table>
@@ -331,6 +342,7 @@ $(document).ready(function() {
                     $('.showData').append(newRow);
                 }
                 calculateTotalCost();
+                showSaleRow()
                 if (response.status === 200) {
                     document.querySelector('.makeItemId').value = response.makeItemId;
                     toastr.success(response.message);
@@ -441,6 +453,42 @@ $(document).ready(function() {
         itemCostInput.value = totalCost.toFixed(2);
 
     }
+    function showSaleRow() {
+        var saleRow = document.getElementById('sale_tr_hide');
+        var buttonRow = document.getElementById('sale_tr_button');
+        if (saleRow.style.display === 'none' && saleRow.style.display === 'none') {
+            saleRow.style.display = '';
+            buttonRow.style.display = '';
+        }
+    }
+
+    document.getElementById('update-sale-price').addEventListener('click', function(event) {
+    const salePriceId = document.getElementById('salePrice-value');
+    const price = salePriceId.value;
+    const sale_price = parseFloat(price);
+
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+    $.ajax({
+        url: '/update/make/itemprice/',
+        type: 'POST',
+        data: { price: sale_price },
+        success: function(res) {
+            if (res.status == 200) {
+                toastr.success(res.message);
+            } else {
+                console.log('Validation errors:', res.error);
+            }
+        },
+        error: function(err) {
+            console.error('Error occurred:', err);
+
+        }
+    });
+    });
     </script>
 
 

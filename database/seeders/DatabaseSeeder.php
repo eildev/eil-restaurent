@@ -19,7 +19,6 @@ class DatabaseSeeder extends Seeder
         //     'email' => 'test@example.com',
         // ]);
         $this->call([
-
             branchSeed::class,
             userSeed::class,
             settingSeed::class,
@@ -29,6 +28,7 @@ class DatabaseSeeder extends Seeder
             ModelHasRolesSeeder::class,
             BankSeeder::class,
             CategorySeeder::class,
+            UnitSeeder::class,
         ]);
     }
 }

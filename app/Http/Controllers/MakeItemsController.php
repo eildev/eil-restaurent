@@ -72,7 +72,7 @@ class MakeItemsController extends Controller
         $validatedData = $request->validate([
             'make_category_id' => 'required|exists:item_categories,id',
             'item_name' => 'required',
-            'sale_price' => 'required',
+            // 'sale_price' => 'required',
             'product_id' => 'required',
             'quantity' => 'required',
             'unit' => 'required',
@@ -100,7 +100,7 @@ class MakeItemsController extends Controller
             'make_category_id' => $request->input('make_category_id'),
             'item_name' => $request->input('item_name'),
             'barcode' => rand(100000, 123456789),
-            'sale_price' => $request->input('sale_price'),
+            // 'sale_price' => $request->input('sale_price'),
             'note' => $request->input('note'),
             'cost_price' => $cost_price,
             'picture' => $requestData['picture'] ?? null,
@@ -139,7 +139,20 @@ class MakeItemsController extends Controller
             'makeItemId' => $makeItemId
         ]);
     }
+    /////Make Item Price Update ///////
+    public function MakeItemPriceUpdate(Request $request){
+        $makeItem = MakeItem::latest('created_at')->first();
 
+        // dd($request->all());
+        $newPrice = $request->input('price');
+        $makeItem->sale_price =  $newPrice;
+        $makeItem->save();
+        return response()->json([
+            'status' => 200,
+            'message' => 'Succesfully Update Sale Price',
+        ]);
+
+    }
     public function DestroyMaterials($id)
     {
         $material = MaterialList::findOrFail($id);

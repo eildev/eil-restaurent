@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('item_name');
             $table->string('barcode')->default(rand(100000,123456789));
             $table->decimal('cost_price',12,2);
-            $table->decimal('sale_price',12,2);
+            $table->decimal('sale_price',12,2)->default(0);
             $table->string('picture')->nullable();
             $table->text('note')->nullable();
             $table->string('status')->default('active');;

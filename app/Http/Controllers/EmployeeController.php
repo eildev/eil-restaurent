@@ -29,6 +29,13 @@ class EmployeeController extends Controller
     } //
     public function EmployeeStore(Request $request)
     {
+        $request->validate([
+            'full_name' => 'required',
+            'email' => 'required',
+            'phone' => 'required',
+            'address' => 'required',
+            'salary' => 'required',
+        ]);
         if ($request->image) {
             $employee = new Employee();
             $imageName = rand() . '.' . $request->image->extension();
@@ -61,6 +68,13 @@ class EmployeeController extends Controller
     } //
     public function EmployeeUpdate(Request $request, $id)
     {
+        $request->validate([
+            'full_name' => 'required',
+            'email' => 'required',
+            'phone' => 'required',
+            'address' => 'required',
+            'salary' => 'required',
+        ]);
         $employee = Employee::findOrFail($id);
         $employee->branch_id = Auth::user()->branch_id;
         $employee->full_name = $request->full_name;
