@@ -1,5 +1,5 @@
 @extends('master')
-@section('title','| Product List')
+@section('title', '| Product List')
 @section('admin')
 
     <nav class="page-breadcrumb">
@@ -24,12 +24,9 @@
                                     <th>SN</th>
                                     <th>Image</th>
                                     <th>Name</th>
-                                    <th>Barcode</th>
                                     <th>Category</th>
-                                    <th>Brand</th>
-                                    <th>Price</th>
+                                    <th>Cost Price</th>
                                     <th>Stock</th>
-                                    <th>Unit</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
@@ -43,25 +40,22 @@
                                                     alt="product image">
                                             </td>
                                             <td>{{ $product->name ?? '' }}</td>
-                                            <td>{{$product->barcode}}</td>
                                             <td>{{ $product->category->name ?? '' }}</td>
-                                            <td>{{ $product->brand->name ?? '' }}</td>
-                                            <td>{{ $product->price ?? 0 }}</td>
-                                            <td>{{ $product->stock ?? 0 }}</td>
-                                            <td>{{ $product->unit->name ?? '' }}</td>
-
+                                            <td>{{ $product->cost ?? 0 }}</td>
+                                            <td>({{ $product->stock ?? 0 }}) {{ $product->unit->name ?? '' }}</td>
+                                            </td>
                                             <td>
-                                                @if(Auth::user()->can('products.edit'))
-                                                <a href="{{ route('product.edit', $product->id) }}"
-                                                    class="btn btn-primary btn-icon">
-                                                    <i data-feather="edit"></i>
-                                                </a>
+                                                @if (Auth::user()->can('products.edit'))
+                                                    <a href="{{ route('product.edit', $product->id) }}"
+                                                        class="btn btn-primary btn-icon">
+                                                        <i data-feather="edit"></i>
+                                                    </a>
                                                 @endif
-                                                @if(Auth::user()->can('products.delete'))
-                                                <a href="{{ route('product.destroy', $product->id) }}"
-                                                    class="btn btn-danger btn-icon" id="delete">
-                                                    <i data-feather="trash-2"></i>
-                                                </a>
+                                                @if (Auth::user()->can('products.delete'))
+                                                    <a href="{{ route('product.destroy', $product->id) }}"
+                                                        class="btn btn-danger btn-icon" id="delete">
+                                                        <i data-feather="trash-2"></i>
+                                                    </a>
                                                 @endif
                                                 <a target="_blank" href="{{ route('product.barcode', $product->id) }}"
                                                     class="btn btn-info btn-icon">
@@ -72,40 +66,6 @@
                                                 </a> --}}
                                             </td>
                                         </tr>
-
-                                        {{-- /Modal Start/ --}}
-                                        <!-- Button trigger modal -->
-
-            <!-- Modal -->
-            {{-- <div class="modal fade modal-lg" id="exampleModal{{$product->id}}"  tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body text-center border">
-                        <div class="row">
-                        @for($i = 0; $i < $product->stock; $i++)
-                        <div class="col-md-4">
-                        <div class="barcode-container">
-                            <span class="dblock">
-                            {!! DNS1D::getBarcodeHTML($product->barcode, 'PHARMA') !!}</span><br>
-                            <span style="">{{$product->barcode}}</span><br>
-                            <span>{{ $product->name ?? '' }} </span><br>
-                            <span class="bold">{{ $product->price ?? 0 }}TK</span>
-                        </div>
-                    </div>
-                        @endfor
-                    </div>
-                </div>
-                    <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button onclick="printModalContent('modalContent{{$product->id}}')" class="btn btn-primary">Print</button>
-                    </div>
-                </div>
-                </div>
-            </div> --}}
-                                        {{-- /Modal End/ --}}
                                     @endforeach
                                 @endif
 
@@ -116,26 +76,27 @@
             </div>
         </div>
     </div>
-<script>
+    <script>
+        function printModalContent(modalId) {
+            var modalBodyContent = document.getElementById(modalId).getElementsByClassName('modal-body')[0].innerHTML;
+            var printWindow = window.open('', '_blank');
+            printWindow.document.write(
+                '<html><head><title>Print</title><link rel="stylesheet" type="text/css" href="print.css" /></head><body>' +
+                modalBodyContent + '</body></html>');
+            printWindow.document.close();
+            printWindow.print();
 
-function printModalContent(modalId) {
-    var modalBodyContent = document.getElementById(modalId).getElementsByClassName('modal-body')[0].innerHTML;
-    var printWindow = window.open('', '_blank');
-    printWindow.document.write('<html><head><title>Print</title><link rel="stylesheet" type="text/css" href="print.css" /></head><body>' + modalBodyContent + '</body></html>');
-    printWindow.document.close();
-    printWindow.print();
-
-}
-</script>
+        }
+    </script>
     <style>
         .barcode-container {
             text-align: center;
             border: 1px solid #e9ecef;
             padding: 10px;
         }
-        .dblock{
+
+        .dblock {
             display: inline-block;
         }
-
     </style>
 @endsection

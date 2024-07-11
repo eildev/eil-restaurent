@@ -104,12 +104,14 @@
             color: #00a9f1;
             display: block;
         }
+
         .menu__tab__pag {
             display: none;
         }
 
         .menu__tab__control {
             cursor: pointer;
+
             @if ($mode->dark_mode == 1)
                 color: black !important;
             @else
@@ -157,16 +159,17 @@
                                                     $categories = App\Models\ItemCategory::all();
                                                 @endphp
                                                 <div class="menu__active menu__tab__control border py-1 px-2"
-                                                    menu__tab__index="{{$index}}">
+                                                    menu__tab__index="{{ $index }}">
                                                     <span>Set Menu</span>
                                                 </div>
                                                 @if ($categories->count() > 0)
-                                                @foreach ($categories as $key => $category)
-                                                    @php $index++; @endphp
-                                                    <div class="menu__tab__control border py-1 px-2" menu__tab__index="{{$index}}">
-                                                        <span>{{ $category->category_name }}</span>
-                                                    </div>
-                                                @endforeach
+                                                    @foreach ($categories as $key => $category)
+                                                        @php $index++; @endphp
+                                                        <div class="menu__tab__control border py-1 px-2"
+                                                            menu__tab__index="{{ $index }}">
+                                                            <span>{{ $category->category_name }}</span>
+                                                        </div>
+                                                    @endforeach
                                                 @else
                                                     <span>Note Found</span>
                                                 @endif
@@ -176,37 +179,39 @@
                                             </div>
                                         </div>
                                         <div class="col-md-5 border">
-                                            <div class="menu__active menu__tab__pag menu__tab__pag--1" style="min-height: 470px;">
+                                            <div class="menu__active menu__tab__pag menu__tab__pag--1"
+                                                style="min-height: 470px;">
                                                 @php
-                                                $setmenus = App\Models\SetMenu::all();
+                                                    $setmenus = App\Models\SetMenu::all();
                                                 @endphp
                                                 @if ($setmenus->count() > 0)
-                                                <div class="row" style="max-height: 500px; overflow-y: scroll;">
-                                                    <style>
-                                                        .product_image {
-                                                            position: relative;
-                                                        }
-                                                    </style>
-                                                    @foreach ($setmenus as $key => $setmenu)
-                                                        <div class="col-lg-3 col-md-6 p-1 my-1 product_image"
-                                                            style="">
-                                                            <div class="setmenu__div w-100"
-                                                                set_menu_id="{{ $setmenu->id }}"
-                                                                style="cursor: pointer; ">
-                                                                <img class="w-100" height="90"
-                                                                    style="border-radius:5px 5px 0 0;border-left: 1px solid;border-top: 1px solid;border-bottom: 1px solid;border-right: 1px solid;border-color:#00a9f1"
-                                                                    src="{{ !empty($setmenu->image) ? asset('uploads/menu_items/' . $setmenu->image) : asset('assets/images/empty.png') }}">
-                                                                <div class="info"
-                                                                    style="border-radius:0 0 5px 5px;color:black;background: rgba(255,255,255,.7);text-align:center;border-left: 1px solid;border-bottom: 1px solid;border-right: 1px solid;border-color:#00a9f1">
-                                                                    <p style="font-size: 12px">{{ Str::limit($setmenu->menu_name, 16, '') }}
-                                                                    </p>
-                                                                    <hr style="margin: 0">
-                                                                    <p>৳{{ $setmenu->sale_price }}</p>
+                                                    <div class="row" style="max-height: 500px; overflow-y: scroll;">
+                                                        <style>
+                                                            .product_image {
+                                                                position: relative;
+                                                            }
+                                                        </style>
+                                                        @foreach ($setmenus as $key => $setmenu)
+                                                            <div class="col-lg-3 col-md-6 p-1 my-1 product_image"
+                                                                style="">
+                                                                <div class="setmenu__div w-100"
+                                                                    set_menu_id="{{ $setmenu->id }}"
+                                                                    style="cursor: pointer; ">
+                                                                    <img class="w-100" height="90"
+                                                                        style="border-radius:5px 5px 0 0;border-left: 1px solid;border-top: 1px solid;border-bottom: 1px solid;border-right: 1px solid;border-color:#00a9f1"
+                                                                        src="{{ !empty($setmenu->image) ? asset('uploads/menu_items/' . $setmenu->image) : asset('assets/images/empty.png') }}">
+                                                                    <div class="info"
+                                                                        style="border-radius:0 0 5px 5px;color:black;background: rgba(255,255,255,.7);text-align:center;border-left: 1px solid;border-bottom: 1px solid;border-right: 1px solid;border-color:#00a9f1">
+                                                                        <p style="font-size: 12px">
+                                                                            {{ Str::limit($setmenu->menu_name, 16, '') }}
+                                                                        </p>
+                                                                        <hr style="margin: 0">
+                                                                        <p>৳{{ $setmenu->sale_price }}</p>
+                                                                    </div>
                                                                 </div>
                                                             </div>
-                                                        </div>
-                                                    @endforeach
-                                                </div>
+                                                        @endforeach
+                                                    </div>
                                                 @endif
                                             </div>
                                             @php
@@ -216,7 +221,7 @@
                                             @if ($categories->count() > 0)
                                                 @foreach ($categories as $key => $category)
                                                     @php $index++; @endphp
-                                                    <div class="menu__tab__pag menu__tab__pag--{{$index}}">
+                                                    <div class="menu__tab__pag menu__tab__pag--{{ $index }}">
                                                         @php
                                                             $items = App\Models\MakeItem::where(
                                                                 'make_category_id',
@@ -242,7 +247,8 @@
                                                                                 src="{{ !empty($item->picture) ? asset($item->picture) : asset('assets/images/empty.png') }}">
                                                                             <div class="info"
                                                                                 style="border-radius:0 0 5px 5px;color:black;background: rgba(255,255,255,.7);text-align:center;border-left: 1px solid;border-bottom: 1px solid;border-right: 1px solid;border-color:#00a9f1">
-                                                                                <p style="font-size: 12px">{{ Str::limit($item->item_name, 16, '') }}
+                                                                                <p style="font-size: 12px">
+                                                                                    {{ Str::limit($item->item_name, 16, '') }}
                                                                                 </p>
                                                                                 <hr style="margin: 0">
                                                                                 <p>৳{{ $item->sale_price }}</p>
@@ -278,9 +284,9 @@
 
                                                         <th style="font-size: 10px; padding: 0 20px 10px 13px">
                                                             Customer Info:<br>
-                                                            <span class="customer_name">{{ $customers->name }}</span>
+                                                            <span class="customer_name">{{ $customers->name ?? '' }}</span>
                                                             <input type="hidden" class="customer_id"
-                                                                value="{{ $customers->id }}">
+                                                                value="{{ $customers->id ?? '' }}">
                                                             <input type="hidden" value="0" class="sale_id">
                                                             <input type="hidden" value="<?php echo rand(123456, 99999); ?>"
                                                                 class="invoice_number">
@@ -290,9 +296,9 @@
                                                         <th style="font-size: 10px; padding: 0 20px 10px 13px">
 
                                                             <span
-                                                                class="customer_address">{{ !empty($customers->phone) ? $customers->phone : $customers->address }}</span><br>
+                                                                class="customer_address">{{ !empty($customers->phone) ? $customers->phone : $customers->address ?? '' }}</span><br>
                                                             <span> P. Total: <span
-                                                                    class="customer_total_receivable">{{ $customers->total_receivable }}</span></span>
+                                                                    class="customer_total_receivable">{{ $customers->total_receivable ?? 0 }}</span></span>
                                                         </th>
                                                         <th>
                                                             <button data-bs-target="#customerModal" data-bs-toggle="modal"
@@ -592,10 +598,10 @@
 
             });
         }
-        $(document).on('click', '.sale_details_btn', function(){
+        $(document).on('click', '.sale_details_btn', function() {
             const sale_id = $(this).attr('value');
             $.ajax({
-                url: '/details/sale/'+sale_id,
+                url: '/details/sale/' + sale_id,
                 type: 'GET',
                 success: function(res) {
                     if (res && res.html) {

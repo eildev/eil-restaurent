@@ -19,12 +19,12 @@ return new class extends Migration
             $table->string('barcode')->nullable()->unique();
             $table->unsignedBigInteger('category_id');
             $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
-            $table->unsignedBigInteger('subcategory_id');
+            $table->unsignedBigInteger('subcategory_id')->nullable();
             $table->foreign('subcategory_id')->references('id')->on('sub_categories')->onDelete('cascade');
             $table->unsignedBigInteger('brand_id')->nullable();
             $table->foreign('brand_id')->references('id')->on('brands')->onDelete('cascade');
-            $table->decimal('cost')->nullable();
-            $table->decimal('price');
+            $table->decimal('cost');
+            $table->decimal('price')->nullable();
             $table->text('details')->nullable();
             $table->string('image')->nullable();
             $table->integer('stock')->nullable();

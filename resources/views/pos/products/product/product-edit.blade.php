@@ -1,5 +1,5 @@
 @extends('master')
-@section('title','| Product Edit')
+@section('title', '| Product Edit')
 @section('admin')
     <nav class="page-breadcrumb">
         <ol class="breadcrumb">
@@ -28,15 +28,14 @@
                                 <input class="form-control" name="barcode" type="number"
                                     value="{{ $product->barcode ?? '' }}">
                             </div>
-                            <div class="mb-3 col-md-4">
+                            <div class="mb-3 col-md-6">
                                 @php
                                     $categories = App\Models\Category::get();
                                 @endphp
                                 <label for="ageSelect" class="form-label">Category <span
                                         class="text-danger">*</span></label>
                                 <select class="form-select category_id" id="category_name" name="category_id"
-                                    onclick="errorRemove(this);" onblur="errorRemove(this);"
-                                    value="{{ $product->category->name ?? '' }}">
+                                    onchange="errorRemove(this);" value="{{ $product->category->name ?? '' }}">
                                     @foreach ($categories as $category)
                                         <option value="{{ $category->id }}"
                                             {{ $category->id == $product->category_id ? 'selected' : '' }}>
@@ -46,14 +45,12 @@
                                 </select>
                                 <span class="text-danger category_id_error"></span>
                             </div>
-                            <div class="mb-3 col-md-4">
+                            <div class="mb-3 col-md-6">
                                 @php
                                     $subcategories = App\Models\SubCategory::get();
                                 @endphp
-                                <label for="ageSelect" class="form-label">Subcategory <span
-                                        class="text-danger">*</span></label>
-                                <select class="form-select subcategory_id" name="subcategory_id"
-                                    onclick="errorRemove(this);" onblur="errorRemove(this);">
+                                <label for="ageSelect" class="form-label">Subcategory </label>
+                                <select class="form-select subcategory_id" name="subcategory_id">
                                     @foreach ($subcategories as $subcategory)
                                         <option value="{{ $subcategory->id }}"
                                             {{ $subcategory->id == $product->subcategory_id ? 'selected' : '' }}>
@@ -61,15 +58,13 @@
                                         </option>
                                     @endforeach
                                 </select>
-                                <span class="text-danger subcategory_id_error"></span>
                             </div>
-                            <div class="mb-3 col-md-4">
+                            <div class="mb-3 col-md-6">
                                 @php
                                     $brands = App\Models\Brand::get();
                                 @endphp
-                                <label for="ageSelect" class="form-label">Brand <span class="text-danger">*</span></label>
-                                <select class="form-select brand_id" name="brand_id" onclick="errorRemove(this);"
-                                    onblur="errorRemove(this);">
+                                <label for="ageSelect" class="form-label">Brand </label>
+                                <select class="form-select brand_id" name="brand_id">
                                     @foreach ($brands as $brand)
                                         <option value="{{ $brand->id }}"
                                             {{ $brand->id == $product->brand_id ? 'selected' : '' }}>
@@ -77,21 +72,23 @@
                                         </option>
                                     @endforeach
                                 </select>
-                                <span class="text-danger brand_id_error"></span>
                             </div>
                             <div class="mb-3 col-md-6">
-                                <label for="password" class="form-label">Cost Price</label>
+                                <label for="password" class="form-label">Cost Price</label> <span
+                                    class="text-danger">*</span>
                                 <input class="form-control" name="cost" type='number' placeholder="00.00"
+                                    onkeyup="errorRemove(this);" onblur="errorRemove(this);"
                                     value="{{ $product->cost ?? 0 }}" />
+                                <span class="text-danger cost_error"></span>
                             </div>
-                            <div class="mb-3 col-md-6">
+                            {{-- <div class="mb-3 col-md-6">
                                 <label for="password" class="form-label">Sale Price <span
                                         class="text-danger">*</span></label>
                                 <input class="form-control price" name="price" type='number' placeholder="00.00"
                                     onkeyup="errorRemove(this);" onblur="errorRemove(this);"
                                     value="{{ $product->price ?? 0 }}" />
-                                <span class="text-danger price_error"></span>
-                            </div>
+
+                            </div> --}}
                             <div class="mb-3 col-12">
                                 <label for="" class="form-label">Description</label>
                                 <textarea class="form-control" name="details" id="tinymceExample" rows="5">{{ $product->description ?? '' }}</textarea>
@@ -145,8 +142,7 @@
                                     $units = App\Models\Unit::get();
                                 @endphp
                                 <label for="ageSelect" class="form-label">Unit <span class="text-danger">*</span></label>
-                                <select class="form-select unit_id" name="unit_id" onclick="errorRemove(this);"
-                                    onblur="errorRemove(this);">
+                                <select class="form-select unit_id" name="unit_id" onchange="errorRemove(this);">
                                     @foreach ($units as $unit)
                                         <option value="{{ $unit->id }}"
                                             {{ $unit->id == $product->unit_id ? 'selected' : '' }}>
@@ -186,9 +182,15 @@
     <script>
         // remove error
         function errorRemove(element) {
+            tag = element.tagName.toLowerCase();
             if (element.value != '') {
-                $(element).siblings('span').hide();
-                $(element).css('border-color', 'green');
+                // console.log('ok');
+                if (tag == 'select') {
+                    $(element).closest('.mb-3').find('.text-danger').hide();
+                } else {
+                    $(element).siblings('span').hide();
+                    $(element).css('border-color', 'green');
+                }
             }
         }
         $(document).ready(function() {
@@ -283,23 +285,15 @@
                             toastr.success(res.message);
                             window.location.href = "{{ route('product.view') }}";
                         } else {
-                            // console.log(res.error);
                             const error = res.error;
-                            // console.log(error)
                             if (error.name) {
                                 showError('.name', error.name);
                             }
                             if (error.category_id) {
                                 showError('.category_id', error.category_id);
                             }
-                            if (error.subcategory_id) {
-                                showError('.subcategory_id', error.subcategory_id);
-                            }
-                            if (error.brand_id) {
-                                showError('.brand_id', error.brand_id);
-                            }
-                            if (error.price) {
-                                showError('.price', error.price);
+                            if (error.cost) {
+                                showError('.cost', error.cost);
                             }
                             if (error.unit_id) {
                                 showError('.unit_id', error.unit_id);

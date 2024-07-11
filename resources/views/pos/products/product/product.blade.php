@@ -31,7 +31,7 @@
                                     <div class="alert alert-danger">{{ $message }}</div>
                                 @enderror
                             </div>
-                            <div class="mb-3 col-md-4">
+                            <div class="mb-3 col-md-6">
                                 @php
                                     $categories = App\Models\Category::get();
                                 @endphp
@@ -50,22 +50,18 @@
                                 </select>
                                 <span class="text-danger category_id_error"></span>
                             </div>
-                            <div class="mb-3 col-md-4">
-                                <label for="ageSelect" class="form-label">Subcategory <span
-                                        class="text-danger">*</span></label>
-                                <select class="js-example-basic-single form-select subcategory_id" name="subcategory_id"
-                                    onchange="errorRemove(this);">
+                            <div class="mb-3 col-md-6">
+                                <label for="ageSelect" class="form-label">Subcategory </label>
+                                <select class="js-example-basic-single form-select subcategory_id" name="subcategory_id">
                                     <option selected disabled>Select Subcategory</option>
                                 </select>
-                                <span class="text-danger subcategory_id_error"></span>
                             </div>
-                            <div class="mb-3 col-md-4">
+                            <div class="mb-3 col-md-6">
                                 @php
                                     $brands = App\Models\Brand::get();
                                 @endphp
-                                <label for="ageSelect" class="form-label">Brand <span class="text-danger">*</span></label>
-                                <select class="js-example-basic-single form-select brand_id" name="brand_id"
-                                    onchange="errorRemove(this);">
+                                <label for="ageSelect" class="form-label">Brand </label>
+                                <select class="js-example-basic-single form-select brand_id" name="brand_id">
                                     @if ($brands->count() > 0)
                                         <option selected disabled>Select Brand</option>
                                         @foreach ($brands as $brand)
@@ -75,19 +71,18 @@
                                         <option selected disabled>Please Add Brand</option>
                                     @endif
                                 </select>
-                                <span class="text-danger brand_id_error"></span>
                             </div>
                             <div class="mb-3 col-md-6">
-                                <label for="password" class="form-label">Cost Price</label>
-                                <input class="form-control" name="cost" type='number' placeholder="00.00" />
-                            </div>
-                            <div class="mb-3 col-md-6">
-                                <label for="password" class="form-label">Sale Price <span
+                                <label for="password" class="form-label">Cost Price <span
                                         class="text-danger">*</span></label>
-                                <input class="form-control price" name="price" type='number' placeholder="00.00"
+                                <input class="form-control" name="cost" type='number' placeholder="00.00"
                                     onkeyup="errorRemove(this);" onblur="errorRemove(this);" />
-                                <span class="text-danger price_error"></span>
+                                <span class="text-danger cost_error"></span>
                             </div>
+                            {{-- <div class="mb-3 col-md-6">
+                                <label for="password" class="form-label">Sale Price </label>
+                                <input class="form-control price" name="price" type='number' placeholder="00.00" />
+                            </div> --}}
                             <div class="mb-3 col-12">
                                 <label for="" class="form-label">Description</label>
                                 <textarea class="form-control" name="details" id="tinymceExample" rows="5"></textarea>
@@ -276,23 +271,15 @@
                             toastr.success(res.message);
                             window.location.href = "{{ route('product.view') }}";
                         } else {
-                            // console.log(res.error);
                             const error = res.error;
-                            // console.log(error)
                             if (error.name) {
                                 showError('.name', error.name);
                             }
                             if (error.category_id) {
                                 showError('.category_id', error.category_id);
                             }
-                            if (error.subcategory_id) {
-                                showError('.subcategory_id', error.subcategory_id);
-                            }
-                            if (error.brand_id) {
-                                showError('.brand_id', error.brand_id);
-                            }
-                            if (error.price) {
-                                showError('.price', error.price);
+                            if (error.cost) {
+                                showError('.cost', error.cost);
                             }
                             if (error.unit_id) {
                                 showError('.unit_id', error.unit_id);
