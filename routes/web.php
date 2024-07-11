@@ -282,6 +282,10 @@ Route::middleware('auth')->group(function () {
         Route::get('/transaction/filter/rander', 'TransactionFilterView')->name('transaction.filter.view');
         ////////Invoice///////////
         Route::get('/transaction/invoice/receipt/{id}', 'TransactionInvoiceReceipt')->name('transaction.invoice.receipt');
+        ////////Investment Route ////
+        Route::post('/add/investor', 'InvestmentStore');
+        Route::get('/get/investor', 'GetInvestor');
+        Route::get('/get/invoice/{id}', 'InvestorInvoice')->name('investor.invoice');
     });
     // pos setting related route
     Route::controller(PosSettingsController::class)->group(function () {
@@ -354,14 +358,12 @@ Route::middleware('auth')->group(function () {
         Route::post('/update/menu/store/{itemId}', 'SetMenuUpdate')->name('update.menu.store');
         Route::get('/set/menu/delete/{id}', 'SetMenuDelete')->name('set.menu.delete');
         // Route::post('/update/quantity', 'updateQuantity')->name('update.quantity');
-                             //Set item Manage//
+        //Set item Manage//
         Route::get('/manage/set/menu', 'ManageSetMenu')->name('manage.set.menu');
         Route::get('/manage/set/item', 'ManageSetItem')->name('manage.set.item');
         Route::get('/menu/item/edit/{id}', 'ManageItemEdit')->name('menu.item.edit');
         Route::get('/menu/item/find/{id}', 'MenuItemFind')->name('menu.item.find');
         Route::get('/menu/item/delete/{id}', 'MenuItemDelete')->name('menu.item.delete');
-
-
     });
     // Transaction related route(n)
     Route::controller(EmployeeSalaryController::class)->group(function () {

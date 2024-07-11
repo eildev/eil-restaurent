@@ -19,8 +19,9 @@ return new class extends Migration
             $table->foreign('employee_id')->references('id')->on('employees')->onDelete('cascade');
             $table->date('date');
             $table->decimal('debit', 12, 2)->nullable()->comment('Submit Salary');
-            $table->decimal('creadit', 12, 2)->nullable()->comment('Employee Salary on Employee Salary Table');
-            $table->decimal('balance', 12, 2)->comment('creadit - debit');
+            $table->decimal('credit', 12, 2)->nullable()->comment('Employee Salary on Employee Salary Table');
+            $table->decimal('balance', 12, 2)->comment('credit - debit');
+            $table->bigInteger('payment_method');
             $table->text('note')->nullable();
             $table->timestamps();
         });

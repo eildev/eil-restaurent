@@ -10,11 +10,11 @@ class EmployeeSalary extends Model
     use HasFactory;
     protected $guarded = [];
 
-   public function branch()
+    public function branch()
     {
         return $this->belongsTo(Branch::class, 'branch_id', 'id');
     }
-   public function emplyee()
+    public function emplyee()
     {
         return $this->belongsTo(Employee::class, 'employee_id', 'id');
     }
