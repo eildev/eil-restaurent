@@ -88,7 +88,7 @@
                                 @if ($products->count() > 0)
                                     <option selected disabled>Select Product</option>
                                     @foreach ($products as $product)
-                                        <option value="{{ $product->id }}" data-price="{{ $product->price }}"">{{ $product->name }} ({{ $product->stock }}
+                                        <option value="{{ $product->id }}" data-price="{{ $product->cost }}">{{ $product->name }} ({{ $product->stock }}
                                             {{ $product->unit->name }} Available )
                                         </option>
                                     @endforeach
