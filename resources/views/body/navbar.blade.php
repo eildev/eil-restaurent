@@ -230,16 +230,23 @@
                      </div>
                  </div>
              </li>
+             @php
+             $user = Illuminate\Support\Facades\Auth::user();
+         @endphp
              <li class="nav-item dropdown">
                  <a class="nav-link dropdown-toggle" href="#" id="profileDropdown" role="button"
                      data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                     <img class="wd-30 ht-30 rounded-circle" src="{{ asset('assets/images/default-user.svg') }}" alt="profile">
+                     <img class="wd-30 ht-30 rounded-circle"
+                        src="{{ $user->photo ? asset('uploads/profile/' . $user->photo) : asset('assets/images/default-user.svg') }}"
+                        alt="profile">
                  </a>
+
                  <div class="dropdown-menu p-0" aria-labelledby="profileDropdown">
                      <div class="d-flex flex-column align-items-center border-bottom px-5 py-3">
                          <div class="mb-3">
-                             <img class="wd-80 ht-80 rounded-circle" src="{{ asset('assets/images/default-user.svg') }}"
-                                 alt="">
+                            <img class="wd-80 ht-80 rounded-circle"
+                            src="{{ $user->photo ? asset('uploads/profile/' . $user->photo) : asset('assets/images/default-user.svg') }}"
+                            alt="Profile">
                          </div>
                          <div class="text-center">
                              <p class="tx-16 fw-bolder">{{ Auth::user()->name }}</p>
@@ -248,17 +255,17 @@
                      </div>
                      <ul class="list-unstyled p-1">
                          <li class="dropdown-item py-2">
-                             <a href="pages/general/profile.html" class="text-body ms-0">
+                             <a href="{{ route('user.profile') }}" class="text-body ms-0">
                                  <i class="me-2 icon-md" data-feather="user"></i>
                                  <span>Profile</span>
                              </a>
                          </li>
                          <li class="dropdown-item py-2">
-                             <a href="{{ route('profile.edit') }}" class="text-body ms-0">
-                                 <i class="me-2 icon-md" data-feather="edit"></i>
-                                 <span>Edit Profile</span>
-                             </a>
-                         </li>
+                            <a href="{{ route('user.change.password') }}" class="text-body ms-0">
+                                <i class="me-2 icon-md" data-feather="repeat"></i>
+                                <span>Change Password</span>
+                            </a>
+                        </li>
                          <li class="dropdown-item py-2">
                              <a href="javascript:;" class="text-body ms-0">
                                  <i class="me-2 icon-md" data-feather="repeat"></i>
