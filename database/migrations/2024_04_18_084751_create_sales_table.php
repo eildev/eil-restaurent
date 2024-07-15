@@ -30,7 +30,7 @@ return new class extends Migration
             // Initial Data -> Actual Pricing of the added products
             $table->integer('quantity')->default(0); //total product quantity
             $table->decimal('total', 12, 2)->default(0); //total product price
-            $table->decimal('discount', 12, 2)->default(0.00); //user input
+            $table->decimal('discount', 12, 2)->default(0); //user input
             $table->decimal('change_amount', 12, 2)->nullable();
             // $table->string('delivery_cost')->nullable(); //user input
             $table->decimal('actual_discount', 12, 2)->default(0); //calculated discount
@@ -48,6 +48,7 @@ return new class extends Migration
             $table->decimal('profit', 10, 2)->default(0);
             $table->integer('payment_method')->nullable();
             $table->string('dine_id')->nullable();
+            $table->string('status')->default('kitchen');
             $table->text('note')->nullable();
             // $table->integer('courier_id');
             // $table->integer('delivery_method_id');

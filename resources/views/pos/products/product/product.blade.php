@@ -9,7 +9,7 @@
     </nav>
     <form class="productForm" enctype="multipart/form-data">
         <div class="row">
-            <div class="col-lg-8 grid-margin stretch-card">
+            <div class="col-lg-12 grid-margin stretch-card">
                 <div class="card">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center mb-3">
@@ -31,7 +31,7 @@
                                     <div class="alert alert-danger">{{ $message }}</div>
                                 @enderror
                             </div>
-                            <div class="mb-3 col-md-6">
+                            <div class="mb-3 col-md-4">
                                 @php
                                     $categories = App\Models\Category::get();
                                 @endphp
@@ -50,13 +50,13 @@
                                 </select>
                                 <span class="text-danger category_id_error"></span>
                             </div>
-                            <div class="mb-3 col-md-6">
+                            <div class="mb-3 col-md-4">
                                 <label for="ageSelect" class="form-label">Subcategory </label>
                                 <select class="js-example-basic-single form-select subcategory_id" name="subcategory_id">
                                     <option selected disabled>Select Subcategory</option>
                                 </select>
                             </div>
-                            <div class="mb-3 col-md-6">
+                            <div class="mb-3 col-md-4">
                                 @php
                                     $brands = App\Models\Brand::get();
                                 @endphp
@@ -79,47 +79,7 @@
                                     onkeyup="errorRemove(this);" onblur="errorRemove(this);" />
                                 <span class="text-danger cost_error"></span>
                             </div>
-                            {{-- <div class="mb-3 col-md-6">
-                                <label for="password" class="form-label">Sale Price </label>
-                                <input class="form-control price" name="price" type='number' placeholder="00.00" />
-                            </div> --}}
-                            <div class="mb-3 col-12">
-                                <label for="" class="form-label">Description</label>
-                                <textarea class="form-control" name="details" id="tinymceExample" rows="5"></textarea>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-4 grid-margin stretch-card">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="row">
-                            {{-- <div class="mb-3 col-md-6">
-                                <label for="name" class="form-label">Stock</label>
-                                <input class="form-control" name="stock" type="number" placeholder="00">
-                            </div>
                             <div class="mb-3 col-md-6">
-                                <label for="name" class="form-label">Main Unit Stock</label>
-                                <input class="form-control" name="main_unit_stock" type="number" placeholder="00">
-                            </div> --}}
-                            {{-- <div class="mb-3 col-md-6">
-                                <label for="name" class="form-label">Total Sold</label>
-                                <input class="form-control" name="total_sold" type="number" placeholder="00">
-                            </div> --}}
-                            <div class="mb-3 col-md-6">
-                                <label for="ageSelect" class="form-label">Color</label>
-                                {{-- <div id="pickr_1"></div> --}}
-                                <input type="color" class="form-control" name="color" id="">
-                            </div>
-                            <div class="mb-3 col-md-6">
-                                <label for="ageSelect" class="form-label">Size </label>
-                                <select class="js-example-basic-single form-select size_id" name="size_id">
-                                    <option selected disabled>Select Size</option>
-                                </select>
-                            </div>
-                            <div class="mb-3 col-md-12">
                                 @php
                                     $units = App\Models\Unit::get();
                                 @endphp
@@ -137,7 +97,7 @@
                                 </select>
                                 <span class="text-danger unit_id_error"></span>
                             </div>
-                            <div class="mb-3 col-12">
+                            <div class="mb-3 col-md-12">
                                 <div class="card">
                                     <div class="card-body">
                                         <h6 class="card-title">Product Image</h6>
