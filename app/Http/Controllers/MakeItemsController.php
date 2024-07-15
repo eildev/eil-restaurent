@@ -146,6 +146,7 @@ class MakeItemsController extends Controller
         // dd($request->all());
         $newPrice = $request->input('price');
         $makeItem->sale_price =  $newPrice;
+        $makeItem->sale_price =  $newPrice;
         $makeItem->save();
         return response()->json([
             'status' => 200,
@@ -197,7 +198,6 @@ class MakeItemsController extends Controller
             $request->validate([
                 'make_category_id' => 'required|integer',
                 'item_name' => 'required',
-                'sale_price' => 'required'
             ]);
             $makeItem = MakeItem::findOrFail($id);
             // Handle picture upload if present
@@ -217,14 +217,14 @@ class MakeItemsController extends Controller
             $makeItem->update([
                 'make_category_id' => $request->input('make_category_id'),
                 'item_name' => $request->input('item_name'),
-                'sale_price' => $request->input('sale_price'),
+                // 'sale_price' => $request->input('sale_price'),
                 'note' => $request->input('note'),
             ]);
             $notification = array(
                 'message' =>'Make Item Update Successfully',
                 'alert-type'=> 'info'
             );
-            return redirect()->route('make.item.manage')->with($notification);
+            return redirect()->back()->with($notification);
         }
         public function UpdateMakeItemMeterials(Request $request ){
             // Validate the request
@@ -292,6 +292,24 @@ class MakeItemsController extends Controller
                 );
         return redirect()->back()->with($notification);
 
+        }
+        public function MakeItemEditPriceUpdate(Request $request){
+            $itemPrice = MakeItem::findOrFail($request->id);
+            if ($itemPrice) {
+                $itemPrice->sale_price = $request->price;
+                $itemPrice->save();
+                // Return a successful response
+                return response()->json([
+                    'status' => 200,
+                    'message' => 'Sale price updated successfully.'
+                ]);
+            } else {
+                // Return an error response if the item was not found
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'Item not found.'
+                ]);
+            }
         }
         /////////////////////////////////////EndMake Item Manage //////////////////////////
 }

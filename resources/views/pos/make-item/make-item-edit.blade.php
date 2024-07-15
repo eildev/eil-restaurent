@@ -42,20 +42,20 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="mb-2 col-md-4 form-valid-groups">
+                        <div class="mb-2 col-md-8 form-valid-groups">
                             <label for="ageSelect" class="form-label">Item Name</label>
                             <div class="">
                                 <input type="text" name="item_name"  class="form-control barcode_input" value="{{$itemEditId->item_name}}" placeholder="Item Name"
                                      aria-describedby="btnGroupAddon">
                             </div>
                         </div>
-                        <div class="mb-2 col-md-4 form-valid-groups">
+                        {{-- <div class="mb-2 col-md-4 form-valid-groups">
                             <label for="ageSelect" class="form-label">Item Price</label>
                             <div class="">
                                 <input type="number" name="sale_price" value="{{$itemEditId->sale_price}}" class="form-control barcode_input" placeholder="Item Price"
                                      aria-describedby="btnGroupAddon">
                             </div>
-                        </div>
+                        </div> --}}
                         <div class="mb-2 col-md-6">
                             <h6 class="card-title">Product Image</h6>
                             <input type="file" class="categoryImage dropify" id ="image" name="picture" />
@@ -218,6 +218,17 @@
                                     <th colspan="3"></th>
                                     <th >Grand Total</th>
                                     <th id="totalCost">0.00</th>
+                                </tr>
+                                <tr>
+                                    <tr id="sale_tr_hide">
+                                        <th colspan="3"></th>
+                                        <th >Sale Price</th>
+                                        <th><input placeholder="00" name="sale_price" value="{{$itemEditId->sale_price}}" id="salePrice-value1" class="form-control" type="number"></th>
+                                    </tr>
+                                    <tr id="sale_tr_button" >
+                                        <th colspan="4"></th>
+                                        <th><button  id="update-sale-price1" class="btn btn-primary ms-2">Update</button></th>
+                                    </tr>
                                 </tr>
                             </tfoot>
                         </table>
@@ -501,6 +512,44 @@ $(document).ready(function() {
         reader.readAsDataURL(e.target.files['0']);
         });
         });
+
+
+
+
+        document.getElementById('update-sale-price1').addEventListener('click', function(event) {
+    event.preventDefault(); // Prevent default form submission
+
+    const salePriceId = document.getElementById('salePrice-value1');
+    const price = salePriceId.value;
+    const sale_price = parseFloat(price);
+    const id = '{{ $itemEditId->id }}';
+    console.log(id);
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+
+    $.ajax({
+        url: '/update-edit/make/item_price/',
+        type: 'POST',
+        data: {
+            price: sale_price,
+            id: id // Pass the itemEditId here
+        },
+        success: function(res) {
+            if (res.status == 200) {
+                toastr.success(res.message);
+                window.location.href = '/make/item/manage';
+            } else {
+                console.log('Validation errors:', res.error);
+            }
+        },
+        error: function(err) {
+            console.error('Error occurred:', err);
+        }
+    });
+});
     </script>
 
 
