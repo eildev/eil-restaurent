@@ -96,7 +96,6 @@
                                     <option selected disabled>Please Add Product</option>
                                 @endif
                             </select>
-
                             <div id="productError" class="text-danger"></div>
                         </div>
                         <div class="mb-2 col-md-3 form-valid-groups">
@@ -479,6 +478,7 @@ $(document).ready(function() {
         success: function(res) {
             if (res.status == 200) {
                 toastr.success(res.message);
+                window.location.href = '/make/item/manage';
             } else {
                 console.log('Validation errors:', res.error);
             }
