@@ -566,7 +566,7 @@
                                 </tr>
                                 <tr>
                                     <td style="text-align:right">Items x ${val.quantity} :</td>
-                                    <td>${val.receivable}</td>
+                                    <td>${val.total}</td>
                                 </tr>
                                 <tr>
                                     <td style="text-align:right">Discount :</td>

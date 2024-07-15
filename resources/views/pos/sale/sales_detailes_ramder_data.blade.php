@@ -2,8 +2,9 @@
     @php
         $mode = App\models\PosSetting::all()->first();
     @endphp
-    <div class="" style="padding:8px; max-height: 260px;margin-bottom:15px;overflow-y:scroll;overflow-x:hidden; border: 1px solid;">
-        <table class="table" >
+    <div class=""
+        style="padding:8px; max-height: 260px;margin-bottom:15px;overflow-y:scroll;overflow-x:hidden; border: 1px solid;">
+        <table class="table">
             <thead>
                 <tr>
                     <th>Product Information</th>
@@ -18,20 +19,18 @@
                         <td>
                             <div class="d-flex">
                                 <img height="90"
-                                style="border-radius:50%;border: 1px solid;border-color:#00a9f1;padding:2px"
-
-                                src="@if($sale_item->set_menu == 1)
-                                        {{ !empty($sale_item->setmenu->image) ? asset('uploads/menu_items/'.$sale_item->setmenu->image) :  asset('assets/images/empty.png')}}
+                                    style="border-radius:50%;border: 1px solid;border-color:#00a9f1;padding:2px"
+                                    src="@if ($sale_item->set_menu == 1) {{ !empty($sale_item->setmenu->image) ? asset('uploads/menu_items/' . $sale_item->setmenu->image) : asset('assets/images/empty.png') }}
                                     @else
-                                        {{ !empty($sale_item->makeitem->picture) ? $sale_item->makeitem->picture :  asset('assets/images/empty.png')}}
-                                    @endif">
+                                        {{ !empty($sale_item->makeitem->picture) ? $sale_item->makeitem->picture : asset('assets/images/empty.png') }} @endif">
                                 <div class="ms-2">
                                     <span
-                                        style="color: #00a9f1;">{{ $sale_item->set_menu == 0 ? $sale_item->makeitem->item_name : $sale_item->setmenu->menu_name }}</span>
+                                        style="color: #00a9f1;">{{ $sale_item->set_menu == 0 ? $sale_item->makeitem->item_name : $sale_item->setmenu->menu_name ?? '' }}</span>
                                     <br>
-                                    <span style="font-size: 11px">{{ $sale_item->rate }}| {{ $sale_item->makeitem->barcode }} |
+                                    <span style="font-size: 11px">{{ $sale_item->rate }}|
+                                        {{ $sale_item->makeitem->barcode }} |
                                         Dis: {{ $sale_item->discount }}</span>
-                                        </div>
+                                </div>
                             </div>
 
 
