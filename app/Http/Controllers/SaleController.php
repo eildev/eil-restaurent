@@ -339,6 +339,7 @@ class SaleController extends Controller
     {
         // dd($request->all());
         $productInfo = MakeItem::findOrFail($request->product_id);
+        // dd($productInfo);
         $status = 'active';
         $promotionDetails = PromotionDetails::whereHas('promotion', function ($query) use ($status) {
             return $query->where('status', '=', $status);
