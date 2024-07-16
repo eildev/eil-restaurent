@@ -150,7 +150,7 @@ class SaleController extends Controller
             $sale->status = 'delivered';
             $sale->update();
 
-            // customer Table Transaction 
+            // customer Table Transaction
             $customer = Customer::findOrFail($sale->customer_id);
             if ($request->modal_payamount > $request->modal_subtotal) {
                 $customer->total_payable = $request->modal_subtotal;
@@ -188,7 +188,7 @@ class SaleController extends Controller
             $accountTransaction->created_at = Carbon::now();
             $accountTransaction->save();
 
-            // transaction Table CRUD 
+            // transaction Table CRUD
             $lastTransaction = Transaction::where('customer_id', $sale->customer_id)->latest()->first();
             $transaction = new Transaction;
             $transaction->date =  Carbon::now();
@@ -564,7 +564,12 @@ class SaleController extends Controller
     }
     public function view()
     {
-        $sales = Sale::where('branch_id', Auth::user()->branch_id)->latest()->get();
+        if(Auth::user()->id == 1){
+            $sales = Sale::all();
+        }else{
+            $sales = Sale::where('branch_id', Auth::user()->branch_id)->latest()->get();
+        }
+
         return view('pos.sale.view', compact('sales'));
     }
     public function viewDetails($id)
@@ -626,7 +631,6 @@ class SaleController extends Controller
             $sale->note = $request->note;
             $sale->created_at = Carbon::now();
             $sale->save();
-
 
             // $saleId = $sale->id;
 

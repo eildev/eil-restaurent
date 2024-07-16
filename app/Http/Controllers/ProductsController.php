@@ -74,7 +74,14 @@ class ProductsController extends Controller
     }
     public function view()
     {
-        $products = Product::all();
+
+        if(Auth::user()->id == 1){
+            $products = Product::all();
+        }else{
+            $products = Product::where('branch_id', Auth::user()->branch_id)
+            ->latest()
+            ->get();
+        }
         return view('pos.products.product.product-show', compact('products'));
     }
     public function edit($id)

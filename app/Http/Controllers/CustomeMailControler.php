@@ -33,7 +33,6 @@ class CustomeMailControler extends Controller
         //      dispatch(new SendCustomerEmailJob($recipient, $data));
         //     // Mail::to($recipient)->queue(new CustomerSendEmail($data));
         // }
-
         $notification = array(
             'message' => 'Email Send Successfully',
             'alert-type' => 'info'

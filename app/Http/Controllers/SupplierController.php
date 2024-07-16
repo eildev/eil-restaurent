@@ -46,7 +46,12 @@ class SupplierController extends Controller
     }
     public function view()
     {
-        $suppliers = Supplier::get();
+
+        if(Auth::user()->id == 1){
+            $suppliers = Supplier::get();
+        }else{
+            $suppliers = Supplier::where('branch_id', Auth::user()->branch_id)->latest()->get();
+        }
         return response()->json([
             "status" => 200,
             "data" => $suppliers

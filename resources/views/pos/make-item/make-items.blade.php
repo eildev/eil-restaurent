@@ -80,7 +80,14 @@
                     <div class="row">
                         <div class="mb-1 col-md-3 form-valid-groups">
                             @php
-                                $products = App\Models\Product::where('stock', '>', 0)->get();
+                    if(Auth::user()->id == 1){
+                    $products = App\Models\Product::where('stock', '>', 0)->get();
+                            }else{
+                        $products = App\Models\Product::where('branch_id', Auth::user()->branch_id)
+                                ->where('stock', '>', 0)
+                                ->latest()
+                                ->get();
+                            }
                             @endphp
                             <label for="ageSelect" class="form-label">Materials Name</label>
                             <select class="js-example-basic-single  form-select product_select" name="product_id" id ="productValid" data-width="100%"

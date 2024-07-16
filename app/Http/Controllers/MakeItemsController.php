@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\ItemCategory;
 use App\Models\MakeItem;
 use App\Models\MaterialList;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Validator;
 class MakeItemsController extends Controller
@@ -99,6 +100,7 @@ class MakeItemsController extends Controller
         ], [
             'make_category_id' => $request->input('make_category_id'),
             'item_name' => $request->input('item_name'),
+            'branch_id' => Auth::user()->branch_id,
             'barcode' => rand(100000, 123456789),
             // 'sale_price' => $request->input('sale_price'),
             'note' => $request->input('note'),
@@ -175,10 +177,17 @@ class MakeItemsController extends Controller
             ]);
         }
     }
-        /////////////////////////////////////Make Item Manage //////////////////////////
+        ////////////////////////////////// Make Item Manage /////////////////////////////
         public function MakeItemManage(){
-            $items = MakeItem::where('cost_price', '>', 0)
-            ->get();
+            if(Auth::user()->id == 1){
+                $items = MakeItem::where('cost_price', '>', 0)->get();
+            }else{
+                $items = MakeItem::where('branch_id', Auth::user()->branch_id)
+                ->where('cost_price', '>', 0)
+                ->latest()
+                ->get();
+            }
+            // $items = MakeItem::where('cost_price', '>', 0)->get();
             return view('pos.make-item.make-item-manage',compact('items'));
         }//
         public function MakeItemEdit($id){
@@ -290,7 +299,7 @@ class MakeItemsController extends Controller
                     'message' =>'Make Item Successfully Deleted',
                     'alert-type'=> 'info'
                 );
-        return redirect()->back()->with($notification);
+                return redirect()->back()->with($notification);
 
         }
         public function MakeItemEditPriceUpdate(Request $request){

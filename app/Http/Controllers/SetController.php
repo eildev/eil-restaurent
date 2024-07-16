@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\SetMenu;
 use App\Models\MakeItem;
+use Illuminate\Support\Facades\Auth;
 use App\Models\MenuItems;
 class SetController extends Controller
 {
@@ -137,6 +138,7 @@ class SetController extends Controller
             } else {
                 // Create new material
                 $material = MenuItems::create([
+                'branch_id' => Auth::user()->branch_id,
                 'menu_id' => $menuId,
                 'item_id' =>  $itemId,
                 'quantity' => $validatedData['quantity'],
@@ -163,7 +165,13 @@ class SetController extends Controller
             ]);
     }
     public function ManageSetItem(){
-        $menuItems = MenuItems::with('items')->get();
+        if(Auth::user()->id == 1){
+            $menuItems = MenuItems::with('items')->get();
+        }else{
+            $menuItems = MenuItems::where('branch_id', Auth::user()->branch_id)
+            ->with('items')
+            ->get();
+        }
         return view('pos.set.all-set-item',compact('menuItems'));
     }//
     public function ManageSetMenu(){
