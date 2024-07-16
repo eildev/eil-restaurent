@@ -20,6 +20,7 @@
             margin: 0;
             padding: 0;
         }
+
         body {
             font-family: "Space Mono", monospace;
             font-weight: 500;
@@ -84,6 +85,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="receipt ">
         <div>
@@ -150,9 +152,11 @@
                     @if ($sale->saleItem->count() > 0)
 
                         @foreach ($sale->saleItem as $index => $saleItem)
-                        {{-- @dd(($saleItem->set_menu == 1) ? $saleItem->setmenu->menu_name : $saleItem->product->name) --}}
+                            {{-- @dd(($saleItem->set_menu == 1) ? $saleItem->setmenu->menu_name : $saleItem->product->name) --}}
                             <tr>
-                                <td class="text-start">{{ ($saleItem->set_menu == 1) ? $saleItem->setmenu->menu_name : $saleItem->product->name}}</td>
+                                <td class="text-start">
+                                    {{ $saleItem->set_menu == 1 ? $saleItem->setmenu->menu_name ?? '' : $saleItem->product->name ?? '' }}
+                                </td>
                                 <td class="text-center">{{ $saleItem->qty ?? 0 }}</td>
                                 <td class="text-center">{{ $saleItem->discount ?? 0 }}</td>
                                 <td class="text-end">{{ $saleItem->sub_total ?? 0 }}</td>
@@ -173,12 +177,12 @@
             {{-- <p>-------------------</p> --}}
             <hr>
 
-                <div class="flex">
-                        <p>Discount: </p>
-                        <p>৳ {{ $sale->discount }}</p>
-                        <p>৳ {{ $sale->change_amount }}</p>
-                </div>
-                <hr>
+            <div class="flex">
+                <p>Discount: </p>
+                <p>৳ {{ $sale->discount }}</p>
+                <p>৳ {{ $sale->change_amount }}</p>
+            </div>
+            <hr>
 
 
 
@@ -219,18 +223,18 @@
 
 
     <style>
-
         @media print {
             body {
-            font-family: "Space Mono", monospace;
-            font-weight: 500;
-            font-style: normal;
-            font-size: 11px;
-            color: #000000;
-            text-align: left !important;
-            width: 300px !important;
-            /* background: red !important; */
-        }
+                font-family: "Space Mono", monospace;
+                font-weight: 500;
+                font-style: normal;
+                font-size: 11px;
+                color: #000000;
+                text-align: left !important;
+                width: 300px !important;
+                /* background: red !important; */
+            }
+
             nav,
             .footer {
                 display: none !important;

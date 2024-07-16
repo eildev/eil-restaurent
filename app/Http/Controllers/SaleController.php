@@ -171,14 +171,14 @@ class SaleController extends Controller
             $accountTransaction->purpose =  'Sale';
             $accountTransaction->account_id =  $request->modal_payment_method;
             if ($request->modal_payamount > $request->modal_subtotal) {
-                $accountTransaction->debit = $request->modal_subtotal;
+                $accountTransaction->credit = $request->modal_subtotal;
                 if ($lastAccountTransaction) {
                     $accountTransaction->balance = $lastAccountTransaction->balance + $request->modal_subtotal;
                 } else {
                     $accountTransaction->balance = $request->modal_subtotal;
                 }
             } else {
-                $accountTransaction->debit = $request->modal_payamount;
+                $accountTransaction->credit = $request->modal_payamount;
                 if ($lastAccountTransaction) {
                     $accountTransaction->balance = $lastAccountTransaction->balance + $request->modal_payamount;
                 } else {
