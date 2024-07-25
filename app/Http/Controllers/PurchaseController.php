@@ -105,7 +105,6 @@ class PurchaseController extends Controller
                 $accountTransaction->created_at = Carbon::now();
                 $accountTransaction->save();
 
-
                 // get Transaction Model
                 $lastTransaction = Transaction::where('supplier_id', $request->supplier_id)->latest()->first();
                 $transaction = new Transaction;
@@ -159,14 +158,23 @@ class PurchaseController extends Controller
 
     public function view()
     {
-        $purchase = Purchase::where('branch_id', Auth::user()->branch_id)->latest()->get();
+        if(Auth::user()->id == 1){
+            $purchase = Purchase::all();
+        }else{
+            $purchase = Purchase::where('branch_id', Auth::user()->branch_id)->latest()->get();
+        }
+
         // return view('pos.purchase.view');
         return view('pos.purchase.view', compact('purchase'));
     }
 
     public function viewAll()
     {
-        $purchase = Purchase::where('branch_id', Auth::user()->branch_id)->latest()->get();
+        if(Auth::user()->id == 1){
+            $purchase = Purchase::all();
+        }else{
+            $purchase = Purchase::where('branch_id', Auth::user()->branch_id)->latest()->get();
+        }
         if ($purchase) {
             return response()->json([
                 'status' => 200,

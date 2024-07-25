@@ -300,7 +300,12 @@ class EmployeeSalaryController extends Controller
     }
     public function EmployeeSalaryAdvancedView()
     {
-        $employeSalary = EmployeeSalary::all();
+        if(Auth::user()->id == 1){
+            $employeSalary = EmployeeSalary::all();
+        }else{
+            $employeSalary = EmployeeSalary::where('branch_id', Auth::user()->branch_id)->latest()->hget();
+        }
+
         return view('pos.employee_salary.view_advanced_employee_salary', compact('employeSalary'));
     } //
     public function EmployeeSalaryAdvancedEdit($id)

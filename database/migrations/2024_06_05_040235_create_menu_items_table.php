@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('menu_items', function (Blueprint $table) {
             $table->id();
-            $table->integer('branch_id');
+            $table->unsignedBigInteger('branch_id')->unsigned();
+            $table->foreign('branch_id')->references('id')->on('branches')->onDelete('cascade');
             $table->unsignedBigInteger('menu_id')->unsigned();
             $table->foreign('menu_id')->references('id')->on('set_menus')->onDelete('cascade');
             $table->unsignedBigInteger('item_id')->unsigned();

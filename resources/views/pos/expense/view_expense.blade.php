@@ -380,11 +380,6 @@
                                         <tr>
                                             <td colspan="12">
                                                 <div class="text-center text-warning mb-2">Data Not Found</div>
-                                                <div class="text-center">
-                                                    <a href="{{ route('expense.add') }}"
-                                                        class="btn btn-primary">Add Expanse<i
-                                                            data-feather="plus"></i></a>
-                                                </div>
                                             </td>
                                         </tr>
                                     @endif

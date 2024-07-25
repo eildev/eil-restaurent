@@ -18,7 +18,12 @@
 
                             <div class="mb-3 col-md-6">
                                 @php
+                                if(Auth::user()->id == 1){
                                     $products = App\Models\Product::get();
+                                }else{
+                                    $products = App\Models\Product::where('branch_id', Auth::user()->branch_id)->latest()->get();
+                                }
+
                                 @endphp
                                 <label for="ageSelect" class="form-label">Product <span class="text-danger">*</span></label>
                                 <select class="js-example-basic-single form-select" name="product_id" data-width="100%"

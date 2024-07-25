@@ -20,7 +20,11 @@ class EmployeeController extends Controller
 
     public function EmployeeView()
     {
-        $employees = $this->employee_repo->ViewAllEmployee();
+        if(Auth::user()->id == 1){
+            $employees = Employee::all();
+        }else{
+            $employees = Employee::where('branch_id', Auth::user()->branch_id)->latest()->get();
+        }
         return view('pos.employee.view_employee', compact('employees'));
     } //
     public function EmployeeAdd()

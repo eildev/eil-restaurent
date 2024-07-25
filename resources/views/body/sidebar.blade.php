@@ -91,6 +91,12 @@
             </li>
             {{-- //make Item Manage End// --}}
             <li class="nav-item">
+                <a href="{{ route('manage.set.menu') }}" class="nav-link {{ request()->routeIs('manage.set.menu') ? 'nav_active' : '' }}">
+                    <i class="ms-2 ms-2 link-icon" data-feather="shopping-cart"></i>
+                    <span class="link-title">Set Menu</span>
+                </a>
+            </li>
+            <li class="nav-item">
                 <a href="{{ route('set.item') }}" class="nav-link {{ request()->routeIs('set.item') ? 'nav_active' : '' }}">
                     <i class="ms-2 ms-2 link-icon" data-feather="shopping-cart"></i>
                     <span class="link-title">Set Items</span>
@@ -109,9 +115,9 @@
                             <li class="nav-item">
                                 <a href="{{ route('manage.set.item') }}" class="nav-link {{ request()->routeIs('manage.set.item') ? 'nav_active' : '' }}">All Set Items </a>
                             </li>
-                            <li class="nav-item">
+                            {{-- <li class="nav-item">
                                 <a href="{{ route('manage.set.menu') }}" class="nav-link {{ request()->routeIs('manage.set.menu') ? 'nav_active' : '' }}">All Set Menu </a>
-                            </li>
+                            </li> --}}
 
                     </ul>
                 </div>

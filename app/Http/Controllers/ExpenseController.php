@@ -94,8 +94,12 @@ class ExpenseController extends Controller
         $expenseCat = ExpenseCategory::latest()->get();
         $bank = Bank::latest()->get();
         $expenseCategory = ExpenseCategory::latest()->get();
-        // $expenseCategory  = ExpenseCategory::latest()->get();
-        $expense = Expense::latest()->get();
+        if(Auth::user()->id == 1){
+            $expense = Expense::latest()->get();
+        }else{
+            $expense = Expense::where('branch_id', Auth::user()->branch_id)->latest()->get();
+        }
+
         return view('pos.expense.view_expense', compact('expense', 'expenseCat', 'bank', 'expenseCategory'));
     } //
 
@@ -188,9 +192,15 @@ class ExpenseController extends Controller
     {
         $expenseCat = ExpenseCategory::latest()->get();
         // $expenseCategory  = ExpenseCategory::latest()->get();
+       if(Auth::user()->id == 1){
         $expense =  Expense::when($request->startDate && $request->endDate, function ($query) use ($request) {
             return $query->whereBetween('expense_date', [$request->startDate, $request->endDate]);
         })->get();
+       }{
+        $expense =  Expense::where('branch_id', Auth::user()->branch_id)->when($request->startDate && $request->endDate, function ($query) use ($request) {
+            return $query->whereBetween('expense_date', [$request->startDate, $request->endDate]);
+        })->get();
+       }
 
         return view('pos.expense.expense-filter-rander-table', compact('expense', 'expenseCat'))->render();
     }

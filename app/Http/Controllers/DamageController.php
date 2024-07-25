@@ -70,7 +70,12 @@ class DamageController extends Controller
      */
     public function view()
     {
-        $damages = $this->damage_repo->ViewAllDamage();
+        if(Auth::user()->id == 1){
+            $damages = Damage::all();
+        }else{
+           $damages = Damage::where('branch_id', Auth::user()->branch_id)->latest()->get();;
+        }
+
         return view('pos.damage.view_damage', compact('damages'));
     }
     /**

@@ -39,7 +39,12 @@ class CustomerController extends Controller
         // return redirect()->route('pos.customer.view')->with($notification);
     }//End Method
     public function CustomerView(){
-        $customers = $this->customer_repo->ViewAllCustomer();
+        if(Auth::user()->id == 1){
+            $customers = Customer::all();
+        }else{
+            $customers = Customer::where('branch_id', Auth::user()->branch_id)->latest()->get();
+        }
+
         return view('pos.customer.view_customer',compact('customers'));
     }//
     public function CustomerEdit($id){

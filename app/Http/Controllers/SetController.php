@@ -22,6 +22,7 @@ class SetController extends Controller
         ]);
 
         $menuItem = new SetMenu();
+        $menuItem->branch_id = Auth::user()->branch_id;;
         $menuItem->menu_name = $request->menu_name;
         $menuItem->discount = $request->discount;
         $menuItem->cost_price = $request->cost_price;
@@ -175,7 +176,13 @@ class SetController extends Controller
         return view('pos.set.all-set-item',compact('menuItems'));
     }//
     public function ManageSetMenu(){
-        $setMenu = SetMenu::all();
+        if(Auth::user()->id == 1){
+            $setMenu = SetMenu::all();
+        }else{
+            $setMenu = SetMenu::where('branch_id', Auth::user()->branch_id)
+            ->latest()
+            ->get();
+        }
         return view('pos.set.all-set-menu',compact('setMenu'));
     }//
     public function ManageItemEdit($id){

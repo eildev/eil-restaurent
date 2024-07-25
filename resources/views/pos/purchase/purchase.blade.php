@@ -53,11 +53,25 @@
                                     $category = App\Models\Category::where('slug', 'via-sell')->first();
                                     $products = collect();
                                     if ($category) {
+                                       if(Auth::user()->id == 1){
                                         $products = App\Models\Product::where('category_id', '!=', $category->id)
                                             ->orderBy('stock', 'asc')
                                             ->get();
+                                       }else{
+                                        $products = App\Models\Product::where('branch_id', Auth::user()->branch_id)
+                                        ->where('category_id', '!=', $category->id)
+                                            ->orderBy('stock', 'asc')
+                                            ->get();
+                                       }
                                     } else {
-                                        $products = App\Models\Product::orderBy('stock', 'asc')->get();
+                                        if(Auth::user()->id == 1){
+                                            $products = App\Models\Product::orderBy('stock', 'asc')->get();
+                                        }else{
+                                            $products = App\Models\Product::where('branch_id', Auth::user()->branch_id)
+                                            ->orderBy('stock', 'asc')
+                                            ->get();
+                                        }
+
                                     }
                                 @endphp
                                 <label for="ageSelect" class="form-label">Product</label>
