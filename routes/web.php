@@ -224,8 +224,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/damage/view', 'view')->name('damage.view');
         Route::get('/damage/show_quantity/{id}', 'ShowQuantity')->name('damage.show.quantity');
         Route::get('/damage/edit/{id}', 'edit')->name('damage.edit');
+        Route::get('/damage/destroy/{id}', 'destroy')->name('damage.destroy');
         // Route::post('/damage/update/{id}', 'update')->name('damage.update');
-        // Route::get('/damage/destroy/{id}', 'destroy')->name('damage.destroy');
         // Route::get('/damage/invoice/{id}', 'invoice')->name('damage.invoice');
     });
     // Promotion  related route(n)

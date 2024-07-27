@@ -46,16 +46,13 @@
                                                     class="btn btn-sm btn-primary btn-icon">
                                                     <i data-feather="edit"></i>
                                                 </a>
-<<<<<<< HEAD
                                                 @endif
                                                 @if(Auth::user()->can('damage.delete'))
                                                 {{-- <a href="{{route('damage.delete',$damage->id)}}" id="delete" class="btn btn-sm btn-danger btn-icon"> --}}
                                                 <i data-feather="trash-2"></i>
-=======
                                                 <a href="{{ route('damage.destroy', $damage->id) }}" id="delete"
                                                     class="btn btn-sm btn-danger btn-icon">
                                                     <i data-feather="trash-2"></i>
->>>>>>> 48ef03ab96642f69da74a1e719c62dc561f8958c
                                                 </a>
                                                 @endif
                                             </td>

@@ -35,7 +35,6 @@
                                             <option value="{{ $roles->id }}">{{ $roles->name }}</option>
                                         @endif
 
-
                                         @endforeach
                                      </select>
                                 </div>

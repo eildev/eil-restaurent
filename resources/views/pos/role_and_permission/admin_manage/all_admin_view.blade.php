@@ -63,7 +63,7 @@
                                                     </a>
                                                 @endif
                                             @endforeach
-                                                    </a>
+
                                                 @endif
                                             </td>
                                         </tr>
