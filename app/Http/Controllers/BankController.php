@@ -36,6 +36,7 @@ class BankController extends Controller
         if ($validator->passes()) {
             $bank = new Bank;
             $bank->name =  $request->name;
+            $bank->branch_id = Auth::user()->branch_id;
             $bank->branch_name = $request->branch_name;
             $bank->manager_name = $request->manager_name;
             $bank->phone_number = $request->phone_number;

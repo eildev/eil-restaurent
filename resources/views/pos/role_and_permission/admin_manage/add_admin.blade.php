@@ -72,9 +72,13 @@
                             <div class="col-sm-9 form-valid-groupss">
                                 <select class="js-example-basic-single form-select " id="exampleInputPassword2s"
                                     name="role_id" data-width="100%">
-                                    <option selected disabled>Select Role</option>
+                                    <option selected disabled>----> Select Role <-----</option>
                                     @foreach ($role as $roles)
+                                    @if ($roles->name === 'Super Admin')
+                                    <option value="{{ $roles->id }}" disabled>{{ $roles->name }}</option>
+                                    @else
                                         <option value="{{ $roles->id }}">{{ $roles->name }}</option>
+                                    @endif
                                     @endforeach
                                 </select>
                             </div>

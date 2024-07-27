@@ -27,8 +27,15 @@
                                     <select class="js-example-basic-single form-select" name="role_id"
                                     data-width="100%"  >
                                         <option selected disabled>Select Role Name</option>
+
                                         @foreach ($role as $roles)
-                                        <option value="{{$roles->id}}">{{$roles->name}}</option>
+                                        @if ($roles->name === 'Super Admin')
+                                        <option value="{{ $roles->id }}" disabled>{{ $roles->name }}</option>
+                                        @else
+                                            <option value="{{ $roles->id }}">{{ $roles->name }}</option>
+                                        @endif
+
+
                                         @endforeach
                                      </select>
                                 </div>

@@ -9,4 +9,9 @@ class Sms extends Model
 {
     use HasFactory;
     protected $guarded = [];
+
+    function customer()
+    {
+        return $this->belongsTo(Customer::class, 'customer_id', 'id');
+    }
 }

@@ -14,7 +14,11 @@
                 <div class="card-body">
                     <div class="row mb-3">
                         @php
+                           if(Auth::user()->id == 1){
                             $customers = App\Models\Customer::all();
+                            }else{
+                                $customers = App\Models\Customer::where('branch_id', Auth::user()->branch_id)->get();
+                            }
                         @endphp
                         <div class="col-md-4">
                             <div class="input-group flatpickr" id="flatpickr-date">

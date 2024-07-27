@@ -45,15 +45,24 @@
                                             <td>{{ $data->branch_id ?? '-' }}</td>
                                             <td>
                                                 @if (Auth::user()->can('admin-manage.edit'))
+                                                @foreach ($data->roles as $role)
+                                                @if ($role->name !== 'Super Admin')
                                                     <a href="{{ route('admin.manage.edit', $data->id) }}"
                                                         class="btn btn-sm btn-primary btn-icon" title="Edit">
                                                         <i data-feather="edit"></i>
                                                     </a>
+                                                    @endif
+                                            @endforeach
                                                 @endif
                                                 @if (Auth::user()->can('admin-manage.delete'))
-                                                    <a href="{{ route('admin.manage.delete', $data->id) }}" id="delete"
-                                                        class="btn btn-sm btn-danger btn-icon" title="Delete">
+
+                                                @foreach ($data->roles as $role)
+                                                @if ($role->name !== 'Super Admin')
+                                                    <a href="{{ route('admin.manage.delete', $data->id) }}" id="delete" class="btn btn-sm btn-danger btn-icon" title="Delete">
                                                         <i data-feather="trash-2"></i>
+                                                    </a>
+                                                @endif
+                                            @endforeach
                                                     </a>
                                                 @endif
                                             </td>
