@@ -18,17 +18,18 @@ class TransactionController extends Controller
 {
     public function TransactionAdd()
     {
-        $paymentMethod = Bank::all();
-        $supplier = Supplier::latest()->get();
-        $customer = Customer::latest()->get();
+
         if(Auth::user()->id == 1){
+            $supplier = Supplier::latest()->get();
+            $customer = Customer::latest()->get();
+            $paymentMethod = Bank::all();
             $investors = Investor::latest()->get();
-        }else{
-            $investors = Investor::where('branch_id', Auth::user()->branch_id)->latest()->get();
-        }
-        if(Auth::user()->id == 1){
             $transaction = Transaction::latest()->get();
         }else{
+            $supplier = Supplier::where('branch_id', Auth::user()->branch_id)->latest()->get();
+            $customer = Customer::where('branch_id', Auth::user()->branch_id)->latest()->get();
+            $paymentMethod = Bank::where('branch_id', Auth::user()->branch_id)->latest()->get();
+            $investors = Investor::where('branch_id', Auth::user()->branch_id)->latest()->get();
             $transaction = Transaction::where('branch_id', Auth::user()->branch_id)->latest()->get();
         }
 
@@ -307,7 +308,11 @@ class TransactionController extends Controller
     }
     public function GetInvestor()
     {
-        $data = Investor::latest()->get();
+        if(Auth::user()->id == 1){
+            $data = Investor::latest()->get();
+        }else{
+            $data = Investor::where('branch_id', Auth::user()->branch_id)->latest()->get();
+        }
         return response()->json([
             'status' => 200,
             'message' => 'Successfully save',

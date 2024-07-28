@@ -94,7 +94,7 @@ class ReportController extends Controller
         $totalSalary = $salary->sum('debit');
         return view('pos.report.summary.summary', compact('saleAmount', 'purchaseAmount', 'expenseAmount', 'sellProfit', 'totalSalary', 'products', 'expense', 'supplier', 'customer'));
     }
-    // customer due report function
+    // customer due report function//
     public function customerDue()
     {
         if(Auth::user()->id == 1){
@@ -110,7 +110,6 @@ class ReportController extends Controller
     function damageReportPrint(Request $request)
     {
         // dd($request->all());
-
         $damageItem = Damage::when($request->startdatepurches && $request->enddatepurches, function ($query) use ($request) {
             return $query->whereBetween('date', [$request->startdatepurches, $request->enddatepurches]);
         })
@@ -136,11 +135,7 @@ class ReportController extends Controller
         }else{
             $customer = Customer::where('branch_id', Auth::user()->branch_id)->where('id', $request->customerId)->get();
         }
-        // return response()->json([
-        //     'status' => 200,
-        //     'customer' => $customer,
-        // ]);
-        // dd($customer);
+
         return view("pos.report.customer.table", compact('customer'))->render();
     }
     // supplier due report function
@@ -295,7 +290,7 @@ class ReportController extends Controller
             'transactions' => $transactions,
             'customer' => $customer,
         ]);
-        // return view("pos.report.supplier.show_ledger", compact('supplier', 'transactions'))->render();
+
     }
     // supplier Ledger report function
     public function supplierLedger()
@@ -332,7 +327,12 @@ class ReportController extends Controller
     //stock Report function
     public function stockReport()
     {
-        $products = Product::where('branch_id', Auth::user()->branch_id)->get();
+        if(Auth::user()->id == 1){
+            $products = Product::all();
+        }else{
+            $products = Product::where('branch_id', Auth::user()->branch_id)->get();
+        }
+
         return view('pos.report.products.stock', compact('products'));
     } //
 
@@ -374,8 +374,7 @@ class ReportController extends Controller
     public function ExpenseReportFilter(Request $request)
     {
         //dd($request->all());
-        $expense = Expense::where('branch_id', Auth::user()->branch_id)
-        ->when($request->startDate && $request->endDate, function ($query) use ($request) {
+        $expense = Expense::when($request->startDate && $request->endDate, function ($query) use ($request) {
             return $query->whereBetween('expense_date', [$request->startDate, $request->endDate]);
         })->get();
         return view('pos.report.expense.expense-table', compact('expense'))->render();
@@ -384,11 +383,10 @@ class ReportController extends Controller
     public function EmployeeSalaryReport()
     {
         if(Auth::user()->id == 1){
-            $employeeSalary = EmployeeSalary::all();
-            }else{
-            $employeeSalary = EmployeeSalary::where('branch_id', Auth::user()->branch_id)->get();
-            }
-
+        $employeeSalary = EmployeeSalary::all();
+        }else{
+        $employeeSalary = EmployeeSalary::where('branch_id', Auth::user()->branch_id)->get();
+        }
         return view('pos.report.employee_salary.employee_salary', compact('employeeSalary'));
     } //
     public function EmployeeSalaryReportFilter(Request $request)
@@ -437,14 +435,7 @@ class ReportController extends Controller
     ///SMS Report Method
     public function SmsView()
     {
-
-        if(Auth::user()->id == 1){
-            $smsAll = Sms::all();
-        }else{
-            $smsAll = Sms::whereHas('customer', function ($query) {
-                $query->where('branch_id', Auth::user()->branch_id);
-            })->get();
-        }
+        $smsAll = Sms::all();
         return view('pos.report.sms.sms_report', compact('smsAll'));
     } //
     public function SmsReportFilter(Request $request)

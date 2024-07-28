@@ -437,8 +437,6 @@
                     }
                 });
             });
-
-
             const saveCategory = document.querySelector('.save_category');
             saveCategory.addEventListener('click', function(e) {
                 e.preventDefault();

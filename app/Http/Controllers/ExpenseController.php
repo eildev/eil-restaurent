@@ -32,7 +32,12 @@ class ExpenseController extends Controller
     } //End Method
     public function ExpenseAdd()
     {
-        $bank = Bank::latest()->get();
+        if(Auth::user()->id == 1){
+            $bank = Bank::latest()->get();
+        }else{
+            $bank = Bank::where('branch_id', Auth::user()->branch_id)->latest()->get();
+        }
+
         $expenseCategory = ExpenseCategory::latest()->get();
         return view('pos.expense.add_expanse', compact('expenseCategory', 'bank'));
     } //
@@ -92,11 +97,13 @@ class ExpenseController extends Controller
     public function ExpenseView()
     {
         $expenseCat = ExpenseCategory::latest()->get();
-        $bank = Bank::latest()->get();
+
         $expenseCategory = ExpenseCategory::latest()->get();
         if(Auth::user()->id == 1){
+            $bank = Bank::latest()->get();
             $expense = Expense::latest()->get();
         }else{
+            $bank = Bank::where('branch_id', Auth::user()->branch_id)->latest()->get();
             $expense = Expense::where('branch_id', Auth::user()->branch_id)->latest()->get();
         }
 

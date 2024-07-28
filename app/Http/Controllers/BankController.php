@@ -67,7 +67,12 @@ class BankController extends Controller
     public function view()
     {
         // $banks = Bank::get();
-        $banks = $this->bankrepo->getAllBank();
+        if(Auth::user()->id == 1){
+            $banks = $this->bankrepo->getAllBank();
+        }else{
+            $banks = Bank::where('branch_id', Auth::user()->branch_id)->latest()->get();
+        }
+
         $banks->load('accountTransaction');
 
         // Add latest transaction to each bank
