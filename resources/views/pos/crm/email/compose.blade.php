@@ -48,7 +48,13 @@
                     <label class="col-md-2 col-form-label">To:</label>
                     <div class="col-md-10">
                         @php
-                        $customer = App\Models\Customer::whereNotNull('email')->where('email', '<>', '')->get();
+                       if(Auth::user()->id == 1){
+                            $customer = App\Models\Customer::whereNotNull('email')->where('email', '<>', '')->get();
+                        }else{
+                            $customer = App\Models\Customer::where('branch_id', Auth::user()->branch_id)
+                            ->whereNotNull('email')->where('email', '<>', '')->get();
+                        }
+
                         @endphp
                 <form  id="myValidForm" method="POST" action="{{ route('customer.send.email') }}">
                             @csrf

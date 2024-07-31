@@ -16,7 +16,7 @@
         <div class="col-md-12 stretch-card">
             <div class="card">
                 <div class="card-body">
-                    <h6 class="card-title text-info">Add Employee</h6>
+                    <h6 class="card-title text-info">SMS Marketing</h6>
                     <div class="row">
                         <div class="col-lg-6">
                             <h4>Choose Customer</h4>
@@ -38,7 +38,11 @@
                                 </thead>
                                 <tbody class="showCustomer">
                                     @php
-                                        $customers = App\Models\Customer::get();
+                                if(Auth::user()->id == 1){
+                                    $customers = App\Models\Customer::get();
+                                }else{
+                                    $customers = App\Models\Customer::where('branch_id', Auth::user()->branch_id)->get();
+                                }
                                     @endphp
                                     @forelse ($customers as $customer)
                                         <tr>
